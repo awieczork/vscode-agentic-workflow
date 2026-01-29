@@ -1,0 +1,11 @@
+# Ignore everything
+/*
+
+# Except these folders
+!.github/
+!.vscode/
+!REFERENCE/
+!generated/
+
+# And keep .gitignore itself
+!.gitignore
