@@ -1,0 +1,152 @@
+# =============================================================================
+# GENERATION FLOW
+# =============================================================================
+# Purpose: Workflow for generating .github/ agentic scaffolding
+# Version: 1.1.0
+# =============================================================================
+
+meta:
+  version: "1.1.0"
+  description: "Generates complete .github/ structure for target projects"
+  output: ".github/"
+  core_agents: [brain, architect, build, inspect, research]  # Copied, not generated
+
+# =============================================================================
+# AGENTS
+# =============================================================================
+
+agents:
+  interviewer:
+    role: "Gathers project context, creates spec"
+    input: "questionnaire.md"
+    output: "spec.md + handoff to generator"
+
+  generator:
+    role: "Orchestrates generation via subagents"
+    input: "spec.md"
+    output: "Complete .github/ structure"
+    subagents:
+      - agent-creator      # → .github/agents/*.agent.md
+      - skill-creator      # → .github/skills/*/
+      - instruction-creator # → .github/instructions/*.instructions.md
+      - prompt-creator     # → .github/prompts/*.prompt.md
+      - memory-creator     # → .github/memory-bank/*.md
+
+# =============================================================================
+# WORKFLOW
+# =============================================================================
+
+workflow:
+  # Step 1: User fills questionnaire
+  - step: context
+    actor: user
+    action: "Fill questionnaire with project details"
+    output: "projects/{name}/questionnaire.md"
+    sections:
+      - purpose_and_goals     # Required
+      - domain_and_scope      # Required
+      - technical_stack       # Required
+      - key_components        # Required
+      - functional_requirements
+      - data_architecture
+      - references
+
+  # Step 2: Interview to clarify and produce spec
+  - step: interview
+    actor: interviewer
+    action: "Clarify gaps, resolve ambiguities, synthesize spec"
+    input: "questionnaire.md"
+    output: "spec.md"
+    max_rounds: 5
+
+  # Step 3: User approves spec
+  - step: review
+    actor: user
+    action: "Review and approve spec"
+    decisions: [approve, revise]
+
+  # Step 4: Generate scaffolding
+  - step: generate
+    actor: generator
+    phases:
+      - id: init
+        action: "Copy core agents, create .github/ structure"
+
+      - id: analyze
+        action: "Determine what to generate from spec"
+        uses: "COMPONENT-MATRIX.md decision rules"
+
+      - id: propose
+        action: "Present recommendations to user"
+        output: "proposal.md"
+
+      - id: create
+        action: "Spawn subagents for each approved component"
+        validate_each: true
+
+      - id: finalize
+        action: "Validate all, generate summary"
+        output: "generation-summary.md"
+
+# =============================================================================
+# FILE TYPES
+# =============================================================================
+
+file_types:
+  agent:
+    extension: ".agent.md"
+    location: ".github/agents/"
+    pattern: "PATTERNS/agent-patterns.md"
+    template: "TEMPLATES/agent-skeleton.md"
+    checklist: "CHECKLISTS/agent-checklist.md"
+
+  skill:
+    location: ".github/skills/{name}/"
+    pattern: "PATTERNS/skill-patterns.md"
+    template: "TEMPLATES/skill-skeleton.md"
+    checklist: "CHECKLISTS/skill-checklist.md"
+
+  instruction:
+    extension: ".instructions.md"
+    location: ".github/instructions/"
+    pattern: "PATTERNS/instruction-patterns.md"
+    template: "TEMPLATES/instruction-skeleton.md"
+    checklist: "CHECKLISTS/instruction-checklist.md"
+
+  prompt:
+    extension: ".prompt.md"
+    location: ".github/prompts/"
+    pattern: "PATTERNS/prompt-patterns.md"
+    template: "TEMPLATES/prompt-skeleton.md"
+    checklist: "CHECKLISTS/prompt-checklist.md"
+
+  memory_bank:
+    extension: ".md"
+    location: ".github/memory-bank/"
+    pattern: "PATTERNS/memory-bank-patterns.md"
+    template: "TEMPLATES/memory-skeleton.md"
+
+  copilot_instructions:
+    filename: "copilot-instructions.md"
+    location: ".github/"
+    always_generated: true
+
+# =============================================================================
+# VALIDATION
+# =============================================================================
+
+validation:
+  per_file:
+    - "Follows pattern from PATTERNS/"
+    - "Passes checklist from CHECKLISTS/"
+    - "No placeholder content"
+
+  cross_references:
+    - "All referenced agents exist"
+    - "All referenced skills exist"
+    - "No circular dependencies"
+
+  compatibility:
+    - "No naming conflicts with core agents"
+    - "Generated agents have handoffs to core agents"
+    - "Safety instruction inheritance preserved"

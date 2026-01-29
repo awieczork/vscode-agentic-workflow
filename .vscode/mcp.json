@@ -1,0 +1,47 @@
+﻿{
+    "servers": {
+        "microsoftdocs/mcp": {
+            "type": "http",
+            "url": "https://learn.microsoft.com/api/mcp"
+        },
+        "brave-search": {
+            "type": "stdio",
+            "command": "npx",
+            "args": ["-y", "@brave/brave-search-mcp-server", "--transport", "stdio"],
+            "env": {
+                "BRAVE_API_KEY": "${input:BRAVE_API_KEY}"
+            }
+        },
+        "youtube": {
+            "type": "http",
+            "url": "https://mcp.ytmcp.com/mcp",
+            "headers": {
+                "x-api-key": "${input:youtube-api-key}"
+            }
+        },
+        "filesystem": {
+            "type": "stdio",
+            "command": "npx",
+            "args": ["-y", "@modelcontextprotocol/server-filesystem", "E:\\workspaces", "E:\\packages"]
+        },
+        "context7": {
+            "type": "stdio",
+            "command": "npx",
+            "args": ["-y", "@upstash/context7-mcp"]
+        }
+    },
+    "inputs": [
+        {
+            "id": "BRAVE_API_KEY",
+            "type": "promptString",
+            "description": "Brave Search API key",
+            "password": true
+        },
+        {
+            "id": "youtube-api-key",
+            "type": "promptString",
+            "description": "YouTube API key",
+            "password": true
+        }
+    ]
+}
