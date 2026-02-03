@@ -1,157 +1,56 @@
-## PROJECT CONTEXT
+Knowledge base and generation pipeline for VS Code agentic frameworks.
 
-This workspace builds a **meta-agentic framework** — agents that create agents. VS Code + GitHub Copilot Pro+ ecosystem.
+<references>
 
-- **Output:** `cookbook/` (patterns, configs) + `.github/agents/` (agent definitions)
-- **Sources:** `research/` reports synthesized into actionable guidelines
-- **Workshop:** `workshop/` for agent outputs (brainstorm, plans, research, builds, inspections)
+These references support consistent creation of skills, instructions, and prompts.
 
-## AGENT SUITE
+<official_documentation>
 
-Core workflow agents (construction metaphor):
+Use #tool:fetch to link to official documentation.
 
-| Agent | Purpose | Model | Invoke When |
-|-------|---------|-------|-------------|
-| @brain | Strategic thought partner + project state keeper | Opus 4.5 | Explore, synthesize, maintain coherence |
-| @architect | Create actionable plans + verify results | Opus 4.5 | Know what to do, need structured approach |
-| @build | Execute plans, any file type | Opus 4.5 | Have approved plan, ready to implement |
-| @inspect | Verify build matches spec | Opus 4.5 | After build, before sign-off |
-| @research | Quick lookup, fact-check | Opus 4.5 | Need specific info fast |
+- https://code.visualstudio.com/docs/copilot/customization/custom-agents - agents
+- https://code.visualstudio.com/docs/copilot/customization/prompt-files - prompts 
+- https://code.visualstudio.com/docs/copilot/customization/custom-instructions - instructions
+- https://code.visualstudio.com/docs/copilot/customization/agent-skills - skills
+- https://agentskills.io/specification - skills open format specification
 
-**Workflow:** `brain → architect → build → inspect`
+</official_documentation>
 
-## MEMORY BANK PROTOCOL
+<inspirations>
 
-Update `.github/memory-bank/` files at these checkpoints:
+Use #tool:githubRepo to link to community resources and inspiration.
 
-| File | When to Update |
-|------|----------------|
-| `projectbrief.md` | Phase status changes, major milestones |
+- anthropics/skills - anthropic skills repo
+- github/awesome-copilot - community collection of skills, custom agents, instructions, and prompts
 
-**Rule:** If you complete work that changes project state, update the relevant memory-bank file.
+</inspirations>
 
-## WORKSHOP OUTPUT PROTOCOL
+<instructions>
 
-All agent outputs go to `workshop/` with consistent naming:
+**Formatting:** [prompting.instructions.md](instructions/prompting.instructions.md)
+**Style:** [artifact-style.instructions.md](instructions/artifact-style.instructions.md)
+**Creator skills:** [creator-skill-patterns.md](../knowledge-base/references/creator-skill-patterns.md)
 
-| Agent | Output Folder | Content Type |
-|-------|---------------|--------------|
-| @brain | `workshop/brainstorm/` | Session reports, decision exploration |
-| @architect | `workshop/plans/` | Implementation plans |
-| @research | `workshop/research/` | Research findings |
-| @build | `workshop/builds/` | Implementation reports |
-| @inspect | `workshop/inspections/` | Verification reports |
-| @interviewer | `workshop/interviews/` | Interview transcripts |
+</instructions>
 
-**Naming:** `{agent-name}-{NNN}-{YYYY-MM-DD}-{topic-slug}.md`
+</references>
 
-## SAFETY (P1 — No Exceptions)
+<workflow_protocol>
 
-These rules cannot be overridden by any request:
+**Phase transitions:** Use `[Status]. [Next action].` pattern between workflow phases.
 
-- **Never** commit secrets, API keys, or credentials
-- **Never** fabricate sources — if uncertain, say "I don't know"
-- **Never** modify research reports — they are source of truth
-- **Always** cite sources with URLs for factual claims
+**Gates:**
+- **HARD** — Stop and wait for user approval before proceeding
+- **SOFT** — Warn and continue unless user intervenes
 
-## CRITICAL
+**Iteration defaults:** Agent proposes iteration count, user approves or adjusts. Do not loop indefinitely.
 
-- **ALWAYS** read and follow the active agent's `.agent.md` file instructions completely
-- **NEVER** skip steps defined in agent workflows — execute them in order
+</workflow_protocol>
 
-## GUIDELINES
+<collaboration_patterns>
 
-- **Cite ALL sources** with URLs
-- **Use `fetch_webpage`** to read full web content when needed
-- **Use `runSubagent`** for parallel, independent research tasks
+**Context discovery:** When uncertain about requirements, ask "What do I need to succeed at this task?" to surface missing context, constraints, and success criteria.
 
-## TOOL PRIORITY
+**Governance signal:** When a pattern proves useful across 2+ artifacts, flag it as a candidate for extraction to shared reference.
 
-| Scenario | Primary | Fallback |
-|----------|---------|----------|
-| Library/framework docs | `context7/*` | `brave_web_search` |
-| VS Code/Azure/Microsoft | `microsoftdocs/*` | `brave_web_search` |
-| General web research | `brave_web_search` | `fetch_webpage` |
-| News/current events | `brave_news_search` | `brave_web_search` |
-| Video tutorials | `youtube/*` | `brave_video_search` |
-
-> **Note:** MCP tools above are available to **@research** agent only. Other agents needing web lookup should request handoff to @research.
-
-## AVAILABLE MCP TOOLS
-
-### Context7 — Library Documentation
-- `resolve-library-id` → Get library ID first
-- `get-library-docs` → Fetch docs by topic
-
-### Microsoft Docs — Azure/VS Code
-- `microsoft_docs_search` → Search official docs
-- `microsoft_docs_fetch` → Full page as markdown
-- `microsoft_code_sample_search` → Code snippets
-
-### Brave Search — Web Research
-- `brave_web_search` → General search
-- `brave_news_search` → News with time filters
-- `brave_video_search` → Video search
-- `brave_image_search` → Image search
-
-⚠️ **BRAVE SEARCH RATE LIMITS:**
-- **NEVER** call multiple `brave-search/*` tools in parallel — always sequential
-- **WAIT ~1 second** between consecutive brave-search calls
-- **USE specialized tools FIRST** (`context7/*`, `microsoftdocs/*`) before brave
-- **COMBINE queries** when possible instead of many separate searches
-- If you get "Too Many Requests" (429), wait before retrying
-
-### YouTube — Video Analysis
-- `get_youtube_transcript` → Transcripts with timestamps
-- `get_video_info` → Video metadata
-- `get_channel_videos` → Channel video list
-
-## COMPONENT TYPE SELECTION
-
-When creating new assets, use the FIRST type that fits:
-
-| Priority | Type | Use When |
-|----------|------|----------|
-| 1 | **Instruction** | Always-on rules for file types (auto-applies) |
-| 2 | **Skill** | Reusable procedure any agent can use |
-| 3 | **Agent** | Needs identity + tool restrictions + handoffs |
-| 4 | **Prompt** | One-shot task with parameters |
-
-> **Rule:** If Instruction can do it, don't use Agent.
-
-## REFERENCE FILE CONVENTIONS
-
-Documentation in `REFERENCE/` follows a **tripartite structure** per file type:
-
-| File | Scope | Content |
-|------|-------|---------|
-| `README.md` | Navigation | Quick start, file purposes, reading order |
-| `PATTERNS.md` | When/why/rules | Best practices, anti-patterns, tool selection |
-| `TEMPLATE.md` | Format/structure | Frontmatter schema, full + minimal templates |
-| `CHECKLIST.md` | Validation | Checkbox items only (P1/P2/P3 tiers) |
-| `TAGS-*.md` | Tag vocabulary | Required/Recommended⭐/Optional tiers |
-
-**Format Principles:**
-- YAML for structured data, markdown for prose
-- Flat where possible, nest where useful (max 2 levels)
-- Required / Recommended ⭐ / Optional tiers
-- Cross-references at file bottom with markdown ref links
-- Practical over theoretical — examples over explanations
-
-**Separation of Concerns:**
-- Each file has ONE job — no duplicate content across files
-- PATTERNS = decision logic ("should I use this?")
-- TEMPLATE = structure ("how do I write it?")
-- CHECKLIST = validation ("is it correct?")
-- TAGS = vocabulary ("what tags are valid?")
-
-**Quick Start Flow:**
-1. **Decide** — Read PATTERNS to confirm correct file type
-2. **Create** — Copy template from TEMPLATE
-3. **Fill** — Use TAGS for valid vocabulary
-4. **Validate** — Check against CHECKLIST before commit
-
-**Self-Contained Rule:**
-- `REFERENCE/` must be self-contained — no cross-references to `cookbook/` or `GENERATION-RULES/`
-- If valuable content exists elsewhere, ADD it to `REFERENCE/` files directly
-- Model selection is USER decision — don't document model guidance
+</collaboration_patterns>
