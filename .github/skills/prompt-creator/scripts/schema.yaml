@@ -1,0 +1,52 @@
+# Prompt Output Schema
+# Source: audit/contract-specifications.md <prompt_output_schema>
+
+artifact_type: prompt
+version: "1.0"
+
+frontmatter:
+  required:
+    - description: "describes prompt purpose"
+  optional:
+    - agent: "target agent mode (e.g., 'architect', 'build')"
+    - variables: "array of variable definitions with name and description"
+
+body:
+  required_sections:
+    - context: "background information for the task"
+    - task: "what to accomplish (task before context in output)"
+    - output_format: "expected response structure"
+  optional_sections:
+    - examples: "sample inputs/outputs"
+    - constraints: "limitations or requirements"
+  forbidden_patterns:
+    - "[PLACEHOLDER]"
+    - "TODO"
+    - "TBD"
+
+constraints:
+  - "Task section appears before context in rendered output"
+  - "Variables use ${input:varname} syntax"
+  - "snake_case XML tag names"
+
+size_limits:
+  max_tokens: 500
+
+filename_pattern: "{name}.prompt.md"
+
+validation_rules:
+  p1:
+    - "Frontmatter fields present and valid"
+    - "description present"
+    - "context section exists"
+    - "task section exists"
+    - "output_format section exists"
+    - "Size limit respected (500 tokens estimated)"
+  p2:
+    - "Variables declared in frontmatter if used in body"
+    - "Cross-references resolve"
+    - "No placeholder text remains"
+    - "XML tags use snake_case"
+  p3:
+    - "Examples provided for complex prompts"
+    - "Variable descriptions helpful"

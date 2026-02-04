@@ -1,0 +1,55 @@
+# Instruction Output Schema
+# Source: audit/contract-specifications.md <instruction_output_schema>
+
+artifact_type: instruction
+version: "1.0"
+
+frontmatter:
+  required:
+    - applyTo: "glob pattern for file matching (e.g., '**/*.ts', 'src/**')"
+    - description: "describes what rules apply"
+  optional: []
+
+body:
+  required_sections:
+    - rules: "XML-tagged rule sections defining behavior"
+  optional_sections:
+    - tag_index: "section navigation for files with 2+ sections"
+    - examples: "usage examples"
+    - cross_references: "links to related files"
+  forbidden_patterns:
+    - "[PLACEHOLDER]"
+    - "TODO"
+    - "TBD"
+    - "<modes>"
+    - "${input:}"
+
+constraints:
+  - "No <modes> tag (agents only)"
+  - "No ${input:} variables (prompts only)"
+  - "XML-tagged sections for all rules"
+  - "snake_case XML tag names"
+
+size_limits:
+  max_lines_specific: 150
+  max_lines_global: 200
+
+filename_patterns:
+  specific: "{domain}.instructions.md"
+  global: "copilot-instructions.md"
+
+validation_rules:
+  p1:
+    - "Frontmatter fields present and valid"
+    - "applyTo contains valid glob pattern"
+    - "description present"
+    - "No forbidden patterns (<modes>, ${input:})"
+    - "Size limits respected (150 lines specific, 200 lines global)"
+  p2:
+    - "Rule sections use XML tags"
+    - "Cross-references resolve"
+    - "No placeholder text remains"
+    - "XML tags use snake_case"
+  p3:
+    - "Examples provided for complex rules"
+    - "Rationale documented for non-obvious rules"

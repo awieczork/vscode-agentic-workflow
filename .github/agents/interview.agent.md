@@ -571,7 +571,7 @@ I see React in your tech stack but your workflows focus on API endpoints. A few 
 ## Cross-References
 
 - [copilot-instructions.md](../copilot-instructions.md) — Global rules
-- [patterns.instructions.md](../instructions/patterns.instructions.md) — Behavioral patterns
+- [writing.instructions.md](../instructions/writing.instructions.md) — Writing patterns and behavioral rules
 - [architect.agent.md](architect.agent.md) — Planning agent
 - [brain.agent.md](brain.agent.md) — Strategic exploration agent
 - [build.agent.md](build.agent.md) — Implementation agent

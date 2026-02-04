@@ -1,0 +1,60 @@
+# Skill Output Schema
+# Source: audit/contract-specifications.md <skill_output_schema>
+
+artifact_type: skill
+version: "1.0"
+
+frontmatter:
+  required:
+    - name: "lowercase alphanumeric + hyphens, 1-64 chars, matches folder name"
+    - description: "under 1024 chars, describes what skill does and when to use"
+  optional: []
+
+body:
+  required_sections:
+    - workflow: "contains numbered <step_N_verb> tags defining execution steps"
+  optional_sections:
+    - defaults: "field default values"
+    - quality_signals: "validation criteria"
+    - tag_index: "section navigation"
+    - error_handling: "failure recovery"
+    - cross_references: "links to related files"
+  forbidden_patterns:
+    - "[PLACEHOLDER]"
+    - "TODO"
+    - "TBD"
+
+constraints:
+  - "Filename must be SKILL.md"
+  - "Folder may contain scripts/, references/, assets/"
+  - "Workflow uses numbered <step_N_verb> tags (e.g., <step_1_gather>, <step_2_validate>)"
+  - "snake_case XML tag names"
+
+size_limits:
+  max_lines: 500
+
+folder_structure:
+  required:
+    - "SKILL.md"
+  optional:
+    - "scripts/": "automation scripts"
+    - "references/": "reference documentation"
+    - "assets/": "templates, examples"
+
+validation_rules:
+  p1:
+    - "Frontmatter fields present and valid"
+    - "name matches folder name"
+    - "description under 1024 chars"
+    - "workflow section exists"
+    - "workflow contains numbered step_N_verb tags"
+    - "Size limit respected (500 lines)"
+  p2:
+    - "Optional sections properly formatted with XML tags"
+    - "Cross-references resolve"
+    - "No placeholder text remains"
+    - "Steps follow logical sequence"
+  p3:
+    - "Examples provided for complex steps"
+    - "Error handling documented"
+    - "Quality signals defined"

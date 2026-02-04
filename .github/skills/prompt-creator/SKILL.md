@@ -87,28 +87,23 @@ All fields optional. Include only what adds value.
 - `model` — Language model override
 - `tools` — Tool whitelist array (see Tools Syntax below)
 
-**Agent Field Values:**
-
-Select based on task requirements:
-
-- `ask` — Read-only analysis, no file edits. Use for: explain, analyze, review, summarize
-- `edit` — Inline code changes to files. Use for: fix, update, refactor, add
-- `agent` — Full tool access, agentic mode. Use for: search codebase, run commands, multi-file operations
-- `[custom-agent-name]` — Delegates to named agent. Use for: specialist tasks (e.g., `"architect"` for planning)
-
-**Default if omitted:** Current chat agent
-
-**Rule:** If `tools:` array specified, set `agent: agent` explicitly.
-
 **Tools Syntax:**
 
 ```yaml
-tools:
-  - fetch_webpage           # Built-in tool
-  - codebase                # Tool set
-  - github/*                # All MCP server tools
-  - playwright/navigate     # Specific MCP tool
+tools: ['read', 'edit', 'search', 'execute']
+
 ```
+
+**Tool aliases:**
+- `read` — readFile, listDirectory
+- `edit` — editFiles, createFile
+- `search` — codebase, textSearch, fileSearch
+- `execute` — runInTerminal
+- `agent` — runSubagent
+- `web` — fetch, WebSearch
+- `todo` — manage_todo_list
+
+**MCP tools:** Use `server/*` or `server/tool` syntax for MCP server tools.
 
 **Priority:** Prompt tools override (not merge with) custom agent tools.
 
@@ -199,7 +194,6 @@ Self-check before delivery.
 - [ ] `description` is 50-150 characters, single-line, starts with verb
 - [ ] Task is single-purpose (one clear goal)
 - [ ] Variables use correct syntax (`${name}` not `{name}`)
-- [ ] `agent: agent` is set when `tools:` array specified
 - [ ] No hardcoded workspace-specific paths
 - [ ] Body uses XML tags (`<context>`, `<task>`, `<format>`, `<constraints>`) for prompts with 2+ logical sections
 
@@ -269,6 +263,7 @@ Place prompt in ecosystem.
 - **One prompt doing many things** — Reduces reliability; split into focused prompts
 - **Using `{name}` instead of `${name}`** — Variables won't resolve
 - **Specifying tools without agent field** — Mode may not auto-switch; set `agent: agent`
+- **Using invalid tool names** — Only use valid tools: `read`, `edit`, `search`, `web`, `execute`, `todo`, `agent`, or MCP syntax
 - **Using server name alone in tools** — Ambiguous; use `server/*` or `server/tool`
 
 ---

@@ -42,6 +42,36 @@ This folder documents the generation pipeline that transforms user requirements 
 
 </documentation>
 
+## Self-Maintenance
+
+The generator can maintain this framework's own artifacts.
+
+<self_bootstrap>
+
+**Use cases:**
+- Improve existing agents (refactor mode)
+- Create new skills following established patterns
+- Update instructions for consistency
+- Generate documentation artifacts
+
+**How to invoke:**
+1. Use the [self-bootstrap prompt](../.github/prompts/self-bootstrap.prompt.md)
+2. Or invoke @interview directly with this repository as target
+
+**Constraints:**
+- Preserve contract schemas in `audit/contract-specifications.md`
+- Follow `copilot-instructions.md` conventions
+- Use refactor mode for existing artifacts
+- Record outcomes in `generation-feedback.md`
+
+**Candidates for self-generation:**
+- Core agents in `.github/agents/`
+- Creator skills in `.github/skills/`
+- Instruction files in `.github/instructions/`
+- Documentation prompts in `.github/prompts/`
+
+</self_bootstrap>
+
 <cross_references>
 
 ## Cross-References

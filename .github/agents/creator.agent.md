@@ -92,6 +92,13 @@ creator_payload:
     constraints: list[string]       # constraint labels (C1, C2, etc.)
     complexity: enum                # L0 | L1 | L2
 
+  operation_mode: enum              # create (default) | refactor
+
+  existing_artifact:                # refactor mode only
+    path: string                    # path to artifact being refactored
+    content: string                 # current artifact content
+    issues: list[string]            # list of problems to fix
+
   context:
     project_brief: string           # relevant excerpt
     constraint_text: list[string]   # full text of constraints
@@ -432,6 +439,12 @@ Record: auto_fix_attempted, auto_fix_succeeded
    - Extract artifact type, name, context
    - Note timeout from session.timeout_seconds
 
+1b. IF `operation_mode: refactor`:
+   - Load existing artifact from `existing_artifact.content`
+   - Identify sections needing changes based on `issues` list
+   - Preserve structure, make targeted fixes
+   - Re-validate after changes
+
 2. LOAD skill
    - Path: .github/skills/{type}-creator/SKILL.md
    - Parse workflow structure
@@ -494,7 +507,7 @@ Record: auto_fix_attempted, auto_fix_succeeded
 - Fabricate content not derived from skill or context
 - Return success with P1 issues
 - Exceed hard timeout (90s)
-- Modify existing artifacts (create new only)
+- Modify existing artifacts UNLESS `operation_mode: refactor` is specified in payload
 
 </boundaries>
 

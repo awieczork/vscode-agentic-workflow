@@ -10,7 +10,7 @@ description: "Review selected code for bugs, security issues, and improvements"
 name: "code-review"
 argument-hint: "Select code to review, then describe focus areas"
 agent: "agent"
-tools: ["codebase", "fetch_webpage"]
+tools: ["search", "web"]
 ---
 
 # Code Review
@@ -39,7 +39,7 @@ Analyze the selected code and provide a thorough review:
 3. Suggest performance improvements
 4. Recommend readability and maintainability enhancements
 
-Use #tool:codebase to search for related code patterns in the repository.
+Use search capabilities to find related code patterns in the repository.
 
 </task>
 
@@ -84,7 +84,7 @@ Use #tool:codebase to search for related code patterns in the repository.
 **Pattern → Purpose:**
 
 - `agent: "agent"` + `tools:` → Demonstrates explicit mode setting when tools specified (P2 requirement)
-- `tools: ["codebase", "fetch_webpage"]` → Shows tool whitelist restricting access to specific capabilities
+- `tools: ["search", "web"]` → Shows tool whitelist restricting access to specific capabilities
 - `${selection}` in context → Shows selection variable capturing user's highlighted code
 - `${file}` for location → Shows file variable providing path context
 - `${input:focus:...}` → Shows user-input variable with placeholder hint for runtime customization

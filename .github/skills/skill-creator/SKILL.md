@@ -12,7 +12,7 @@ Create valid, high-quality `.github/skills/{name}/SKILL.md` files from specifica
 When specification omits details, use these values:
 
 - **Structure:** Single SKILL.md, no subfolders
-- **Description length:** 50-200 characters
+- **Description length:** under 1024 characters
 - **Steps count:** 3-7 numbered steps
 - **Error handling:** 3-5 failure modes with If/Then format
 - **Reference file threshold:** Extract content >100 lines

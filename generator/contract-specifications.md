@@ -268,6 +268,117 @@ artifact_spec:
 
 </artifact_spec>
 
+<artifact_output_schemas>
+
+## Artifact Output Schemas
+
+Machine-readable structure definitions for generated artifacts.
+
+<agent_output_schema>
+
+**Frontmatter (required):**
+- `name` — lowercase alphanumeric + hyphens, 1-64 chars, matches filename
+- `description` — 50-150 chars, describes purpose and when to use
+- `tools` — array of tool names (optional)
+
+**Body required sections:**
+- Identity paragraph — starts with "You are..."
+- `<safety>` — contains NEVER/ALWAYS rules
+- `<boundaries>` — contains Do/Ask First/Don't subsections
+
+**Body optional sections:**
+- `<tag_index>` — section navigation
+- `<context_loading>` — HOT/WARM file tiers
+- `<modes>` — operational modes
+- `<iron_laws>` — inviolable constraints
+- `<error_handling>` — conditional responses
+- `<outputs>` — deliverable formats
+
+**Constraints:**
+- Max 500 lines, 30K characters
+- snake_case XML tag names
+- Max 1-level tag nesting
+
+</agent_output_schema>
+
+<skill_output_schema>
+
+**Frontmatter (required):**
+- `name` — lowercase alphanumeric + hyphens, 1-64 chars, matches folder name
+- `description` — under 1024 chars, describes what skill does and when to use
+
+**Body required sections:**
+- `<workflow>` — contains numbered `<step_N_verb>` tags
+
+**Body optional sections:**
+- `<defaults>` — field default values
+- `<quality_signals>` — validation criteria
+
+**Constraints:**
+- Max 500 lines
+- Filename must be SKILL.md
+- Folder may contain scripts/, references/, assets/
+
+</skill_output_schema>
+
+<instruction_output_schema>
+
+**Frontmatter (required):**
+- `applyTo` — glob pattern for file matching
+- `description` — describes what rules apply
+
+**Body structure:**
+- XML-tagged rule sections
+- No `<modes>` (agents only)
+- No `${input:}` variables (prompts only)
+
+**Constraints:**
+- Max 150 lines (specific) or 200 lines (global)
+- Filename: `{domain}.instructions.md` or `copilot-instructions.md`
+
+</instruction_output_schema>
+
+<prompt_output_schema>
+
+**Frontmatter (required):**
+- `description` — describes prompt purpose
+
+**Frontmatter (optional):**
+- `agent` — target agent mode
+- `variables` — array of variable definitions
+
+**Body structure:**
+- `<context>` — background information
+- `<task>` — what to accomplish (task before context)
+- `<output_format>` — expected response structure
+
+**Constraints:**
+- Max 500 tokens estimated
+- Filename: `{name}.prompt.md`
+
+</prompt_output_schema>
+
+<validation_rules>
+
+**P1 (must pass):**
+- Frontmatter fields present and valid
+- Required sections exist
+- Size limits respected
+- Naming conventions followed
+
+**P2 (should pass):**
+- Optional sections properly formatted
+- Cross-references resolve
+- No placeholder text remains
+
+**P3 (nice to have):**
+- Examples provided
+- Edge cases documented
+
+</validation_rules>
+
+</artifact_output_schemas>
+
 <cross_references>
 
 ## Cross-References

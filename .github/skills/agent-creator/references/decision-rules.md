@@ -35,6 +35,7 @@ Map role to tools using least-privilege principle.
 - `execute` — runInTerminal
 - `agent` — runSubagent
 - `web` — fetch, WebSearch
+- `todo` — manage_todo_list
 
 **MCP tools:** Use `server/*` or `server/tool` syntax:
 ```yaml

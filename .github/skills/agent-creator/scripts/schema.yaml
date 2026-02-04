@@ -1,0 +1,54 @@
+# Agent Output Schema
+# Source: audit/contract-specifications.md <agent_output_schema>
+
+artifact_type: agentversion: "1.0"
+
+frontmatter:
+  required:
+    - name: "lowercase alphanumeric + hyphens, 1-64 chars, matches filename"
+    - description: "50-150 chars, describes purpose and when to use"
+  optional:
+    - tools: "array of tool names"
+
+body:
+  required_sections:
+    - identity: "opening paragraph starting with 'You are...'"
+    - safety: "contains NEVER/ALWAYS rules"
+    - boundaries: "contains Do/Ask First/Don't subsections"
+  optional_sections:
+    - tag_index: "section navigation"
+    - context_loading: "HOT/WARM file tiers"
+    - modes: "operational modes"
+    - iron_laws: "inviolable constraints"
+    - error_handling: "conditional responses"
+    - outputs: "deliverable formats"
+  forbidden_patterns:
+    - "[PLACEHOLDER]"
+    - "TODO"
+    - "TBD"
+
+constraints:
+  - "snake_case XML tag names"
+  - "max 1-level tag nesting"
+
+size_limits:
+  max_lines: 500
+  max_chars: 30000
+
+validation_rules:
+  p1:
+    - "Frontmatter fields present and valid"
+    - "name matches filename (without .agent.md)"
+    - "description between 50-150 chars"
+    - "Identity paragraph starts with 'You are...'"
+    - "safety section contains NEVER/ALWAYS rules"
+    - "boundaries section contains Do/Ask First/Don't subsections"
+    - "Size limits respected (500 lines, 30K chars)"
+  p2:
+    - "Optional sections properly formatted with XML tags"
+    - "Cross-references resolve"
+    - "No placeholder text remains"
+    - "XML tags use snake_case"
+  p3:
+    - "Examples provided for complex behaviors"
+    - "Edge cases documented in error_handling"
