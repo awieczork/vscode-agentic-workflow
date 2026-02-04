@@ -4,6 +4,8 @@ Syntax and format specifications for instruction files.
 
 ---
 
+<two_instruction_types>
+
 ## Two Instruction Types
 
 ### Repo-Wide (`copilot-instructions.md`)
@@ -30,7 +32,11 @@ Syntax and format specifications for instruction files.
 
 **Size:** Target 50-100 lines, maximum 150 lines.
 
+</two_instruction_types>
+
 ---
+
+<frontmatter_schema>
 
 ## Frontmatter Schema (Path-Specific Only)
 
@@ -47,9 +53,13 @@ description: "[PURPOSE]"     # Optional, 50-150 characters
 **Field constraints:**
 - `applyTo` — Valid glob pattern (see Glob Reference below)
 - `name` — 3-50 characters
-- `description` — 50-150 characters
+- `description` — 50-150 characters, single-line
+
+</frontmatter_schema>
 
 ---
+
+<glob_pattern_reference>
 
 ## Glob Pattern Reference
 
@@ -78,7 +88,11 @@ description: "[PURPOSE]"     # Optional, 50-150 characters
 - Regex syntax (`\d`, `^`, `$`) — Not supported
 - Negation prefix (`!`) — Not supported
 
+</glob_pattern_reference>
+
 ---
+
+<layer_system>
 
 ## Layer System
 
@@ -113,7 +127,11 @@ L1 requirements plus:
 
 **Use when:** Complex standards, multiple team members, high visibility.
 
+</layer_system>
+
 ---
+
+<size_thresholds>
 
 ## Size Thresholds
 
@@ -132,7 +150,11 @@ L1 requirements plus:
 - Split by concern when rules cover distinct domains (security vs style)
 - Extract to Repo-Wide when rule applies to 3+ file types
 
+</size_thresholds>
+
 ---
+
+<section_patterns>
 
 ## Section Patterns
 
@@ -183,7 +205,11 @@ L1 requirements plus:
 - [Pattern to avoid]: [Why]
 ```
 
+</section_patterns>
+
 ---
+
+<loading_directives>
 
 ## Loading Directives
 
@@ -195,10 +221,15 @@ Instructions auto-load based on:
 
 **Stacking:** Multiple instructions load simultaneously. Order is non-deterministic. Design rules to be self-contained.
 
+</loading_directives>
+
 ---
+
+<cross_references>
 
 ## Cross-References
 
+- [SKILL.md](../SKILL.md) — Parent skill entry point
 - [validation-checklist.md](validation-checklist.md) — P1/P2/P3 checks
-- [instruction-template.md](../../../knowledge-base/artifacts/instruction-template.md) — Base templates
-- [instruction-patterns.md](../../../knowledge-base/artifacts/instruction-patterns.md) — Design decisions
+
+</cross_references>

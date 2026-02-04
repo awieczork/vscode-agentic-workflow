@@ -2,7 +2,7 @@
 
 Exact syntax for agent artifacts. Use during Step 4: Draft.
 
----
+<frontmatter_schema>
 
 ## Frontmatter Schema
 
@@ -10,7 +10,7 @@ Exact syntax for agent artifacts. Use during Step 4: Draft.
 ---
 # REQUIRED
 name: 'agent-name'           # Must match filename, lowercase-with-hyphens
-description: '[50-150 chars, single quotes, what agent does]'
+description: '[50-150 chars, single-line, what agent does]'
 
 # RECOMMENDED
 tools: ['read', 'search', 'edit']  # Explicit list, no ['*']
@@ -27,7 +27,9 @@ handoffs:
 ---
 ```
 
----
+</frontmatter_schema>
+
+<body_sections>
 
 ## Body Sections
 
@@ -246,7 +248,9 @@ Present options. Do not proceed without user direction.
 </error_handling>
 ```
 
----
+</body_sections>
+
+<xml_tags_summary>
 
 ## XML Tags Summary
 
@@ -271,7 +275,9 @@ Present options. Do not proceed without user direction.
 **Domain-specific (creator decides):**
 - Custom tags using `snake_case` naming
 
----
+</xml_tags_summary>
+
+<domain_specific_xml_tags>
 
 ## Domain-Specific XML Tags
 
@@ -304,7 +310,9 @@ When referring to content defined in another section, use the XML tag name expli
 - "Using the gates from `<deployment_gates>`"
 - "Follow the process in `<modes name="deploy-production">`"
 
----
+</domain_specific_xml_tags>
+
+<size_limits>
 
 ## Size Limits
 
@@ -328,10 +336,22 @@ When referring to content defined in another section, use the XML tag name expli
 - Recommended: 3-8
 - Hard limit: 15
 
----
+</size_limits>
+
+<reserved_names>
 
 ## Reserved Names
 
 Do NOT use these agent names:
 - `ask`, `edit`, `agent` — Built-in chat modes
 - `plan`, `workspace`, `terminal`, `vscode` — VS Code agents
+
+</reserved_names>
+
+<cross_references>
+
+## Cross-References
+
+- [SKILL.md](../SKILL.md) — Parent skill entry point
+
+</cross_references>

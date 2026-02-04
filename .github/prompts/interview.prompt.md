@@ -7,12 +7,20 @@ agent: 'interview'
 
 # Project Interview
 
+<introduction>
+
 Fill the questionnaire below, then send to generate a customized `.github/` framework for your project.
+
+</introduction>
+
+<tips>
 
 **Tips:**
 - Use `&lt;` and `&gt;` for literal angle brackets in your content
 - Mark high-priority workflows with `(priority)` or combine: `(daily, priority)`
 - Refs must use `https://` or relative paths (`./docs/...`)
+
+</tips>
 
 <questionnaire version="1.0">
 
@@ -54,3 +62,26 @@ Fill the questionnaire below, then send to generate a customized `.github/` fram
 </notes>
 
 </questionnaire>
+
+<expected_output>
+
+## Expected Output
+
+InterviewHandoff artifact containing:
+- Project brief summary
+- Requirements gathered
+- Recommended artifacts for generation
+- Confidence assessment
+
+</expected_output>
+
+<success_criteria>
+
+## Success Criteria
+
+- [ ] All questionnaire sections completed or explicitly skipped
+- [ ] Project brief synthesized from responses
+- [ ] Artifact recommendations provided with rationale
+- [ ] Handoff package ready for @architect
+
+</success_criteria>

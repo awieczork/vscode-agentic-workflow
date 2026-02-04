@@ -1,23 +1,15 @@
 ---
 name: instruction-creator
-description: >
-  Creates instruction files (.instructions.md and copilot-instructions.md) from
-  specifications. Use when asked to "create an instruction", "build instruction",
-  "generate instruction for [domain]", or when spec describes auto-applying rules
-  for file patterns. Do NOT use for personas with tools (use agent-creator),
-  reusable procedures (use skill-creator), or one-shot templates with variables
-  (use prompt-creator).
+description: Creates instruction files (.instructions.md and copilot-instructions.md) from specifications. Use when asked to create an instruction, build instruction, or generate instruction for a domain. Produces frontmatter, applyTo patterns, and rule sections.
 ---
 
 # Instruction Creator
 
 Create valid, high-quality instruction files from specifications.
 
-## Process
+<workflow>
 
-Follow these 6 steps in order. Instructions have a two-tier classification unique to this artifact type.
-
-### Step 1: Classify
+<step_1_classify>
 
 Confirm spec describes an INSTRUCTION, then determine which type.
 
@@ -55,7 +47,9 @@ If unclear, ask user: "This sounds like [type] because [reason]. Confirm instruc
 - Location: `.github/instructions/*.instructions.md`
 - Token cost: Only when files match pattern
 
-### Step 2: Name and Describe
+</step_1_classify>
+
+<step_2_name_and_describe>
 
 **Repo-Wide:**
 - Filename is fixed: `copilot-instructions.md`
@@ -73,7 +67,9 @@ Examples:
 - "Security validation rules for API endpoints"
 - "Testing conventions for unit and integration tests"
 
-### Step 3: Assess Complexity
+</step_2_name_and_describe>
+
+<step_3_assess_complexity>
 
 Determine output depth using layer system.
 
@@ -105,7 +101,9 @@ If splitting needed, create multiple Path-Specific files by:
 - Concern (security vs style vs performance)
 - Domain (API vs UI vs infrastructure)
 
-### Step 4: Draft
+</step_3_assess_complexity>
+
+<step_4_draft>
 
 Fork based on instruction type determined in Step 1.
 
@@ -158,18 +156,31 @@ Structure:
 
 [One-line summary]
 
+<core_rules>
+
 ## Core Rules
 - [5-10 imperative rules]
 
+</core_rules>
+
+<code_standards>
+
 ## Code Standards (L2 only)
+
 ### Correct
 [code example]
 
 ### Incorrect
 [code example]
 
+</code_standards>
+
+<anti_patterns>
+
 ## Anti-Patterns (L2 only)
 - [Pattern]: [Why problematic]
+
+</anti_patterns>
 ```
 
 </if>
@@ -204,7 +215,9 @@ Instructions stack additively. Order is non-deterministic.
 
 If conflicts found, resolve before proceeding to validation.
 
-### Step 5: Validate
+</step_4_draft>
+
+<step_5_validate>
 
 Run validation checks. Load [validation-checklist.md](references/validation-checklist.md) for full list.
 
@@ -216,6 +229,10 @@ Run validation checks. Load [validation-checklist.md](references/validation-chec
 4. [ ] All rules are specific and actionable
 5. [ ] No placeholders, secrets, or persona language
 
+**P2 Checks (Required):**
+
+1. [ ] Content sections wrapped in XML tags (e.g., `<core_rules>`, `<code_standards>`, `<anti_patterns>`)
+
 **Contamination check:**
 
 Reject if ANY of these patterns appear:
@@ -225,13 +242,15 @@ Reject if ANY of these patterns appear:
 - "You are a..." identity statements
 - `#!/bin/bash` or other shebang lines
 
-**Exception:** `<rules>`, `<important>`, `<examples>` tags ARE allowed.
+**Requirement:** Use XML tags for all logical sections (e.g., `<core_rules>`, `<code_standards>`, `<anti_patterns>`). Markdown headings are supplementary inside tags.
 
 **Size check:**
 - Path-Specific >150 lines → Split required
 - Repo-Wide >200 lines → Split required
 
-### Step 6: Integrate
+</step_5_validate>
+
+<step_6_integrate>
 
 Place instruction in correct location.
 
@@ -246,6 +265,10 @@ Place instruction in correct location.
 **Platform support:**
 - Repo-Wide: VS Code ✓, GitHub.com ✓, JetBrains ✓
 - Path-Specific: VS Code ✓, GitHub.com (Coding Agent/Code Review only), JetBrains ✓
+
+</step_6_integrate>
+
+</workflow>
 
 ---
 

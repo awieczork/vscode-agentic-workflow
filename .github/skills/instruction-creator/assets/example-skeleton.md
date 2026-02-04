@@ -10,26 +10,18 @@ Use for comprehensive standards with code examples.
 
 ```markdown
 ---
-# FRONTMATTER (Path-Specific only)
-# ─────────────────────────────────────────────────────────────────────────────
-# TLDR: YAML metadata for auto-apply. Required for Path-Specific.
-# OMIT entirely for Repo-Wide (no --- block at all).
-
 applyTo: "[GLOB_PATTERN]"           # REQUIRED for auto-apply. Example: "**/*.ts"
 name: "[DISPLAY_NAME]"              # Optional. Defaults to filename without extension.
-description: "[PURPOSE_50_150]"     # Optional. Shows in VS Code UI.
+description: "[PURPOSE_50_150, single-line]"     # Optional. Shows in VS Code UI.
 ---
 
 # [DISPLAY_NAME]
-# ─────────────────────────────────────────────────────────────────────────────
-# TLDR: Title matching the name field or describing the rules domain.
 
 [ONE_LINE_SUMMARY_OF_PURPOSE]
 
+<core_rules>
+
 ## Core Rules
-# ─────────────────────────────────────────────────────────────────────────────
-# TLDR: 5-10 imperative rules. Use "Do X" not "You should do X".
-# Use ALWAYS/NEVER for safety-critical constraints.
 
 - Use [PATTERN] for [SITUATION]
 - Prefer [OPTION_A] over [OPTION_B] when [CONDITION]
@@ -37,10 +29,11 @@ description: "[PURPOSE_50_150]"     # Optional. Shows in VS Code UI.
 - ALWAYS [REQUIRED_BEHAVIOR] before [ACTION]
 - Include [ELEMENT] in [CONTEXT]
 
+</core_rules>
+
+<code_standards>
+
 ## Code Standards
-# ─────────────────────────────────────────────────────────────────────────────
-# TLDR: Correct/incorrect pairs. Include only when prose rules are ambiguous.
-# OMIT if rules are clear without examples.
 
 ### Correct
 
@@ -54,13 +47,16 @@ description: "[PURPOSE_50_150]"     # Optional. Shows in VS Code UI.
 [INCORRECT_CODE_EXAMPLE]
 ```
 
+</code_standards>
+
+<anti_patterns>
+
 ## Anti-Patterns
-# ─────────────────────────────────────────────────────────────────────────────
-# TLDR: Common mistakes to avoid. 3-5 items.
-# OMIT if no common mistakes exist for this domain.
 
 - [ANTI_PATTERN]: [WHY_PROBLEMATIC]
 - [ANTI_PATTERN]: [WHY_PROBLEMATIC]
+
+</anti_patterns>
 ```
 
 ---
@@ -76,11 +72,15 @@ applyTo: "**/*.ts"
 
 # TypeScript Rules
 
+<core_rules>
+
 - Use `interface` for object shapes
 - Use `type` for unions and intersections
 - Export types alongside their implementations
 - Prefer `unknown` over `any` for untyped values
 - Enable strict mode in tsconfig.json
+
+</core_rules>
 ```
 
 ---

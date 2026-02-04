@@ -7,16 +7,14 @@ A complete working skill demonstrating Medium complexity with references.
 ```markdown
 ---
 name: 'api-scaffold'
-description: >
-  Create REST API endpoint structures when asked to "add endpoint", "create route",
-  "scaffold API", or "generate controller". Produces route handlers with validation,
-  error handling, and TypeScript types. Do NOT use for GraphQL (use graphql-scaffold)
-  or database migrations (use db-migrate).
+description: Creates REST API endpoint structures. Use when user asks to "add endpoint", "create route", "scaffold API", or "generate controller". Produces route handlers with validation, error handling, and TypeScript types.
 ---
 
 # API Scaffold
 
 Create REST API endpoint structure with route, controller, validation, and types.
+
+<steps>
 
 ## Steps
 
@@ -68,6 +66,10 @@ Create REST API endpoint structure with route, controller, validation, and types
    - Confirm route registered in index
    - Confirm no TypeScript errors
 
+</steps>
+
+<error_handling>
+
 ## Error Handling
 
 If resource name unclear: Ask "What resource does this endpoint manage?"
@@ -80,6 +82,10 @@ If validation library unknown: Check `package.json` for zod/joi/yup, default to 
 
 If TypeScript not used: Skip type generation, adjust imports accordingly
 
+</error_handling>
+
+<validation>
+
 ## Validation
 
 Before complete:
@@ -88,11 +94,17 @@ Before complete:
 - [ ] No TypeScript compilation errors
 - [ ] Imports resolve correctly
 
+</validation>
+
+<notes>
+
 ## Notes
 
 - This skill assumes Express.js or similar routing pattern
 - For Fastify, Hono, or other frameworks, adjust route syntax
 - Generated code follows REST conventions (plural resource names, standard methods)
+
+</notes>
 ```
 
 ---
@@ -100,7 +112,7 @@ Before complete:
 ## Why This Example Works
 
 **Demonstrates key patterns:**
-- Description with specific triggers AND negative triggers
+- Description following [What it does] + [When to use it] + [Key capabilities]
 - Numbered steps with clear actions
 - Tool references (`#tool:editFiles`) where specific
 - Error handling for common ambiguities

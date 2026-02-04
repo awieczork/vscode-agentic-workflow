@@ -2,20 +2,22 @@
 
 Self-check before delivery. Use during Step 5: Validate.
 
----
+<quick_6_check>
 
 ## Quick 6-Check (P1 Blockers)
 
 Agent is INVALID if any fails. Fix before delivery.
 
 - [ ] `name` field present, matches filename (lowercase-with-hyphens)
-- [ ] `description` is 50-150 characters, single quotes
+- [ ] `description` is 50-150 characters, single-line
 - [ ] First paragraph starts with "You are..."
 - [ ] `<safety>` section present with at least one NEVER or ALWAYS
 - [ ] `<boundaries>` section present with Do / Ask First / Don't
 - [ ] No placeholder text remaining (`[PLACEHOLDER]`, `{placeholder}`, `TODO`)
 
----
+</quick_6_check>
+
+<p1_blocking>
 
 ## P1 — Blocking
 
@@ -28,10 +30,11 @@ Must fix. Agent fails validation.
 ### Frontmatter
 - [ ] `name` field present and matches filename (lowercase-with-hyphens)
 - [ ] `description` field present
-- [ ] `description` is 50-150 characters
+- [ ] `description` is 50-150 characters, single-line
 - [ ] Valid YAML syntax (proper quotes, indentation)
 
 ### Structure
+- [ ] File content NOT wrapped in markdown codeblock (no leading/trailing backticks)
 - [ ] Identity statement starts with "You are..."
 - [ ] `<safety>` section present
 - [ ] `<boundaries>` section present
@@ -47,7 +50,9 @@ Must fix. Agent fails validation.
 - [ ] Total characters ≤30,000
 - [ ] Total lines ≤500
 
----
+</p1_blocking>
+
+<p2_required>
 
 ## P2 — Required
 
@@ -83,7 +88,9 @@ Fix before delivery for quality.
 - [ ] Subagent depth = 1 only
 - [ ] Escalation path specified
 
----
+</p2_required>
+
+<p3_optional>
 
 ## P3 — Optional
 
@@ -98,7 +105,9 @@ Enhancements for excellence.
 - [ ] Total characters ≤25,000 (recommended)
 - [ ] Modes count 2-5 (if `<modes>` present)
 
----
+</p3_optional>
+
+<tools_boundaries_alignment_check>
 
 ## Tools-Boundaries Alignment Check
 
@@ -114,7 +123,9 @@ Verify no conflicts:
 - "Don't execute commands" → Remove `execute`
 - "Don't access external" → Remove `web`
 
----
+</tools_boundaries_alignment_check>
+
+<safety_requirements_by_tools>
 
 ## Safety Requirements by Tools
 
@@ -133,7 +144,9 @@ Verify no conflicts:
 **If tools include `agent`:**
 - Add: `max_cycles` in `<stopping_rules>`
 
----
+</safety_requirements_by_tools>
+
+<common_mistakes>
 
 ## Common Mistakes
 
@@ -160,3 +173,13 @@ Verify no conflicts:
 
 **Missing `name` field:**
 - Fix: Add `name` matching filename in lowercase-with-hyphens
+
+</common_mistakes>
+
+<cross_references>
+
+## Cross-References
+
+- [SKILL.md](../SKILL.md) — Parent skill entry point
+
+</cross_references>

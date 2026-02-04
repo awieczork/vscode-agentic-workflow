@@ -1,21 +1,29 @@
 ---
 name: skill-creator
-description: >
-  Creates SKILL.md files from specifications. Use when asked to "create a skill",
-  "build a skill", "generate skill for [domain]", or when spec describes a reusable
-  procedure any agent can invoke. Do NOT use for personas with tools (use agent-creator),
-  file-pattern rules (use instruction-creator), or one-shot templates (use prompt-creator).
+description: Creates SKILL.md files from specifications. Use when user asks to "create a skill", "build a skill", "make a reusable procedure", or "generate skill for [domain]". Produces folder structure, frontmatter, numbered steps, error handling, and validation checks.
 ---
 
 # Skill Creator
 
 Create valid, high-quality `.github/skills/{name}/SKILL.md` files from specifications.
 
-## Process
+<defaults>
 
-Follow these 6 steps in order. Load references as needed.
+When specification omits details, use these values:
 
-### Step 1: Classify
+- **Structure:** Single SKILL.md, no subfolders
+- **Description length:** 50-200 characters
+- **Steps count:** 3-7 numbered steps
+- **Error handling:** 3-5 failure modes with If/Then format
+- **Reference file threshold:** Extract content >100 lines
+- **Validation checks:** 3-5 verifiable conditions
+- **XML structure:** Content with 2+ sections uses XML tags as primary structure per `<structure_hierarchy>` in copilot-instructions.md
+
+</defaults>
+
+<workflow>
+
+<step_1_classify>
 
 Confirm spec describes a SKILL, not another artifact type.
 
@@ -27,7 +35,9 @@ Confirm spec describes a SKILL, not another artifact type.
 
 If unclear, ask user: "This sounds like [type] because [reason]. Confirm skill?"
 
-### Step 2: Name and Describe
+</step_1_classify>
+
+<step_2_name_and_describe>
 
 **Name:**
 - Extract from: "skill for [name]" or derive from capability
@@ -35,13 +45,22 @@ If unclear, ask user: "This sounds like [type] because [reason]. Confirm skill?"
 - Rule: Must match parent folder name exactly
 
 **Description:**
-- Formula: `[VERB] [WHAT] when [TRIGGER]`
-- Include trigger phrases users would say
-- Include negative triggers: "Do NOT use for..."
+- Structure: `[What it does]. Use when [trigger phrases]. [Key capabilities].`
+- Include 2-4 specific tasks users say in quotes
+- Mention file types if relevant (SKILL.md, .agent.md)
+- Under 1024 characters, no XML tags
+
+**Do NOT include:** Negative triggers ("Do NOT use for...") or "when not to use" guidance.
+
+**Examples:**
+- `Creates REST API endpoints. Use when user asks to "scaffold routes", "add endpoint", or "create controller". Produces route handlers with validation and TypeScript types.`
+- `Manages sprint workflows. Use when user mentions "sprint", "Linear tasks", or asks to "create tickets". Supports bulk operations and status tracking.`
 
 If name unclear, ask: "What should this skill be called?"
 
-### Step 3: Assess Complexity
+</step_2_name_and_describe>
+
+<step_3_assess_complexity>
 
 Determine structure from content signals, not size labels.
 
@@ -62,7 +81,9 @@ Determine structure from content signals, not size labels.
 - All steps are inline-explainable
 - No JIT content separation benefits
 
-### Step 4: Draft
+</step_3_assess_complexity>
+
+<step_4_draft>
 
 Build the skill using these sections. Load `references/structure-reference.md` for:
 - Frontmatter schema
@@ -70,26 +91,28 @@ Build the skill using these sections. Load `references/structure-reference.md` f
 - "Load X when Y" syntax
 - Exclusion rules (what skills must NOT contain)
 
-**Required sections:**
+**Required sections (wrapped in XML tags):**
 1. YAML Frontmatter (`name`, `description`)
 2. H1 Title
 3. Overview (1-2 sentences)
-4. Steps (numbered, imperative)
-5. Error Handling (If X: Y format)
+4. `<workflow>` containing `<step_N_verb>` tags (numbered, imperative)
+5. Error Handling in `<error_handling>` tag (If X: Y format)
 
 **Optional sections:**
 - Reference Files (if using `references/`)
 - Validation (if success is verifiable)
 - Notes (for caveats, prerequisites)
 
-### Step 5: Validate
+</step_4_draft>
+
+<step_5_validate>
 
 Self-check before delivery. Load `references/validation-checklist.md` for full checks.
 
 **Quick 5-check (P1 blockers):**
 1. [ ] `name` + `description` in frontmatter
 2. [ ] `name` matches parent folder exactly
-3. [ ] Description has verb + "when [trigger]"
+3. [ ] Description follows: [What it does] + [When to use it] + [Key capabilities], no negative triggers
 4. [ ] SKILL.md ≤500 lines
 5. [ ] No hardcoded secrets or absolute paths
 
@@ -99,7 +122,13 @@ Self-check before delivery. Load `references/validation-checklist.md` for full c
 - References: knowledge-base/, memory-bank/, .agent.md files
 - Frontmatter: `tools:`, `handoffs:`, `model:`, `applyTo:`
 
-### Step 6: Integrate
+### XML Structure (P2)
+- [ ] Content with 2+ logical sections uses XML tags as primary structure
+- [ ] Markdown headings (`##`) used inside XML tags for human readability
+
+</step_5_validate>
+
+<step_6_integrate>
 
 Connect skill to ecosystem.
 
@@ -114,6 +143,10 @@ Connect skill to ecosystem.
 **Tool references:**
 - Explicit need: `Use #tool:editFiles to update config`
 - Implicit (agent chooses): `Update the configuration file`
+
+</step_6_integrate>
+
+</workflow>
 
 ---
 
@@ -136,16 +169,17 @@ Use explicit loading directives in steps to trigger JIT context loading.
 
 ## Quality Signals
 
-**Good skill:**
-- Description has specific trigger phrases
+**Minimum quality:**
+- Description follows [What it does] + [When to use it] + [Key capabilities]
+- Description includes 2-4 quoted user phrases
 - Steps are numbered and imperative
-- Error handling covers predictable failures
+- Error handling covers 3-5 failure modes
 - Single focused capability
 
-**Excellent skill:**
-- Progressive disclosure for complex content
-- Loading directives point to real files
-- Validation section with verifiable checks
+**High quality (additional):**
+- Progressive disclosure for content exceeding 50 lines
+- Loading directives point to existing files
+- Validation section with 3-5 verifiable checks
 - No agent contamination (identity, safety, boundaries)
 
 ---

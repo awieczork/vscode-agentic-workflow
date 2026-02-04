@@ -4,17 +4,23 @@ Self-check before delivery. Use during Step 5: Validate.
 
 ---
 
+<quick_validation>
+
 ## Quick Validation (5 Essential Checks)
 
 Skill is INVALID if any fails. Fix before delivery.
 
 - [ ] `name` + `description` in frontmatter
 - [ ] `name` matches parent folder exactly
-- [ ] Description has verb + "when [trigger]"
+- [ ] Description follows: [What it does] + [When to use it] + [Key capabilities], no negative triggers
 - [ ] SKILL.md ≤500 lines
 - [ ] No hardcoded secrets or absolute paths
 
+</quick_validation>
+
 ---
+
+<p1_blocking>
 
 ## P1 — Blocking
 
@@ -43,7 +49,11 @@ Must fix. Skill fails validation.
 - [ ] No hardcoded absolute paths
 - [ ] SKILL.md under 500 lines
 
+</p1_blocking>
+
 ---
+
+<p2_required>
 
 ## P2 — Required
 
@@ -51,9 +61,11 @@ Fix before delivery for quality.
 
 ### Description Quality
 
-- [ ] Description follows formula: `[VERB] [WHAT] when [TRIGGER]`
-- [ ] Trigger clause is specific (not "when needed" or "helps with")
-- [ ] Domain keywords included for discoverability
+- [ ] Description is 1-1024 characters, single-line
+- [ ] Description follows: `[What it does] + [When to use it] + [Key capabilities]`
+- [ ] Includes 2-4 trigger phrases users say in quotes
+- [ ] Mentions file types if relevant
+- [ ] Contains NO negative triggers ("Do NOT use for...")
 
 ### No Agent Contamination
 
@@ -97,13 +109,17 @@ Fix before delivery for quality.
 - [ ] Steps use imperative form ("Run X" not "You should run X")
 - [ ] Destructive operations have exact commands (not general guidance)
 - [ ] Non-idempotent operations flagged with warnings
-- [ ] Error handling covers predictable failure modes
+- [ ] Error handling covers 3-5 failure modes
+
+</p2_required>
 
 ---
 
+<p3_optional>
+
 ## P3 — Optional
 
-Enhancements for excellence.
+Enhancements beyond minimum requirements.
 
 - [ ] `license` field specifies licensing
 - [ ] `compatibility` documents environment requirements
@@ -113,17 +129,21 @@ Enhancements for excellence.
 - [ ] Examples demonstrate expected usage
 - [ ] Notes section for caveats or prerequisites
 
+</p3_optional>
+
 ---
+
+<common_mistakes>
 
 ## Common Mistakes
 
 **Description too vague:**
 - Bad: "Helps with API tasks"
-- Fix: "Create REST API endpoints when asked to scaffold routes or add endpoints"
+- Fix: "Creates REST API endpoints. Use when user asks to 'scaffold routes' or 'add endpoint'. Produces route handlers with validation."
 
 **Missing trigger clause:**
 - Bad: "Generate documentation"
-- Fix: "Generate documentation when source files need JSDoc comments extracted"
+- Fix: "Generates API documentation from source code. Use when user asks to 'extract JSDoc' or 'document functions'. Outputs Markdown with parameter descriptions."
 
 **Agent contamination:**
 - Bad: "You are a thorough documentation expert..."
@@ -145,7 +165,11 @@ Enhancements for excellence.
 - Bad: Creating `references/` folder "just in case"
 - Fix: Only create folders when content exists
 
+</common_mistakes>
+
 ---
+
+<validation_by_tools>
 
 ## Validation by Tools
 
@@ -161,10 +185,17 @@ Enhancements for excellence.
 - Verify output paths are relative or use variables
 - Verify no hardcoded user directories
 
+</validation_by_tools>
+
 ---
+
+<cross_references>
 
 ## Cross-References
 
+- [SKILL.md](../SKILL.md) — Parent skill entry point
 - [structure-reference.md](structure-reference.md) — Frontmatter, patterns, exclusions
 - [example-skeleton.md](../assets/example-skeleton.md) — Minimal template
 - [example-api-scaffold.md](../assets/example-api-scaffold.md) — Full example
+
+</cross_references>

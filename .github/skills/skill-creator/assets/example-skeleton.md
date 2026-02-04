@@ -6,12 +6,8 @@ Annotated structure showing all sections. Copy and customize.
 
 ```markdown
 ---
-# FRONTMATTER
-# ─────────────────────────────────────────────────────────────────────────────
-# TLDR: Metadata for discovery. Only `name` and `description` are required.
-
 name: 'skill-name'                                    # REQUIRED: matches folder
-description: '[VERB] [WHAT] when [TRIGGER]'           # REQUIRED: triggers invocation
+description: '[What it does]. Use when [trigger phrases]. [Key capabilities].'  # REQUIRED: 1-1024 chars, single-line
 license: 'MIT'                                        # OPTIONAL
 compatibility: 'Requires Node.js 18+'                 # OPTIONAL: environment needs
 metadata:                                             # OPTIONAL
@@ -21,15 +17,12 @@ metadata:                                             # OPTIONAL
 ---
 
 # [SKILL_TITLE]
-# ─────────────────────────────────────────────────────────────────────────────
-# TLDR: Human-readable name, title case
 
 [ONE_SENTENCE_OVERVIEW]
-# TLDR: What this skill does in one line
+
+<steps>
 
 ## Steps
-# ─────────────────────────────────────────────────────────────────────────────
-# TLDR: Numbered procedure. Use imperative form. Be specific.
 
 1. [STEP_1_ACTION]
    - [Detail if needed]
@@ -39,34 +32,43 @@ metadata:                                             # OPTIONAL
 
 3. [STEP_3_ACTION]
 
+</steps>
+
+<error_handling>
+
 ## Error Handling
-# ─────────────────────────────────────────────────────────────────────────────
-# TLDR: What to do when things fail. Format: If [condition]: [action]
 
 If [CONDITION_1]: [RECOVERY_ACTION]
 If [CONDITION_2]: [RECOVERY_ACTION]
 If unknown error: Abort with error message and context
 
+</error_handling>
+
+<reference_files>
+
 ## Reference Files
-# ─────────────────────────────────────────────────────────────────────────────
-# TLDR: Only if using references/ folder. Link with descriptions.
-# OMIT THIS SECTION for simple skills without references.
 
 - [file-name.md](references/file-name.md) — [What it contains]
 
+</reference_files>
+
+<validation>
+
 ## Validation
-# ─────────────────────────────────────────────────────────────────────────────
-# TLDR: How to verify success. OMIT if success is self-evident.
 
 Before complete:
 - [ ] [VERIFIABLE_CHECK_1]
 - [ ] [VERIFIABLE_CHECK_2]
 
+</validation>
+
+<notes>
+
 ## Notes
-# ─────────────────────────────────────────────────────────────────────────────
-# TLDR: Caveats, prerequisites, warnings. OMIT if none.
 
 - [PREREQUISITE_OR_CAVEAT]
+
+</notes>
 ```
 
 ---
@@ -78,12 +80,14 @@ For simple skills under 50 lines, use this minimal structure:
 ```markdown
 ---
 name: 'skill-name'
-description: '[VERB] [WHAT] when [TRIGGER]'
+description: '[What it does]. Use when [trigger phrases]. [Key capabilities].'
 ---
 
 # [SKILL_TITLE]
 
 [OVERVIEW]
+
+<steps>
 
 ## Steps
 
@@ -91,9 +95,15 @@ description: '[VERB] [WHAT] when [TRIGGER]'
 2. [STEP_2]
 3. [STEP_3]
 
+</steps>
+
+<error_handling>
+
 ## Error Handling
 
 If [CONDITION]: [ACTION]
+
+</error_handling>
 ```
 
 ---
@@ -102,7 +112,6 @@ If [CONDITION]: [ACTION]
 
 - `[UPPERCASE]` — Required placeholder, must replace
 - `[lowercase]` — Example text, customize as needed
-- `# TLDR:` — Annotation comment, remove in final skill
 - `# OMIT` — Section is optional, remove if not needed
 
 ---

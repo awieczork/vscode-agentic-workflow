@@ -10,7 +10,7 @@ Annotated template showing prompt structure with inline commentary.
 ---
 # TLDR: description is the only field that affects discoverability
 # OMIT if: Never — always include description for /menu visibility
-description: "[VERB] [WHAT] [CONTEXT] — 50-150 characters"
+description: "[VERB] [WHAT] [CONTEXT] — 50-150 characters, single-line"
 
 # TLDR: Custom display name after /
 # OMIT if: Filename is already a good name
@@ -84,11 +84,17 @@ description: "[VERB] [WHAT]"
 
 # [Title]
 
+<task>
+
 [Task instructions]
+
+</task>
 
 Use ${file} for current file context.
 Use ${selection} for selected text.
 ```
+
+**Note:** XML tags are mandatory for prompts with 2+ logical sections. Even minimal prompts benefit from `<task>` to clearly delineate the instruction.
 
 ---
 

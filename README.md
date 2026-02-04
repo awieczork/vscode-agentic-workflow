@@ -91,7 +91,6 @@ generator/
 ├── prerequisites.md  # Requirements
 └── generator.md      # Pipeline documentation
 
-knowledge-base/       # Reference documentation for artifact creation
 core-agents/          # Portable agent pack documentation
 audit/                # Design decisions and specifications
 ```

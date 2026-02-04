@@ -15,6 +15,8 @@ description: "Type safety and coding conventions for TypeScript files in this pr
 
 Enforce strict type safety and consistent patterns across all TypeScript code.
 
+<core_rules>
+
 ## Core Rules
 
 - Enable `strict: true` in tsconfig.json for all projects
@@ -26,6 +28,10 @@ Enforce strict type safety and consistent patterns across all TypeScript code.
 - Prefer `const` assertions for literal types (`as const`)
 - NEVER use `@ts-ignore` without a linked issue explaining why
 - ALWAYS handle null and undefined explicitly — no implicit any
+
+</core_rules>
+
+<code_standards>
 
 ## Code Standards
 
@@ -80,6 +86,10 @@ function sortItems(items: Item[]): Item[] {
 const value = someUntypedLibrary.getValue();
 ```
 
+</code_standards>
+
+<anti_patterns>
+
 ## Anti-Patterns
 
 - **Excessive type assertions (`as`)**: Indicates type system is fighting you — fix the types instead
@@ -87,6 +97,8 @@ const value = someUntypedLibrary.getValue();
 - **Nested ternaries in types**: Extract to named type aliases for readability
 - **Ignoring strict null checks**: Handle null/undefined explicitly, don't disable the check
 - **Using `Function` type**: Use specific function signatures (`() => void`, `(x: string) => number`)
+
+</anti_patterns>
 ```
 
 ---

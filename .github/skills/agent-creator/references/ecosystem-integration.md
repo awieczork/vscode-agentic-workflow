@@ -2,7 +2,7 @@
 
 How agents connect to memory, handoffs, instructions, and skills. Use during Step 6: Integrate.
 
----
+<memory_bank_structure>
 
 ## Memory-Bank Structure
 
@@ -58,7 +58,9 @@ How agents connect to memory, handoffs, instructions, and skills. Use during Ste
 - Action: Document blocker
 - Target: `_active.md`
 
----
+</memory_bank_structure>
+
+<handoff_mechanics>
 
 ## Handoff Mechanics
 
@@ -109,7 +111,9 @@ handoffs:
 - build → inspect: Implementation complete, needs verification
 - inspect → architect: Issues found, needs plan adjustment
 
----
+</handoff_mechanics>
+
+<instruction_loading>
 
 ## Instruction Loading
 
@@ -129,7 +133,9 @@ applyTo: "**/*.ts"
 
 **Agent implication:** Don't duplicate file-specific rules in agent definition. Let instructions handle file-pattern rules.
 
----
+</instruction_loading>
+
+<skill_invocation>
 
 ## Skill Invocation
 
@@ -149,7 +155,9 @@ Agents can invoke skills for complex procedures.
 
 **Agent implication:** For complex procedures, create a skill rather than embedding in agent definition. Keep agents focused on identity and coordination.
 
----
+</skill_invocation>
+
+<mcp_server_integration>
 
 ## MCP Server Integration
 
@@ -183,7 +191,9 @@ External search: Max 10 queries per session
 </constraints>
 ```
 
----
+</mcp_server_integration>
+
+<hub_and_spoke_architecture>
 
 ## Hub-and-Spoke Architecture
 
@@ -200,7 +210,9 @@ Single orchestrator coordinates specialists. No peer-to-peer.
 - Chain depth ≤4 agents total
 - Errors amplify through chains
 
----
+</hub_and_spoke_architecture>
+
+<cross_references_in_agents>
 
 ## Cross-References in Agents
 
@@ -211,3 +223,13 @@ See [decision-rules.md](references/decision-rules.md) for tool selection.
 ```
 
 Do NOT embed large content. Reference by path, load JIT.
+
+</cross_references_in_agents>
+
+<cross_references>
+
+## Cross-References
+
+- [SKILL.md](../SKILL.md) — Parent skill entry point
+
+</cross_references>

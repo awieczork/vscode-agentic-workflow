@@ -1,22 +1,15 @@
 ---
 name: agent-creator
-description: >
-  Creates .agent.md files from specifications. Use when asked to "create an agent",
-  "build an agent", "generate agent for [domain]", or when spec describes a persona
-  with tools and cross-session behavior. Do NOT use for file-pattern rules (use
-  instruction-creator), reusable procedures (use skill-creator), or one-shot
-  generation (use prompt-creator).
+description: Creates .agent.md files from specifications. Use when asked to create an agent, build an agent, or generate agent for a domain. Produces frontmatter, identity, safety, boundaries, and modes sections.
 ---
 
 # Agent Creator
 
 Create valid, high-quality `.agent.md` files from specifications.
 
-## Process
+<workflow>
 
-Follow these 6 steps in order. Load references as needed.
-
-### Step 1: Classify
+<step_1_classify>
 
 Confirm spec describes an AGENT, not another artifact type.
 
@@ -28,7 +21,9 @@ Confirm spec describes an AGENT, not another artifact type.
 
 If unclear, ask user: "This sounds like [type] because [reason]. Confirm agent?"
 
-### Step 2: Extract
+</step_1_classify>
+
+<step_2_extract>
 
 Pull these elements from the spec:
 
@@ -54,7 +49,9 @@ Pull these elements from the spec:
 
 If role is unclear, ask user before proceeding.
 
-### Step 3: Decide
+</step_2_extract>
+
+<step_3_decide>
 
 Apply decision rules to fill the skeleton. Load `references/decision-rules.md` for:
 - Role → Tools mapping
@@ -62,7 +59,9 @@ Apply decision rules to fill the skeleton. Load `references/decision-rules.md` f
 - Role → Boundaries (Do / Ask First / Don't)
 - Behavioral variation → Modes inclusion
 
-### Step 4: Draft
+</step_3_decide>
+
+<step_4_draft>
 
 Build the agent in layers. Start with L0, add L1/L2 as needed.
 
@@ -81,16 +80,20 @@ Build the agent in layers. Start with L0, add L1/L2 as needed.
 - Add: `<update_triggers>` for memory integration
 - Add: `<outputs>` with confidence thresholds
 
+**Behavioral steering:** If agent needs proactive/conservative action modes or thinking patterns, load [decision-rules.md](references/decision-rules.md#behavioral-steering) for steering templates.
+
 Load `references/structure-reference.md` for exact syntax.
 Use `assets/example-skeleton.md` as template.
 
-### Step 5: Validate
+</step_4_draft>
+
+<step_5_validate>
 
 Self-check before delivery. Load `references/validation-checklist.md`.
 
 **Quick 6-check (P1 blockers):**
 1. [ ] `name` field present, matches filename
-2. [ ] `description` is 50-150 characters
+2. [ ] `description` is 50-150 characters, single-line
 3. [ ] First paragraph starts with "You are..."
 4. [ ] `<safety>` section present with NEVER/ALWAYS
 5. [ ] `<boundaries>` section present with Do/Ask First/Don't
@@ -101,13 +104,19 @@ Self-check before delivery. Load `references/validation-checklist.md`.
 7. [ ] `<red_flags>` section present
 8. [ ] `send: false` on all handoffs
 
-### Step 6: Integrate
+</step_5_validate>
+
+<step_6_integrate>
 
 Connect agent to ecosystem. Load `references/ecosystem-integration.md` for:
 - Memory-bank file paths and tiers
 - Handoff payload structure
 - How instructions auto-load
 - How to invoke skills
+
+</step_6_integrate>
+
+</workflow>
 
 ---
 

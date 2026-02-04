@@ -11,7 +11,7 @@ Annotated structure showing all sections with TLDR descriptions. Copy and fill.
 # TLDR: Metadata that VS Code reads. Name and description are required.
 
 name: 'agent-name'                                        # REQUIRED: matches filename, lowercase-with-hyphens
-description: '[50-150 chars: what this agent does]'       # REQUIRED
+description: '[50-150 chars, single-line: what this agent does]'       # REQUIRED
 tools: ['read', 'search']                                 # RECOMMENDED: explicit list
 handoffs:                                                 # OPTIONAL: transition buttons
   - label: 'Next Action'

@@ -4,13 +4,15 @@ Exact syntax for skill artifacts. Use during Step 4: Draft.
 
 ---
 
+<frontmatter_schema>
+
 ## Frontmatter Schema
 
 ```yaml
 ---
 # REQUIRED
 name: 'skill-name'              # Must match folder, lowercase-with-hyphens
-description: '[VERB] [WHAT] when [TRIGGER]'
+description: '[What it does]. Use when [trigger phrases]. [Key capabilities].'
 
 # OPTIONAL
 license: 'MIT'                  # License identifier
@@ -24,10 +26,14 @@ metadata:
 
 **Field limits:**
 - `name`: 1-64 characters, pattern `[a-z0-9]+(-[a-z0-9]+)*`
-- `description`: 1-1024 characters
+- `description`: 1-1024 characters, single-line. Structure: `[What it does] + [When to use it] + [Key capabilities]`. Include 2-4 trigger phrases in quotes. Do NOT include "when not to use" guidance.
 - `compatibility`: 1-500 characters
 
+</frontmatter_schema>
+
 ---
+
+<folder_structure>
 
 ## Folder Structure
 
@@ -51,7 +57,7 @@ skill-name/
 - Documentation exceeds 100 lines
 - Content is JIT-loaded (not always needed)
 - Decision rules need separation from main flow
-- Detailed patterns benefit from isolation
+- Patterns exceeding 30 lines benefit from isolation
 
 **Create `assets/` when:**
 - Steps use templates or boilerplate
@@ -63,7 +69,11 @@ skill-name/
 - For potential future content (no empty folders)
 - To "look complete" (structure matches need)
 
+</folder_structure>
+
 ---
+
+<procedure_design>
 
 ## Procedure Design
 
@@ -74,13 +84,13 @@ skill-name/
 **Match precision to risk:**
 
 **High freedom (text instructions):**
-- Multiple approaches valid
+- 2+ valid approaches exist
 - Decisions depend on context
 - Non-destructive operations
 
 **Medium freedom (pseudocode):**
 - Preferred pattern exists
-- Some variation acceptable
+- Minor variation acceptable
 - Configuration affects behavior
 
 **Low freedom (exact commands):**
@@ -90,7 +100,11 @@ skill-name/
 
 **Rule:** Destructive operations require exact commands, not general guidance.
 
+</procedure_design>
+
 ---
+
+<progressive_disclosure_patterns>
 
 ## Progressive Disclosure Patterns
 
@@ -126,7 +140,11 @@ Customize for the specific route and method.
 
 **Single-hop rule:** Reference files link only to SKILL.md or external URLs. Never reference → reference.
 
+</progressive_disclosure_patterns>
+
 ---
+
+<tool_reference_syntax>
 
 ## Tool Reference Syntax
 
@@ -148,7 +166,11 @@ Skills can reference tools using `#tool:<tool-name>` syntax.
 - Implicit: `Update the configuration file`
 - Implicit: `Execute the build command`
 
+</tool_reference_syntax>
+
 ---
+
+<exclusion_rules>
 
 ## Exclusion Rules
 
@@ -216,7 +238,11 @@ When exclusion detected:
 - **External references** — Embed required content in skill's `references/` folder
 - **Forbidden frontmatter** — Remove the field
 
+</exclusion_rules>
+
 ---
+
+<size_limits>
 
 ## Size Limits
 
@@ -230,10 +256,17 @@ When exclusion detected:
 
 **If exceeding limits:** Extract content to `references/` folder.
 
+</size_limits>
+
 ---
+
+<cross_references>
 
 ## Cross-References
 
+- [SKILL.md](../SKILL.md) — Parent skill entry point
 - [validation-checklist.md](validation-checklist.md) — P1/P2 validation checks
 - [example-skeleton.md](../assets/example-skeleton.md) — Minimal template
 - [example-api-scaffold.md](../assets/example-api-scaffold.md) — Full example
+
+</cross_references>
