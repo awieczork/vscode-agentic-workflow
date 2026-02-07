@@ -1,10 +1,7 @@
-# Ecosystem Integration
+This reference explains how agents connect to the broader ecosystem: memory-bank files, handoff chains, auto-loading instructions, and skill invocation. The governing principle is minimal coupling — agents reference ecosystem components by path rather than embedding content, enabling independent evolution. Use this during `<step_6_integrate>` to wire the agent into project infrastructure.
 
-How agents connect to memory, handoffs, instructions, and skills. Use during Step 6: Integrate.
 
 <memory_bank_structure>
-
-## Memory-Bank Structure
 
 ```
 .github/memory-bank/
@@ -17,7 +14,7 @@ How agents connect to memory, handoffs, instructions, and skills. Use during Ste
     └── decisions.md            # ADR log (append-only)
 ```
 
-### Tier Definitions
+<tier_definitions>
 
 **HOT tier:**
 - Load when: Every session
@@ -34,13 +31,17 @@ How agents connect to memory, handoffs, instructions, and skills. Use during Ste
 - Files: Large specs, reference docs
 - Token budget: Rarely, load sections not full files
 
-### Context Thresholds
+</tier_definitions>
 
-- **Below 60%:** Load HOT + essential WARM
-- **Above 60%:** Load HOT only, signal to user
-- **Above 80%:** Compact HOT, preserve critical only
+<context_thresholds>
 
-### Update Events
+- **Below 60%** — Load HOT + essential WARM
+- **Above 60%** — Load HOT only, signal to user
+- **Above 80%** — Compact HOT, preserve critical only
+
+</context_thresholds>
+
+<update_events>
 
 **session_start:**
 - Action: Read, update focus
@@ -58,38 +59,35 @@ How agents connect to memory, handoffs, instructions, and skills. Use during Ste
 - Action: Document blocker
 - Target: `_active.md`
 
+</update_events>
+
 </memory_bank_structure>
+
 
 <handoff_mechanics>
 
-## Handoff Mechanics
-
-### Frontmatter Syntax
+<frontmatter_syntax>
 
 ```yaml
 handoffs:
   - label: 'Start Building'      # Button text shown to user
     agent: 'build'               # Target agent (without .agent.md)
     prompt: |                    # Context passed to target
-      ## Summary
-      [Completed work description]
-      
-      ## Key Findings
+      Summary: [Completed work description]
+      Key Findings:
       - [Finding 1]
       - [Finding 2]
-      
-      ## Files Relevant
+      Files Relevant:
       - `path/to/file` — [description]
-      
-      ## Next Steps
-      [What target should do]
-      
-      ## Constraints
-      [Inherited limits]
+      Next Steps: [What target should do]
+      Constraints: [Inherited limits]
     send: false                  # false = user reviews, true = auto-send
+    model: 'model-name'         # Optional model override
 ```
 
-### Send Behavior
+</frontmatter_syntax>
+
+<send_behavior>
 
 **`send: false` (default):**
 - Behavior: Pre-fills prompt, waits for user review
@@ -99,9 +97,11 @@ handoffs:
 - Behavior: Auto-submits immediately
 - Use when: Target is read-only, well-tested
 
-**Rule:** Default to `send: false`. Use `send: true` only for read-only targets after extensive testing.
+Default to `send: false`. Use `send: true` only for read-only targets after extensive testing.
 
-### Common Handoff Chains
+</send_behavior>
+
+<common_handoff_chains>
 
 **Standard flow:** brain (explore) → architect (plan) → build (execute) → inspect (verify)
 
@@ -111,11 +111,12 @@ handoffs:
 - build → inspect: Implementation complete, needs verification
 - inspect → architect: Issues found, needs plan adjustment
 
+</common_handoff_chains>
+
 </handoff_mechanics>
 
-<instruction_loading>
 
-## Instruction Loading
+<instruction_loading>
 
 Instructions auto-apply based on `applyTo` patterns.
 
@@ -131,19 +132,18 @@ applyTo: "**/*.ts"
 2. Matching instructions automatically load into context
 3. Agent follows instruction rules for that file type
 
-**Agent implication:** Don't duplicate file-specific rules in agent definition. Let instructions handle file-pattern rules.
+**Agent implication:** Do not duplicate file-specific rules in agent definition. Let instructions handle file-pattern rules.
 
 </instruction_loading>
 
-<skill_invocation>
 
-## Skill Invocation
+<skill_invocation>
 
 Agents can invoke skills for complex procedures.
 
 **Invocation methods:**
-1. **Automatic:** Skill loads when task matches description triggers
-2. **Explicit:** User or agent references skill by name
+1. **Automatic** — Skill loads when task matches description triggers
+2. **Explicit** — User or agent references skill by name
 
 **Skill structure:**
 ```
@@ -157,14 +157,12 @@ Agents can invoke skills for complex procedures.
 
 </skill_invocation>
 
-<mcp_server_integration>
 
-## MCP Server Integration
+<mcp_server_integration>
 
 External tools via Model Context Protocol.
 
-### Syntax
-
+**Syntax:**
 ```yaml
 tools:
   - 'github/*'              # All tools from github server
@@ -172,18 +170,13 @@ tools:
   - 'playwright/navigate'   # Specific tool from playwright
 ```
 
-### Error Handling
-
-```markdown
+**Error handling:**
 When MCP tool fails:
 1. Wait 1 second, retry once
 2. If still failing, try alternative tool
 3. If no alternative, report partial results
-```
 
-### Rate Limits
-
-Add awareness for external tools:
+**Rate limits:** Add awareness for external tools:
 ```markdown
 <constraints>
 GitHub API: Max 30 requests per minute
@@ -193,9 +186,8 @@ External search: Max 10 queries per session
 
 </mcp_server_integration>
 
-<hub_and_spoke_architecture>
 
-## Hub-and-Spoke Architecture
+<hub_and_spoke_architecture>
 
 Single orchestrator coordinates specialists. No peer-to-peer.
 
@@ -212,9 +204,8 @@ Single orchestrator coordinates specialists. No peer-to-peer.
 
 </hub_and_spoke_architecture>
 
-<cross_references_in_agents>
 
-## Cross-References in Agents
+<cross_references_in_agents>
 
 Link to ecosystem files using relative paths:
 
@@ -226,9 +217,8 @@ Do NOT embed large content. Reference by path, load JIT.
 
 </cross_references_in_agents>
 
-<cross_references>
 
-## Cross-References
+<cross_references>
 
 - [SKILL.md](../SKILL.md) — Parent skill entry point
 

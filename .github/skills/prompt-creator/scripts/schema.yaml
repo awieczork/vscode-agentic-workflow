@@ -1,5 +1,4 @@
 # Prompt Output Schema
-# Source: audit/contract-specifications.md <prompt_output_schema>
 
 artifact_type: prompt
 version: "1.0"
@@ -15,7 +14,7 @@ body:
   required_sections:
     - context: "background information for the task"
     - task: "what to accomplish (task before context in output)"
-    - output_format: "expected response structure"
+    - format: "expected response structure"
   optional_sections:
     - examples: "sample inputs/outputs"
     - constraints: "limitations or requirements"
@@ -25,7 +24,7 @@ body:
     - "TBD"
 
 constraints:
-  - "Task section appears before context in rendered output"
+  - "Task section MAY appear before context in rendered output (recommended for complex tasks)"
   - "Variables use ${input:varname} syntax"
   - "snake_case XML tag names"
 
@@ -36,17 +35,19 @@ filename_pattern: "{name}.prompt.md"
 
 validation_rules:
   p1:
-    - "Frontmatter fields present and valid"
-    - "description present"
-    - "context section exists"
-    - "task section exists"
-    - "output_format section exists"
-    - "Size limit respected (500 tokens estimated)"
+    - "File location is .github/prompts/"
+    - "File extension is .prompt.md"
+    - "Frontmatter YAML is valid"
+    - "No placeholder text ([PLACEHOLDER], TODO, TBD)"
+    - "No secrets or credentials"
   p2:
-    - "Variables declared in frontmatter if used in body"
-    - "Cross-references resolve"
-    - "No placeholder text remains"
-    - "XML tags use snake_case"
+    - "description field present"
+    - "description is 50-150 characters, single-line"
+    - "description starts with imperative verb"
+    - "Variables use ${name} syntax"
+    - "XML tags for prompts with 2+ sections"
+    - "No hardcoded workspace-specific paths"
   p3:
+    - "Task section before context section"
     - "Examples provided for complex prompts"
-    - "Variable descriptions helpful"
+    - "Variable descriptions in frontmatter"

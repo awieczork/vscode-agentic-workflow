@@ -1,12 +1,13 @@
 # Agent Output Schema
 # Source: audit/contract-specifications.md <agent_output_schema>
 
-artifact_type: agentversion: "1.0"
+artifact_type: agent
+version: "1.0"
 
 frontmatter:
   required:
     - name: "lowercase alphanumeric + hyphens, 1-64 chars, matches filename"
-    - description: "50-150 chars, describes purpose and when to use"
+    - description: "single-line, keyword-rich, describes purpose and when to use"
   optional:
     - tools: "array of tool names"
 
@@ -39,7 +40,7 @@ validation_rules:
   p1:
     - "Frontmatter fields present and valid"
     - "name matches filename (without .agent.md)"
-    - "description between 50-150 chars"
+    - "description is single-line and keyword-rich"
     - "Identity paragraph starts with 'You are...'"
     - "safety section contains NEVER/ALWAYS rules"
     - "boundaries section contains Do/Ask First/Don't subsections"

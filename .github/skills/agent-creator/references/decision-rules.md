@@ -1,10 +1,7 @@
-# Decision Rules
+This reference maps specification elements to agent configuration decisions. The governing principle is least-privilege — start with minimal capabilities and add tools/permissions only when the specification explicitly requires them. Use this during `<step_3_decide>` to derive tools, safety requirements, boundaries, and modes from extracted spec elements.
 
-Mappings from spec elements to agent configuration. Use during Step 3: Decide.
 
 <tools_selection>
-
-## Tools Selection
 
 Map role to tools using least-privilege principle.
 
@@ -44,13 +41,38 @@ tools:
   - 'context7/resolve'   # Specific tool
 ```
 
-**Hard limit:** ≤15 tools (avoid context overflow from tool descriptions)
-
 </tools_selection>
 
-<safety_requirements>
 
-## Safety Requirements
+<tool_profile_decision_tree>
+
+Determines safety section requirements based on tool capabilities.
+
+```
+IF tools include {edit, execute, delete} THEN
+  REQUIRE: <iron_law> section (1-3 laws)
+  REQUIRE: <red_flags> section with HALT conditions
+  REQUIRE: Rationalization tables for each iron law
+  REQUIRE: send: false on all handoffs
+
+ELSE IF tools are read-only {read, search, web} THEN
+  REQUIRE: <safety> with flat constraints only
+  OMIT: <iron_law>, <red_flags> (not needed for read-only)
+
+ELSE IF conversational-only (no tools) THEN
+  REQUIRE: <safety> with minimal constraints
+  OMIT: <iron_law>, <red_flags>
+```
+
+**Summary:**
+- Destructive tools (edit, execute, delete) → Full safety treatment
+- Read-only tools → Flat constraints only
+- No tools → Minimal safety section
+
+</tool_profile_decision_tree>
+
+
+<safety_requirements>
 
 Conditional requirements based on tool capabilities.
 
@@ -76,9 +98,8 @@ IF tools include agent THEN
 
 </safety_requirements>
 
-<iron_law_format>
 
-## Iron Law Format
+<iron_law_format>
 
 Required for agents with destructive tools.
 
@@ -100,16 +121,15 @@ Required for agents with destructive tools.
 
 </iron_law_format>
 
-<boundaries_derivation>
 
-## Boundaries Derivation
+<boundaries_derivation>
 
 Map role to three-tier boundaries.
 
 **Pattern:**
-- **Do:** Core responsibilities, read operations, analysis
-- **Ask First:** Modifications, external calls, scope expansion
-- **Don't:** Out-of-scope actions, destructive operations without confirmation
+- **Do** — Core responsibilities, read operations, analysis
+- **Ask First** — Modifications, external calls, scope expansion
+- **Don't** — Out-of-scope actions, destructive operations without confirmation
 
 **Examples by role:**
 
@@ -135,9 +155,8 @@ Map role to three-tier boundaries.
 
 </boundaries_derivation>
 
-<modes_inclusion>
 
-## Modes Inclusion
+<modes_inclusion>
 
 ```
 IF agent handles multiple distinct task types THEN
@@ -158,9 +177,38 @@ IF agent has single behavior THEN
 
 </modes_inclusion>
 
-<stopping_rules_section>
 
-## Stopping Rules
+<subagent_pattern>
+
+Agents designed as internal helpers for orchestrators.
+
+```
+IF role = subagent (internal helper) THEN
+  user-invokable: false  # Hidden from picker
+  agents: []             # Subagents cannot spawn subagents
+```
+
+**Subagent characteristics:**
+- Called by parent orchestrator only
+- Single-purpose, focused scope
+- No handoff buttons (orchestrator handles routing)
+- Depth = 1 only (no recursive subagent chains)
+
+**Frontmatter example:**
+```yaml
+---
+name: 'code-formatter'
+description: 'Formats code files using project style rules'
+tools: ['read', 'edit']
+user-invokable: false
+agents: []
+---
+```
+
+</subagent_pattern>
+
+
+<stopping_rules_derivation>
 
 Every agent needs exit conditions.
 
@@ -180,11 +228,10 @@ Every agent needs exit conditions.
 </stopping_rules>
 ```
 
-</stopping_rules_section>
+</stopping_rules_derivation>
 
-<context_loading_section>
 
-## Context Loading
+<context_loading_derivation>
 
 Derive from role's information needs.
 
@@ -200,11 +247,10 @@ Derive from role's information needs.
 - Reference documentation
 - Large specification files
 
-</context_loading_section>
+</context_loading_derivation>
+
 
 <handoff_configuration>
-
-## Handoff Configuration
 
 ```
 IF handoff targets identified THEN
@@ -216,28 +262,21 @@ IF handoff targets identified THEN
 **Payload structure:**
 ```markdown
 prompt: |
-  ## Summary
-  [2-3 sentences of completed work]
-  
-  ## Key Findings
+  Summary: [2-3 sentences of completed work]
+  Key Findings:
   - [Finding 1]
   - [Finding 2]
-  
-  ## Next Steps
-  [What target should do]
+  Next Steps: [What target should do]
 ```
 
 </handoff_configuration>
 
-<behavioral_steering>
 
-## Behavioral Steering
+<behavioral_steering>
 
 Map behavioral need to XML steering pattern.
 
-### Proactive Implementation
-
-**Use when:** Builder agents, task executors, agents that should act by default
+**Proactive implementation** — Use for builder agents, task executors, agents that should act by default:
 
 ```markdown
 <default_to_action>
@@ -247,9 +286,7 @@ using tools to discover any missing details instead of guessing.
 </default_to_action>
 ```
 
-### Conservative Research
-
-**Use when:** Analyst agents, architects, reviewers, agents that should gather before acting
+**Conservative research** — Use for analyst agents, architects, reviewers, agents that should gather before acting:
 
 ```markdown
 <do_not_act_before_instructions>
@@ -259,9 +296,7 @@ and providing recommendations rather than taking action.
 </do_not_act_before_instructions>
 ```
 
-### Code Exploration Required
-
-**Use when:** Any agent discussing codebase
+**Code exploration required** — Use for any agent discussing codebase:
 
 ```markdown
 <investigate_before_answering>
@@ -271,26 +306,20 @@ Investigate and read relevant files BEFORE answering questions about the codebas
 </investigate_before_answering>
 ```
 
-### Verbosity Control
-
-**Use when:** Agents that use many tools and need summary output
+**Verbosity control** — Use for agents that use many tools and need summary output:
 
 ```markdown
 After completing a task that involves tool use, provide a quick summary of the work you've done.
 ```
 
-### Thinking After Tool Use
-
-**Use when:** Complex multi-step workflows requiring reflection
+**Thinking after tool use** — Use for complex multi-step workflows requiring reflection:
 
 ```markdown
 After receiving tool results, carefully reflect on their quality and determine optimal next steps before proceeding.
 Use your thinking to plan and iterate based on this new information, and then take the best next action.
 ```
 
-### Subagent Delegation Control
-
-**Use when:** Agents that spawn subagents and need conservative delegation
+**Subagent delegation control** — Use for agents that spawn subagents and need conservative delegation:
 
 ```markdown
 Only delegate to subagents when the task clearly benefits from a separate agent with a new context window.
@@ -298,9 +327,8 @@ Only delegate to subagents when the task clearly benefits from a separate agent 
 
 </behavioral_steering>
 
-<cross_references>
 
-## Cross-References
+<cross_references>
 
 - [SKILL.md](../SKILL.md) — Parent skill entry point
 

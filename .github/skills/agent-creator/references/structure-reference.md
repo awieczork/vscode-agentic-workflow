@@ -1,22 +1,28 @@
-# Structure Reference
+This reference defines the exact syntax for agent artifacts: frontmatter schema, body sections, XML tag requirements, and size limits. The governing principle is safety-first positioning — place P1 content (safety, iron laws) within the first 200 tokens where attention weight is highest. Use this during `<step_4_draft>` to construct properly structured agents.
 
-Exact syntax for agent artifacts. Use during Step 4: Draft.
 
 <frontmatter_schema>
-
-## Frontmatter Schema
 
 ```yaml
 ---
 # REQUIRED
 name: 'agent-name'           # Must match filename, lowercase-with-hyphens
-description: '[50-150 chars, single-line, what agent does]'
+description: 'Single-line, keyword-rich description of what agent does'
 
 # RECOMMENDED
 tools: ['read', 'search', 'edit']  # Explicit list, no ['*']
 
 # OPTIONAL
 argument-hint: 'What to do?' # Placeholder in chat input
+user-invokable: true         # false = hidden from picker, only accessible as subagent
+agents: ['architect', 'build']  # Whitelist of invokable subagents; [] = none; omit = all
+model: ['Claude Sonnet 4.5 (copilot)', 'GPT-5 (copilot)']  # Fallback array when primary unavailable
+disable-model-invocation: false  # true = cannot be invoked as subagent (L2, safety-critical only)
+target: 'vscode'             # 'vscode' (default) or 'github-copilot'
+mcp-servers:                  # MCP server configs (GitHub Copilot custom agents only)
+  - url: 'https://example.com/mcp'
+    headers:
+      Authorization: 'Bearer [TOKEN]'
 
 # IF HANDOFFS EXIST
 handoffs:
@@ -24,18 +30,32 @@ handoffs:
     agent: 'target-agent'    # Without .agent.md
     prompt: 'Context...'     # Summary + findings + next steps
     send: false              # ALWAYS false for edit/execute targets
+    model: 'model-name'      # Optional model override for handoff
 ---
 ```
 
+**Tool aliases:**
+- `read` — readFile, listDirectory
+- `edit` — editFiles, createFile
+- `search` — codebase, textSearch, fileSearch
+- `execute` — runInTerminal
+- `agent` — runSubagent
+- `web` — fetch, WebSearch
+- `todo` — manage_todo_list
+
+**Deprecated fields:**
+- `infer` — No longer supported by VS Code. Remove if present.
+
 </frontmatter_schema>
+
 
 <body_sections>
 
-## Body Sections
-
 Sections in recommended order. Position P1 content (safety, iron laws) early.
 
-### Identity (REQUIRED, no XML tag)
+<identity_section>
+
+**Identity (REQUIRED, no XML tag)**
 
 First paragraph, no wrapping tag.
 
@@ -54,28 +74,37 @@ You are a [ROLE] specialized in [DOMAIN].
 - **creative** — proposes alternatives, explores possibilities
 - **minimal** — smallest viable solution, no extras
 
-### `<safety>` (REQUIRED)
+</identity_section>
+
+<safety_section>
+
+**`<safety>` (REQUIRED)**
 
 P1 constraints. Place immediately after identity.
 
 ```markdown
 <safety>
 
-**Priority:** Safety > Clarity > Flexibility > Convenience
+**Priority:** Safety → Accuracy → Clarity → Style
 
 - NEVER [critical constraint]
 - NEVER [critical constraint]
 - ALWAYS [required behavior]
+- ONLY [primary action] — positive scope constraint
 
 </safety>
 ```
 
-**Rules:**
 - Use binary NEVER/ALWAYS (not "try to", "should")
+- Use ONLY for positive scope constraints (e.g., "ONLY generate documentation artifacts")
 - 2-5 statements total
 - Most critical constraints first
 
-### `<iron_law>` (CONDITIONAL: if edit/execute/delete tools)
+</safety_section>
+
+<iron_law_section>
+
+**`<iron_law>` (CONDITIONAL — if edit/execute/delete tools)**
 
 Inviolable rules with rationalization prevention.
 
@@ -89,13 +118,16 @@ Inviolable rules with rationalization prevention.
 </iron_law>
 ```
 
-**Rules:**
 - 1-3 iron laws per agent
 - Each needs red flags list
 - Each needs 2-3 rationalization entries
 - ID format: IL_001, IL_002, etc.
 
-### `<red_flags>` (CONDITIONAL: if edit/execute/delete tools)
+</iron_law_section>
+
+<red_flags_section>
+
+**`<red_flags>` (CONDITIONAL — if edit/execute/delete tools)**
 
 HALT conditions with rationalization table.
 
@@ -115,7 +147,11 @@ HALT conditions with rationalization table.
 </red_flags>
 ```
 
-### `<context_loading>` (RECOMMENDED)
+</red_flags_section>
+
+<context_loading_section>
+
+**`<context_loading>` (RECOMMENDED)**
 
 Files to read at session start, by tier.
 
@@ -135,7 +171,11 @@ Files to read at session start, by tier.
 </context_loading>
 ```
 
-### `<update_triggers>` (RECOMMENDED for memory-integrated agents)
+</context_loading_section>
+
+<update_triggers_section>
+
+**`<update_triggers>` (RECOMMENDED for memory-integrated agents)**
 
 Event-to-action mappings for memory writes.
 
@@ -150,7 +190,11 @@ Event-to-action mappings for memory writes.
 </update_triggers>
 ```
 
-### `<boundaries>` (REQUIRED)
+</update_triggers_section>
+
+<boundaries_section>
+
+**`<boundaries>` (REQUIRED)**
 
 Three-tier scope definition.
 
@@ -166,12 +210,15 @@ Three-tier scope definition.
 </boundaries>
 ```
 
-**Rules:**
 - Each tier: 1-5 items
 - Must align with tools (no "edit files" in Do if no edit tool)
 - Don't tier includes out-of-scope + dangerous actions
 
-### `<modes>` (CONDITIONAL: if multiple behaviors)
+</boundaries_section>
+
+<modes_section>
+
+**`<modes>` (CONDITIONAL — if multiple behaviors)**
 
 Behavioral variations with triggers.
 
@@ -187,12 +234,15 @@ Behavioral variations with triggers.
 </modes>
 ```
 
-**Rules:**
 - 2-7 modes maximum
 - Omit entirely if single behavior
 - Triggers must be distinct (no overlap)
 
-### `<outputs>` (RECOMMENDED)
+</modes_section>
+
+<outputs_section>
+
+**`<outputs>` (RECOMMENDED)**
 
 What the agent produces.
 
@@ -211,7 +261,11 @@ What the agent produces.
 </outputs>
 ```
 
-### `<stopping_rules>` (RECOMMENDED)
+</outputs_section>
+
+<stopping_rules_section>
+
+**`<stopping_rules>` (RECOMMENDED)**
 
 When to hand off or stop.
 
@@ -226,7 +280,11 @@ When to hand off or stop.
 </stopping_rules>
 ```
 
-### `<error_handling>` (RECOMMENDED)
+</stopping_rules_section>
+
+<error_handling_section>
+
+**`<error_handling>` (RECOMMENDED)**
 
 Recovery procedures.
 
@@ -248,11 +306,12 @@ Present options. Do not proceed without user direction.
 </error_handling>
 ```
 
+</error_handling_section>
+
 </body_sections>
 
-<xml_tags_summary>
 
-## XML Tags Summary
+<xml_tags_summary>
 
 **Always required:**
 - `<safety>` — P1 constraints
@@ -277,9 +336,8 @@ Present options. Do not proceed without user direction.
 
 </xml_tags_summary>
 
-<domain_specific_xml_tags>
 
-## Domain-Specific XML Tags
+<domain_specific_xml_tags>
 
 Create custom tags when domain requires specialized structure. Custom tags are flexible tools — adapt per domain.
 
@@ -306,41 +364,40 @@ Create custom tags when domain requires specialized structure. Custom tags are f
 
 **Cross-referencing tags:**
 When referring to content defined in another section, use the XML tag name explicitly:
-- "Apply the constraints defined in `<safety>` above"
+- "Apply the constraints defined in `<safety>`"
 - "Using the gates from `<deployment_gates>`"
-- "Follow the process in `<modes name="deploy-production">`"
+- "Follow the process in `<mode name="deploy-production">`"
 
 </domain_specific_xml_tags>
 
+
+<layer_mapping>
+
+**L1 — Good (production-ready):**
+- Add `user-invokable: false` for subagent patterns (agents only accessible via orchestrator)
+
+**L2 — Excellent (full integration):**
+- Add `agents: [...]` to restrict which subagents can be invoked
+- Add `model: [...]` for fallback model arrays
+- Add `disable-model-invocation: true` for safety-critical agents that should only run via explicit user invocation
+- Add `target: 'github-copilot'` for agents deployed to GitHub Copilot
+- Add `mcp-servers: [...]` for external MCP tool integration
+
+</layer_mapping>
+
+
 <size_limits>
 
-## Size Limits
+**Modes count:** 2-5 recommended, 7 maximum
 
-**Total lines:**
-- Recommended: ≤300
-- Hard limit: ≤500
+**Handoffs count:** 1-2 recommended, 3 maximum
 
-**Total characters:**
-- Recommended: ≤25,000
-- Hard limit: ≤30,000
-
-**Modes count:**
-- Recommended: 2-5
-- Hard limit: 7
-
-**Handoffs count:**
-- Recommended: 1-2
-- Hard limit: 3
-
-**Tools count:**
-- Recommended: 3-8
-- Hard limit: 15
+**Tools count:** 3-8 recommended
 
 </size_limits>
 
-<reserved_names>
 
-## Reserved Names
+<reserved_names>
 
 Do NOT use these agent names:
 - `ask`, `edit`, `agent` — Built-in chat modes
@@ -348,9 +405,8 @@ Do NOT use these agent names:
 
 </reserved_names>
 
-<cross_references>
 
-## Cross-References
+<cross_references>
 
 - [SKILL.md](../SKILL.md) — Parent skill entry point
 

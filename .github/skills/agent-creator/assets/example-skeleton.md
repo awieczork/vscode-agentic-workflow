@@ -1,29 +1,21 @@
-# Agent Skeleton
+This template provides the complete agent structure with inline annotations explaining each section's purpose. Copy the template below and replace placeholders with domain-specific content. Required sections are marked; conditional sections include criteria for when to include them.
 
-Annotated structure showing all sections with TLDR descriptions. Copy and fill.
 
----
+<full_template>
 
 ```markdown
 ---
-# FRONTMATTER
-# ───────────────────────────────────────────────────────────────────────────────
-# TLDR: Metadata that VS Code reads. Name and description are required.
-
-name: 'agent-name'                                        # REQUIRED: matches filename, lowercase-with-hyphens
-description: '[50-150 chars, single-line: what this agent does]'       # REQUIRED
-tools: ['read', 'search']                                 # RECOMMENDED: explicit list
-handoffs:                                                 # OPTIONAL: transition buttons
+name: 'agent-name'
+description: '[single-line, keyword-rich: what this agent does]'
+tools: ['read', 'search']
+handoffs:
   - label: 'Next Action'
     agent: 'target-agent'
     prompt: 'Context for target...'
-    send: false                                           # false for edit/execute targets
+    send: false
 ---
 
-# IDENTITY (no XML tag)
-# ───────────────────────────────────────────────────────────────────────────────
-# TLDR: Who is this agent? First paragraph, starts with "You are..."
-# Include: role, domain, expertise areas, behavioral stance
+<!-- Identity (no XML tag) — Who is this agent? Starts with "You are..." -->
 
 You are a [ROLE] specialized in [DOMAIN].
 
@@ -31,14 +23,11 @@ You are a [ROLE] specialized in [DOMAIN].
 
 **Stance:** [thorough | cautious | precise | creative | minimal]
 
-# SAFETY (required)
-# ───────────────────────────────────────────────────────────────────────────────
-# TLDR: P1 constraints that cannot be overridden. Binary NEVER/ALWAYS rules.
-# Position early (first 200 tokens) for attention priority.
+<!-- Safety (required) — P1 constraints, position early for attention priority -->
 
 <safety>
 
-**Priority:** Safety > Clarity > Flexibility > Convenience
+**Priority:** Safety → Accuracy → Clarity → Style
 
 - NEVER [critical constraint that cannot be violated]
 - NEVER [another hard limit]
@@ -46,10 +35,7 @@ You are a [ROLE] specialized in [DOMAIN].
 
 </safety>
 
-# IRON LAW (conditional: if tools include edit/execute/delete)
-# ───────────────────────────────────────────────────────────────────────────────
-# TLDR: Inviolable rules with rationalization prevention. 1-3 per agent.
-# Include red flags (triggers) and excuse-busting table.
+<!-- Iron Law (conditional: if tools include edit/execute/delete) -->
 
 <iron_law id="IL_001">
 **Statement:** [ALL CAPS RULE THAT CANNOT BE BYPASSED]
@@ -59,9 +45,7 @@ You are a [ROLE] specialized in [DOMAIN].
 - "[another excuse]" → [why it fails]
 </iron_law>
 
-# RED FLAGS (conditional: if tools include edit/execute/delete)
-# ───────────────────────────────────────────────────────────────────────────────
-# TLDR: Conditions that trigger immediate HALT. Include rationalization table.
+<!-- Red Flags (conditional: if tools include edit/execute/delete) -->
 
 <red_flags>
 
@@ -74,9 +58,7 @@ You are a [ROLE] specialized in [DOMAIN].
 
 </red_flags>
 
-# CONTEXT LOADING (recommended)
-# ───────────────────────────────────────────────────────────────────────────────
-# TLDR: Files to read at session start. Organize by tier (HOT/WARM/FROZEN).
+<!-- Context Loading (recommended) -->
 
 <context_loading>
 
@@ -92,9 +74,7 @@ You are a [ROLE] specialized in [DOMAIN].
 
 </context_loading>
 
-# UPDATE TRIGGERS (recommended for memory integration)
-# ───────────────────────────────────────────────────────────────────────────────
-# TLDR: When to write to memory files. Event → action mapping.
+<!-- Update Triggers (recommended for memory integration) -->
 
 <update_triggers>
 
@@ -105,10 +85,7 @@ You are a [ROLE] specialized in [DOMAIN].
 
 </update_triggers>
 
-# BOUNDARIES (required)
-# ───────────────────────────────────────────────────────────────────────────────
-# TLDR: Three-tier scope. Do (free), Ask First (confirm), Don't (refuse).
-# Must align with tools list.
+<!-- Boundaries (required) — Must align with tools list -->
 
 <boundaries>
 
@@ -120,10 +97,7 @@ You are a [ROLE] specialized in [DOMAIN].
 
 </boundaries>
 
-# MODES (conditional: if multiple behaviors)
-# ───────────────────────────────────────────────────────────────────────────────
-# TLDR: Behavioral variations. Each mode: trigger, steps, output.
-# Omit entirely if agent has single behavior. 2-7 modes max.
+<!-- Modes (conditional: if multiple behaviors) — 2-7 modes max -->
 
 <modes>
 
@@ -141,9 +115,7 @@ You are a [ROLE] specialized in [DOMAIN].
 
 </modes>
 
-# OUTPUTS (recommended)
-# ───────────────────────────────────────────────────────────────────────────────
-# TLDR: What the agent produces. Include confidence thresholds.
+<!-- Outputs (recommended) -->
 
 <outputs>
 
@@ -158,9 +130,7 @@ You are a [ROLE] specialized in [DOMAIN].
 
 </outputs>
 
-# STOPPING RULES (recommended)
-# ───────────────────────────────────────────────────────────────────────────────
-# TLDR: When to stop or hand off. Completion, blockers, errors, confidence.
+<!-- Stopping Rules (recommended) -->
 
 <stopping_rules>
 
@@ -171,9 +141,7 @@ You are a [ROLE] specialized in [DOMAIN].
 
 </stopping_rules>
 
-# ERROR HANDLING (recommended)
-# ───────────────────────────────────────────────────────────────────────────────
-# TLDR: Recovery procedures for common failure scenarios.
+<!-- Error Handling (recommended) -->
 
 <error_handling>
 
@@ -191,26 +159,19 @@ Present options with tradeoffs. Ask user for direction. Do not guess.
 
 </error_handling>
 
-# DOMAIN-SPECIFIC TAGS (optional)
-# ───────────────────────────────────────────────────────────────────────────────
-# TLDR: Create custom tags when domain has recurring patterns not covered above.
-# Use snake_case naming. Reference from other sections using explicit tag name.
+<!-- Domain-Specific Tags (optional) — snake_case naming -->
 
 <domain_specific_tag>
 
 [Content specific to your domain that needs clear boundaries]
 
 </domain_specific_tag>
-
-# When referencing other sections, use the XML tag name:
-# - "Apply constraints from `<safety>` above"
-# - "Using the process defined in `<modes name="mode-name">`"
-# - "As specified in `<domain_specific_tag>`"
 ```
 
----
+</full_template>
 
-## Section Checklist
+
+<section_checklist>
 
 **Required sections:**
 - Frontmatter `name` — Always
@@ -234,11 +195,12 @@ Present options with tradeoffs. Ask user for direction. Do not guess.
 
 **Cross-reference rule:** When referring to content in another section, use the explicit XML tag name (e.g., "as defined in `<safety>`").
 
----
+</section_checklist>
 
-## Minimal Template
 
-Use when: Agent has single behavior, no destructive tools, minimal coordination needs.
+<minimal_template>
+
+Use when agent has single behavior, no destructive tools, minimal coordination needs.
 
 ```markdown
 ---
@@ -254,7 +216,7 @@ You are a [ROLE] specialized in [DOMAIN].
 
 <safety>
 
-**Priority:** Safety > Clarity > Flexibility > Convenience
+**Priority:** Safety → Accuracy → Clarity → Style
 
 - NEVER [critical constraint]
 - ALWAYS [required behavior]
@@ -272,21 +234,26 @@ You are a [ROLE] specialized in [DOMAIN].
 </boundaries>
 ```
 
----
+</minimal_template>
 
-## Placeholder Conventions
+
+<placeholder_conventions>
 
 - `[UPPERCASE]` — Required, user must replace
 - `[lowercase description]` — Descriptive placeholder, replace with actual content
 - `[option1 | option2]` — Choose one
 
----
+</placeholder_conventions>
 
-## What NOT to Include
 
-- **README.md** — Agents don't need separate documentation
-- **CHANGELOG.md** — Version history unnecessary for agents
-- **Steps section** — Agents have `<modes>`, not numbered steps (that's skills)
-- **Loading Directives in body** — Use `<context_loading>` instead
-- **Skill frontmatter fields** — No `license`, `compatibility`, `metadata` fields
-- **Explicit tool syntax** — Agents choose tools; no `#tool:` references in body
+<exclusions>
+
+Do NOT include in agents:
+- README.md — Agents do not need separate documentation
+- CHANGELOG.md — Version history unnecessary for agents
+- Steps section — Agents have `<modes>`, not numbered steps (that belongs to skills)
+- Loading Directives in body — Use `<context_loading>` instead
+- Skill frontmatter fields — No `license`, `compatibility`, `metadata` fields
+- Explicit tool syntax — Agents choose tools; no `#tool:` references in body
+
+</exclusions>

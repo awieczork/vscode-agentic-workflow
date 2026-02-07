@@ -1,8 +1,7 @@
-# Example: API Scaffold Skill
+A complete working skill demonstrating medium complexity with references. Shows tool references (`#tool:editFiles`), validation checks, and framework-aware decisions. Study the `<why_this_works>` section at the end for pattern explanations.
 
-A complete working skill demonstrating Medium complexity with references.
 
----
+<example_output>
 
 ```markdown
 ---
@@ -10,13 +9,12 @@ name: 'api-scaffold'
 description: Creates REST API endpoint structures. Use when user asks to "add endpoint", "create route", "scaffold API", or "generate controller". Produces route handlers with validation, error handling, and TypeScript types.
 ---
 
-# API Scaffold
-
 Create REST API endpoint structure with route, controller, validation, and types.
 
-<steps>
 
-## Steps
+<workflow>
+
+<step_1_gather>
 
 1. **Gather Requirements**
    - Identify HTTP method (GET, POST, PUT, DELETE, PATCH)
@@ -25,17 +23,29 @@ Create REST API endpoint structure with route, controller, validation, and types
    - Identify request body schema (for POST/PUT/PATCH)
    - Identify response schema
 
+</step_1_gather>
+
+<step_2_locate>
+
 2. **Determine File Locations**
    - Route file: `src/routes/{resource}.routes.ts`
    - Controller: `src/controllers/{resource}.controller.ts`
    - Validation: `src/validators/{resource}.validator.ts`
    - Types: `src/types/{resource}.types.ts`
 
+</step_2_locate>
+
+<step_3_generate_types>
+
 3. **Generate Type Definitions**
    Use #tool:editFiles to create `src/types/{resource}.types.ts`:
    - Request interfaces (params, query, body)
    - Response interfaces
    - Export all types
+
+</step_3_generate_types>
+
+<step_4_generate_validation>
 
 4. **Generate Validation Schema**
    Use #tool:editFiles to create `src/validators/{resource}.validator.ts`:
@@ -44,12 +54,20 @@ Create REST API endpoint structure with route, controller, validation, and types
    - Define query parameter schema
    - Export validators
 
+</step_4_generate_validation>
+
+<step_5_generate_controller>
+
 5. **Generate Controller**
    Use #tool:editFiles to create `src/controllers/{resource}.controller.ts`:
    - Import types and validators
    - Create handler function with typed request/response
    - Add try/catch with error handling
    - Return appropriate status codes
+
+</step_5_generate_controller>
+
+<step_6_generate_route>
 
 6. **Generate Route**
    Use #tool:editFiles to create or update `src/routes/{resource}.routes.ts`:
@@ -58,19 +76,28 @@ Create REST API endpoint structure with route, controller, validation, and types
    - Attach validation middleware
    - Export router
 
+</step_6_generate_route>
+
+<step_7_register>
+
 7. **Register Route**
    Update `src/routes/index.ts` to import and use new router.
+
+</step_7_register>
+
+<step_8_verify>
 
 8. **Verify Structure**
    - Confirm all 4 files created
    - Confirm route registered in index
    - Confirm no TypeScript errors
 
-</steps>
+</step_8_verify>
+
+</workflow>
+
 
 <error_handling>
-
-## Error Handling
 
 If resource name unclear: Ask "What resource does this endpoint manage?"
 
@@ -84,9 +111,8 @@ If TypeScript not used: Skip type generation, adjust imports accordingly
 
 </error_handling>
 
-<validation>
 
-## Validation
+<validation>
 
 Before complete:
 - [ ] All 4 files created (types, validator, controller, route)
@@ -96,9 +122,8 @@ Before complete:
 
 </validation>
 
-<notes>
 
-## Notes
+<notes>
 
 - This skill assumes Express.js or similar routing pattern
 - For Fastify, Hono, or other frameworks, adjust route syntax
@@ -107,9 +132,10 @@ Before complete:
 </notes>
 ```
 
----
+</example_output>
 
-## Why This Example Works
+
+<why_this_works>
 
 **Demonstrates key patterns:**
 - Description following [What it does] + [When to use it] + [Key capabilities]
@@ -118,7 +144,7 @@ Before complete:
 - Error handling for common ambiguities
 - Validation checklist for verifiable completion
 
-**Shows Medium complexity:**
+**Shows medium complexity:**
 - 8 steps requiring coordination
 - Multiple file outputs
 - Framework-aware decisions
@@ -128,3 +154,5 @@ Before complete:
 - Not a "creator" skill (avoids meta-confusion)
 - Practical utility (commonly needed)
 - Shows skill scope (single capability: scaffold endpoint)
+
+</why_this_works>

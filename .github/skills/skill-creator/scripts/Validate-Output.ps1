@@ -105,9 +105,9 @@ if (-not $frontmatterMatch.Success) {
             Add-Issue -Priority "P1" -Check "name_format" -Message "Name must be lowercase alphanumeric with hyphens, got: $nameValue"
         }
 
-        # P2: Name matches parent folder name
+        # P1: Name matches parent folder name
         if ($nameValue -ne $parentFolder) {
-            Add-Issue -Priority "P2" -Check "name_matches_folder" -Message "Name '$nameValue' does not match parent folder '$parentFolder'"
+            Add-Issue -Priority "P1" -Check "name_matches_folder" -Message "Name '$nameValue' does not match parent folder '$parentFolder'"
         }
     }
 
@@ -135,9 +135,9 @@ if ($content -notmatch '<step_\d+_') {
     Add-Issue -Priority "P1" -Check "step_tags" -Message "Missing numbered step tags (<step_N_verb>)"
 }
 
-# P2: Has <defaults> section
+# P3: Has <defaults> section (recommended but not required)
 if ($content -notmatch '<defaults>') {
-    Add-Issue -Priority "P2" -Check "defaults_section" -Message "Missing <defaults> section"
+    Add-Issue -Priority "P3" -Check "defaults_section" -Message "Missing <defaults> section (recommended)"
 }
 
 # P2: No "[PLACEHOLDER]" text

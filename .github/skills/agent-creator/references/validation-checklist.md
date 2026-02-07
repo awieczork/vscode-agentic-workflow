@@ -1,15 +1,12 @@
-# Validation Checklist
+This checklist validates agent artifacts before delivery. The governing principle is severity-ordered checking — run P1 checks first (blocking issues that invalidate the agent), then P2 (quality issues that degrade effectiveness), then P3 (optional enhancements). Use this during `<step_5_validate>` to catch issues before handoff.
 
-Self-check before delivery. Use during Step 5: Validate.
 
 <quick_6_check>
-
-## Quick 6-Check (P1 Blockers)
 
 Agent is INVALID if any fails. Fix before delivery.
 
 - [ ] `name` field present, matches filename (lowercase-with-hyphens)
-- [ ] `description` is 50-150 characters, single-line
+- [ ] `description` is single-line, keyword-rich
 - [ ] First paragraph starts with "You are..."
 - [ ] `<safety>` section present with at least one NEVER or ALWAYS
 - [ ] `<boundaries>` section present with Do / Ask First / Don't
@@ -17,60 +14,82 @@ Agent is INVALID if any fails. Fix before delivery.
 
 </quick_6_check>
 
-<p1_blocking>
 
-## P1 — Blocking
+<p1_blocking>
 
 Must fix. Agent fails validation.
 
-### Naming
+<naming>
+
 - [ ] Filename not reserved: `ask`, `edit`, `agent`, `plan`, `workspace`, `terminal`, `vscode`
 - [ ] Filename uses lowercase-with-hyphens (e.g., `code-reviewer.agent.md`)
 
-### Frontmatter
+</naming>
+
+<frontmatter>
+
 - [ ] `name` field present and matches filename (lowercase-with-hyphens)
 - [ ] `description` field present
-- [ ] `description` is 50-150 characters, single-line
+- [ ] `description` is single-line, keyword-rich
 - [ ] Valid YAML syntax (proper quotes, indentation)
+- [ ] No unsupported fields (check against [structure-reference.md](structure-reference.md) `<frontmatter_schema>`)
 
-### Structure
+</frontmatter>
+
+<structure>
+
 - [ ] File content NOT wrapped in markdown codeblock (no leading/trailing backticks)
 - [ ] Identity statement starts with "You are..."
 - [ ] `<safety>` section present
 - [ ] `<boundaries>` section present
 - [ ] All XML tags properly closed
+- [ ] No markdown headings — XML tags are exclusive structure
 
-### Safety (if edit/execute/delete tools)
+</structure>
+
+<safety_checks>
+
+If tools include edit/execute/delete:
 - [ ] `<iron_law>` section present with 1-3 laws
 - [ ] `<red_flags>` section present with HALT conditions
 - [ ] Each iron law has rationalization table
 - [ ] `send: false` on all handoffs
 
-### Size
-- [ ] Total characters ≤30,000
-- [ ] Total lines ≤500
+</safety_checks>
 
 </p1_blocking>
 
-<p2_required>
 
-## P2 — Required
+<p2_required>
 
 Fix before delivery for quality.
 
-### Tools
+<tools_checks>
+
 - [ ] `tools` field explicitly listed (not omitted)
 - [ ] Tools match boundaries (no `edit` if "Don't modify files")
 - [ ] No `tools: ['*']` without documented justification
-- [ ] Tool count ≤15
+- [ ] Tool aliases ≤5 (warn if >5, block if >8) — prevents "Swiss-army agents" anti-pattern
 
-### Content
+</tools_checks>
+
+<description_quality>
+
+- [ ] `description` contains ≥2 action verbs or domain terms — enables subagent discovery via keyword matching
+
+</description_quality>
+
+<content_quality>
+
 - [ ] `<context_loading>` specifies files with tiers
 - [ ] `<stopping_rules>` defines handoff conditions
 - [ ] `<error_handling>` covers 3+ consecutive errors
 - [ ] Handoff targets exist as agent files (if handoffs used)
 
-### Quality
+</content_quality>
+
+<quality_standards>
+
 - [ ] No vague instructions: "be helpful", "as appropriate", "be careful"
 - [ ] Safety rules are binary NEVER/ALWAYS (not "try to avoid")
 - [ ] No conflicting guidance between sections
@@ -78,21 +97,30 @@ Fix before delivery for quality.
 - [ ] Cross-references use explicit XML tag names (e.g., "as defined in `<safety>`")
 - [ ] Domain-specific tags use `snake_case` naming
 
-### Memory (if memory integration)
+</quality_standards>
+
+<memory_checks>
+
+If memory integration:
 - [ ] Tier hierarchy specified: HOT/WARM/FROZEN
 - [ ] `<update_triggers>` section present
 - [ ] Session handoff writes to `_active.md`
 
-### Orchestration (if agent tool)
+</memory_checks>
+
+<orchestration_checks>
+
+If agent tool:
 - [ ] `max_cycles` defined (default: 3)
 - [ ] Subagent depth = 1 only
 - [ ] Escalation path specified
 
+</orchestration_checks>
+
 </p2_required>
 
-<p3_optional>
 
-## P3 — Optional
+<p3_optional>
 
 Enhancements for excellence.
 
@@ -101,15 +129,12 @@ Enhancements for excellence.
 - [ ] Expertise areas listed (2-5 items)
 - [ ] Stance explicitly defined
 - [ ] Confidence thresholds in `<outputs>`
-- [ ] Total lines ≤300 (recommended)
-- [ ] Total characters ≤25,000 (recommended)
 - [ ] Modes count 2-5 (if `<modes>` present)
 
 </p3_optional>
 
-<tools_boundaries_alignment_check>
 
-## Tools-Boundaries Alignment Check
+<tools_boundaries_alignment_check>
 
 Verify no conflicts:
 
@@ -125,9 +150,8 @@ Verify no conflicts:
 
 </tools_boundaries_alignment_check>
 
-<safety_requirements_by_tools>
 
-## Safety Requirements by Tools
+<safety_requirements_by_tools>
 
 **Any agent:**
 - Required: `<safety>`, `<boundaries>`
@@ -146,39 +170,35 @@ Verify no conflicts:
 
 </safety_requirements_by_tools>
 
+
 <common_mistakes>
 
-## Common Mistakes
-
-**`description` too short (<50 chars):**
-- Fix: Add context — what domain, what outcome
-
-**`description` too long (>150 chars):**
-- Fix: Extract detail to identity paragraph
+**`description` missing action verbs:**
+- Wrong: "Helps with code tasks"
+- Correct: Add verbs describing what agent does (creates, reviews, generates, validates)
 
 **Vague boundary: "appropriate actions":**
-- Fix: Replace with specific actions
+- Correct: Replace with specific actions
 
 **Missing iron law for builder agent:**
-- Fix: Add destructive command protection
+- Correct: Add destructive command protection
 
 **`send: true` to agent with edit tools:**
-- Fix: Change to `send: false`
+- Correct: Change to `send: false`
 
 **Modes with overlapping triggers:**
-- Fix: Make triggers distinct
+- Correct: Make triggers distinct
 
 **No stopping rules:**
-- Fix: Add completion + blocker + error conditions
+- Correct: Add completion + blocker + error conditions
 
 **Missing `name` field:**
-- Fix: Add `name` matching filename in lowercase-with-hyphens
+- Correct: Add `name` matching filename in lowercase-with-hyphens
 
 </common_mistakes>
 
-<cross_references>
 
-## Cross-References
+<cross_references>
 
 - [SKILL.md](../SKILL.md) — Parent skill entry point
 

@@ -131,16 +131,14 @@ if (-not $frontmatterData.ContainsKey('name') -or [string]::IsNullOrWhiteSpace($
     }
 }
 
-# P1: description field present (50-150 chars)
+# P1: description field present (single-line, keyword-rich)
 $result.checks_run++
 if (-not $frontmatterData.ContainsKey('description') -or [string]::IsNullOrWhiteSpace($frontmatterData['description'])) {
     Add-Failure -Check "description_field" -Severity "P1" -Message "Missing 'description' field in frontmatter" -Line 3
 } else {
     $desc = $frontmatterData['description']
-    if ($desc.Length -lt 50) {
-        Add-Failure -Check "description_field" -Severity "P1" -Message "description must be at least 50 chars (found: $($desc.Length))" -Line 3
-    } elseif ($desc.Length -gt 150) {
-        Add-Failure -Check "description_field" -Severity "P1" -Message "description must be at most 150 chars (found: $($desc.Length))" -Line 3
+    if ($desc -match "`n") {
+        Add-Failure -Check "description_field" -Severity "P1" -Message "description must be single-line (found newline)" -Line 3
     } else {
         Add-Pass
     }
@@ -182,14 +180,6 @@ if ($content -notmatch '<boundaries>[\s\S]*?</boundaries>') {
 # ============================================
 # P2 CHECKS (quality)
 # ============================================
-
-# P2: <tag_index> section exists
-$result.checks_run++
-if ($content -notmatch '<tag_index>[\s\S]*?</tag_index>') {
-    Add-Warning -Check "tag_index_section" -Severity "P2" -Message "Missing recommended <tag_index> section"
-} else {
-    Add-Pass
-}
 
 # P2: <error_handling> section exists
 $result.checks_run++

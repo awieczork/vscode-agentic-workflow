@@ -1,41 +1,25 @@
-# Structure Reference
+This reference provides exact syntax for skill artifacts. Load during Step 4 when constructing frontmatter, folder structure, or procedure sections. Each section defines field limits, creation triggers, and syntax patterns that ensure consistent skill output.
 
-Exact syntax for skill artifacts. Use during Step 4: Draft.
-
----
 
 <frontmatter_schema>
 
-## Frontmatter Schema
+VS Code supports only `name` and `description` for skill frontmatter. No other fields are recognized.
 
 ```yaml
 ---
-# REQUIRED
-name: 'skill-name'              # Must match folder, lowercase-with-hyphens
-description: '[What it does]. Use when [trigger phrases]. [Key capabilities].'
-
-# OPTIONAL
-license: 'MIT'                  # License identifier
-compatibility: 'Requires X'     # Environment requirements
-metadata:
-  author: 'org-name'
-  version: '1.0.0'
-  tags: ['category', 'domain']
+name: 'skill-name'              # Required: must match folder, lowercase-with-hyphens
+description: '[What it does]. Use when [trigger phrases]. [Key capabilities].'  # Required
 ---
 ```
 
 **Field limits:**
-- `name`: 1-64 characters, pattern `[a-z0-9]+(-[a-z0-9]+)*`
-- `description`: 1-1024 characters, single-line. Structure: `[What it does] + [When to use it] + [Key capabilities]`. Include 2-4 trigger phrases in quotes. Do NOT include "when not to use" guidance.
-- `compatibility`: 1-500 characters
+- `name` — 1-64 characters, pattern `[a-z0-9]+(-[a-z0-9]+)*`
+- `description` — 1-1024 characters, single-line. Structure: `[What it does] + [When to use it] + [Key capabilities]`. Include 2-4 trigger phrases in quotes. Never include "when not to use" guidance.
 
 </frontmatter_schema>
 
----
 
 <folder_structure>
-
-## Folder Structure
 
 ```
 skill-name/
@@ -50,13 +34,13 @@ skill-name/
 **Create `scripts/` when:**
 - Code exceeds 20 lines
 - Requires specific shell (bash, PowerShell)
-- Called multiple times across steps
+- Called 2+ times across steps
 - Needs deterministic execution
 
 **Create `references/` when:**
 - Documentation exceeds 100 lines
 - Content is JIT-loaded (not always needed)
-- Decision rules need separation from main flow
+- Decision rules exceed 30 lines of conditional logic
 - Patterns exceeding 30 lines benefit from isolation
 
 **Create `assets/` when:**
@@ -65,17 +49,14 @@ skill-name/
 - Non-markdown resources required (JSON, YAML)
 - Examples intended for user modification
 
-**Do NOT create folders:**
-- For potential future content (no empty folders)
-- To "look complete" (structure matches need)
+**Create folders only when:**
+- Content already exists for the folder
+- Actual need justifies the structure
 
 </folder_structure>
 
----
 
 <procedure_design>
-
-## Procedure Design
 
 **Use imperative form:**
 - "Run tests" not "You should run tests"
@@ -98,39 +79,32 @@ skill-name/
 - Sequence-sensitive steps
 - Fragile or error-prone operations
 
-**Rule:** Destructive operations require exact commands, not general guidance.
+Never use general guidance for destructive operations — provide exact commands.
 
 </procedure_design>
 
----
 
 <progressive_disclosure_patterns>
 
-## Progressive Disclosure Patterns
-
 Skills use folder structure for context efficiency.
 
-**Pattern 1: Loading directive**
+**Pattern 1 — Loading directive:**
 ```markdown
-### Step 3: Apply Rules
-Load `references/decision-rules.md` for:
+Load [decision-rules.md](references/decision-rules.md) for:
 - Input validation patterns
 - Error code mappings
 - Edge case handling
 ```
 
-**Pattern 2: Conditional loading**
+**Pattern 2 — Conditional loading:**
 ```markdown
-### Step 4: Handle Variants
-
-If REST API: Load `references/rest-patterns.md`
-If GraphQL: Load `references/graphql-patterns.md`
+If REST API: Load [rest-patterns.md](references/rest-patterns.md)
+If GraphQL: Load [graphql-patterns.md](references/graphql-patterns.md)
 ```
 
-**Pattern 3: Asset reference**
+**Pattern 3 — Asset reference:**
 ```markdown
-### Step 5: Generate Output
-Use template from `assets/endpoint-template.md`
+Use template from [endpoint-template.md](assets/endpoint-template.md)
 Customize for the specific route and method.
 ```
 
@@ -138,45 +112,38 @@ Customize for the specific route and method.
 - Loading directive: `Load [file] for:` (imperative, agent reads file)
 - Informational link: `See [file](path/file.md)` (optional, navigation)
 
-**Single-hop rule:** Reference files link only to SKILL.md or external URLs. Never reference → reference.
+**Single-hop rule** — Reference files link only to SKILL.md or external URLs. Never reference → reference. Exception: Scripts in `scripts/` may reference files in `assets/` directly.
 
 </progressive_disclosure_patterns>
 
----
 
 <tool_reference_syntax>
 
-## Tool Reference Syntax
-
-Skills can reference tools using `#tool:<tool-name>` syntax.
-
-**When to use explicit references:**
-- Specific tool is REQUIRED for the step
-- Tool parameters need documentation
-- Disambiguation between similar tools
-
-**When to use implicit description:**
-- Any of several tools could work
-- Agent should choose approach
-- Flexibility is preferred
+Reference tools using `#tool:name` syntax when a specific tool is required.
 
 **Examples:**
-- Explicit: `Use #tool:editFiles to update the configuration`
-- Explicit: `Run #tool:runInTerminal with the build command`
-- Implicit: `Update the configuration file`
-- Implicit: `Execute the build command`
+- `Use #tool:editFiles to update the configuration`
+- `Run #tool:runInTerminal with the build command`
+
+When any approach works, describe the action without tool reference (e.g., "Update the configuration file").
+
+**Tool aliases:**
+- **`execute`** — Run shell commands
+- **`read`** — Read file contents
+- **`edit`** — Edit files
+- **`search`** — Search files or text
+- **`agent`** — Invoke custom agents as subagents
+- **`web`** — Fetch URLs and web search
+- **`todo`** — Manage task lists
 
 </tool_reference_syntax>
 
----
 
 <exclusion_rules>
 
-## Exclusion Rules
+Skills are agent-agnostic procedures — they define WHAT to do, while agents define WHO does it and with what constraints. Separating procedure from persona enables skill reuse across different agents.
 
-Skills are agent-agnostic procedures. These patterns must NOT appear.
-
-### Forbidden XML Tags
+<forbidden_xml_tags>
 
 Skills must NOT contain these agent-specific sections:
 
@@ -191,7 +158,9 @@ Skills must NOT contain these agent-specific sections:
 - `<update_triggers>` — Session events are agent-level
 - `<red_flags>` — HALT conditions are agent behavior
 
-### Forbidden Language
+</forbidden_xml_tags>
+
+<forbidden_language>
 
 **Identity phrases:**
 - "You are a..." (skills have no identity)
@@ -211,58 +180,84 @@ Skills must NOT contain these agent-specific sections:
 - "In scope" / "Out of scope" (skill scope = steps)
 - "Ask First" (permission tiers are agent-level)
 
-### Forbidden References
+</forbidden_language>
+
+<forbidden_references>
 
 **External paths that break self-sufficiency:**
 - `knowledge-base/` — Embed required content instead
 - `memory-bank/` — Skills are stateless
 - `.agent.md` files — Skills are agent-agnostic
-- `@agent-name` — Skills don't invoke agents
+- `@agent-name` — Skills do not invoke agents
 - `#skill:other-skill` as required dependency — Keep skills atomic
 
-### Forbidden Frontmatter Fields
+</forbidden_references>
+
+<forbidden_frontmatter>
 
 - `tools:` — Tool permissions belong to agents
-- `handoffs:` — Skills don't transfer to agents
+- `handoffs:` — Skills do not transfer to agents
 - `model:` — Model selection is agent/user decision
 - `allowed-tools:` — Not supported in VS Code
 - `applyTo:` — Auto-apply patterns define instructions
+- `license:` — Not a VS Code-supported field
+- `compatibility:` — Not a VS Code-supported field
+- `metadata:` — Not a VS Code-supported field
 
-### Recovery Actions
+</forbidden_frontmatter>
+
+<recovery_actions>
 
 When exclusion detected:
 
-- **Agent XML tag** — Remove section; move safety-relevant content to Error Handling
+- **Agent XML tag** — Remove section; move safety-relevant content to error handling
 - **Identity language** — Rewrite as procedural description
 - **Stance words** — Delete; make steps explicit enough to not need stance
 - **External references** — Embed required content in skill's `references/` folder
 - **Forbidden frontmatter** — Remove the field
 
+</recovery_actions>
+
 </exclusion_rules>
 
----
 
 <size_limits>
 
-## Size Limits
-
 **SKILL.md:**
-- Target: 50-150 lines
-- Maximum: 500 lines
+- Target: 150-300 lines
+- Use opening prose paragraph, not a heading
 
 **Reference files:**
 - Target: 100-300 lines each
-- Maximum: 500 lines each
 
 **If exceeding limits:** Extract content to `references/` folder.
 
 </size_limits>
 
----
+
+<token_budget>
+
+Skills use progressive loading to minimize context consumption.
+
+**Discovery phase (~100 tokens):**
+- Agent reads frontmatter only (name + description)
+- Determines if skill matches current task
+- Low cost enables scanning many skills quickly
+
+**Instruction phase:**
+- Agent loads SKILL.md body when skill is invoked
+- Contains workflow steps, error handling, quality signals
+- Budget constraint keeps skills focused and scannable
+
+**Resource phase (on-demand):**
+- Reference files loaded via `Load [file] for:` directives
+- Assets loaded when step requires them
+- Only consumes tokens when actually needed
+
+</token_budget>
+
 
 <cross_references>
-
-## Cross-References
 
 - [SKILL.md](../SKILL.md) — Parent skill entry point
 - [validation-checklist.md](validation-checklist.md) — P1/P2 validation checks

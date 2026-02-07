@@ -1,5 +1,3 @@
-# Example: Code Review Prompt
-
 Full working prompt demonstrating tools array, agent field, variables, and XML body structure.
 
 ---
@@ -9,11 +7,9 @@ Full working prompt demonstrating tools array, agent field, variables, and XML b
 description: "Review selected code for bugs, security issues, and improvements"
 name: "code-review"
 argument-hint: "Select code to review, then describe focus areas"
-agent: "agent"
+agent: "inspect"
 tools: ["search", "web"]
 ---
-
-# Code Review
 
 <context>
 
@@ -45,23 +41,23 @@ Use search capabilities to find related code patterns in the repository.
 
 <format>
 
-## Review Summary
+**Review Summary**
 
 **Risk Level:** [High/Medium/Low]
 
-## Issues Found
+**Issues Found**
 
 - **Line X**: [Issue description] → [Suggested fix]
 
-## Security Concerns
+**Security Concerns**
 
 - [Vulnerability]: [Explanation and mitigation]
 
-## Improvements
+**Improvements**
 
 - [Suggestion with code example]
 
-## Related Patterns
+**Related Patterns**
 
 [Links to similar code in the repository]
 
@@ -79,22 +75,21 @@ Use search capabilities to find related code patterns in the repository.
 
 ---
 
-## Why This Example Works
+<why_this_works>
 
 **Pattern → Purpose:**
-
-- `agent: "agent"` + `tools:` → Demonstrates explicit mode setting when tools specified (P2 requirement)
+- `agent: "inspect"` + `tools:` → Delegates to quality verification agent with restricted tool access
 - `tools: ["search", "web"]` → Shows tool whitelist restricting access to specific capabilities
 - `${selection}` in context → Shows selection variable capturing user's highlighted code
 - `${file}` for location → Shows file variable providing path context
 - `${input:focus:...}` → Shows user-input variable with placeholder hint for runtime customization
-- `#tool:codebase` in task → Shows tool reference syntax for inline documentation
-- `<constraints>` with "analysis only" → Reinforces read-only behavior despite agent mode access
+- `<constraints>` with "analysis only" → Reinforces read-only behavior despite tool access
 
 **Demonstrates:**
-
 - All 4 XML body sections (`<context>`, `<task>`, `<format>`, `<constraints>`)
 - All 3 variable categories used (file, selection, user-input)
-- Tool whitelist pattern with explicit agent mode
+- Tool whitelist pattern with explicit agent delegation
 - Single-purpose task (review) with structured output format
 - Constraint that limits scope despite having tool access
+
+</why_this_works>

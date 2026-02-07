@@ -1,5 +1,4 @@
 # Skill Output Schema
-# Source: audit/contract-specifications.md <skill_output_schema>
 
 artifact_type: skill
 version: "1.0"

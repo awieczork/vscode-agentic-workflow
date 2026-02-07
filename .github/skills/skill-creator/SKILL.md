@@ -3,21 +3,19 @@ name: skill-creator
 description: Creates SKILL.md files from specifications. Use when user asks to "create a skill", "build a skill", "make a reusable procedure", or "generate skill for [domain]". Produces folder structure, frontmatter, numbered steps, error handling, and validation checks.
 ---
 
-# Skill Creator
-
-Create valid, high-quality `.github/skills/{name}/SKILL.md` files from specifications.
+This skill creates well-structured SKILL.md files that define reusable procedures for AI agents. The governing principle is single-focused capability — each skill solves one specific problem within a standard folder structure. Begin with `<step_1_classify>` to confirm the request is a skill, not another artifact type.
 
 <defaults>
 
 When specification omits details, use these values:
 
-- **Structure:** Single SKILL.md, no subfolders
-- **Description length:** under 1024 characters
-- **Steps count:** 3-7 numbered steps
-- **Error handling:** 3-5 failure modes with If/Then format
-- **Reference file threshold:** Extract content >100 lines
-- **Validation checks:** 3-5 verifiable conditions
-- **XML structure:** Content with 2+ sections uses XML tags as primary structure per `<structure_hierarchy>` in copilot-instructions.md
+- **Structure** — Single SKILL.md, no subfolders
+- **Description length** — Under 1024 characters
+- **Steps count** — 3-7 numbered steps
+- **Error handling** — 3-5 failure modes with If/Then format
+- **Reference file threshold** — Extract content >100 lines
+- **Validation checks** — 3-5 verifiable conditions
+- **XML structure** — Content with 2+ sections uses XML tags as primary structure (snake_case, max 3 levels nesting)
 
 </defaults>
 
@@ -25,32 +23,29 @@ When specification omits details, use these values:
 
 <step_1_classify>
 
-Confirm spec describes a SKILL, not another artifact type.
+Confirm spec describes a skill, not another artifact type.
 
-**Decision gate:**
-- Reusable procedure any agent invokes? → Skill ✓
-- Needs persona + tools + cross-session behavior? → Agent (stop, wrong skill)
-- File-pattern rules that auto-apply? → Instruction (stop, wrong skill)
-- One-shot template with placeholders? → Prompt (stop, wrong skill)
+- Reusable procedure any agent invokes? → Skill (continue)
+- Needs persona, tools, cross-session behavior? → Agent (stop, use agent-creator)
+- File-pattern rules that auto-apply? → Instruction (stop, use instruction-creator)
+- One-shot template with placeholders? → Prompt (stop, use prompt-creator)
 
-If unclear, ask user: "This sounds like [type] because [reason]. Confirm skill?"
+If unclear, ask: "This sounds like [type] because [reason]. Confirm skill?"
 
 </step_1_classify>
 
 <step_2_name_and_describe>
 
 **Name:**
-- Extract from: "skill for [name]" or derive from capability
+- Extract from "skill for [name]" or derive from capability
 - Format: lowercase-with-hyphens, 1-64 characters
-- Rule: Must match parent folder name exactly
+- Must match parent folder name exactly
 
 **Description:**
 - Structure: `[What it does]. Use when [trigger phrases]. [Key capabilities].`
 - Include 2-4 specific tasks users say in quotes
 - Mention file types if relevant (SKILL.md, .agent.md)
 - Under 1024 characters, no XML tags
-
-**Do NOT include:** Negative triggers ("Do NOT use for...") or "when not to use" guidance.
 
 **Examples:**
 - `Creates REST API endpoints. Use when user asks to "scaffold routes", "add endpoint", or "create controller". Produces route handlers with validation and TypeScript types.`
@@ -85,35 +80,38 @@ Determine structure from content signals, not size labels.
 
 <step_4_draft>
 
-Build the skill using these sections. Load `references/structure-reference.md` for:
-- Frontmatter schema
-- Procedure design patterns
-- "Load X when Y" syntax
-- Exclusion rules (what skills must NOT contain)
+Build the skill using these sections. Load [structure-reference.md](references/structure-reference.md) for: frontmatter schema, procedure design patterns, loading directive syntax, exclusion rules.
+
+**Progressive loading design:**
+Skills load in three phases to minimize context consumption:
+1. **Discovery (~100 tokens)** — Agent reads name + description to match skill to task
+2. **Instruction** — Agent loads SKILL.md body when skill invoked
+3. **Resource (on-demand)** — Reference files load via `Load [file] for:` directives
+
+Design skill structure so discovery is cheap, instructions are self-contained, and resources load only when needed.
 
 **Required sections (wrapped in XML tags):**
-1. YAML Frontmatter (`name`, `description`)
-2. H1 Title
-3. Overview (1-2 sentences)
-4. `<workflow>` containing `<step_N_verb>` tags (numbered, imperative)
-5. Error Handling in `<error_handling>` tag (If X: Y format)
+1. YAML frontmatter (`name`, `description` — VS Code supports only these two fields)
+2. Opening prose paragraph (2-3 sentences stating purpose and governing principle)
+3. `<workflow>` containing `<step_N_verb>` tags (numbered, imperative)
+4. `<error_handling>` (If X: Y format)
 
 **Optional sections:**
-- Reference Files (if using `references/`)
-- Validation (if success is verifiable)
-- Notes (for caveats, prerequisites)
+- `<validation>` (if success is verifiable)
+- `<loading_directives>` (if using references/)
+- `<notes>` (for caveats, prerequisites)
 
 </step_4_draft>
 
 <step_5_validate>
 
-Self-check before delivery. Load `references/validation-checklist.md` for full checks.
+Self-check before delivery. Load [validation-checklist.md](references/validation-checklist.md) for full checks.
 
 **Quick 5-check (P1 blockers):**
 1. [ ] `name` + `description` in frontmatter
 2. [ ] `name` matches parent folder exactly
 3. [ ] Description follows: [What it does] + [When to use it] + [Key capabilities], no negative triggers
-4. [ ] SKILL.md ≤500 lines
+4. [ ] No unsupported frontmatter fields — VS Code supports only `name` and `description`
 5. [ ] No hardcoded secrets or absolute paths
 
 **Exclusion check (skills must NOT contain):**
@@ -122,9 +120,10 @@ Self-check before delivery. Load `references/validation-checklist.md` for full c
 - References: knowledge-base/, memory-bank/, .agent.md files
 - Frontmatter: `tools:`, `handoffs:`, `model:`, `applyTo:`
 
-### XML Structure (P2)
-- [ ] Content with 2+ logical sections uses XML tags as primary structure
-- [ ] Markdown headings (`##`) used inside XML tags for human readability
+**Structure check (P2):**
+- [ ] No markdown headings — XML tags are exclusive structure
+- [ ] Content with 2+ logical sections uses XML tags
+- [ ] Every `Load [file]` directive points to existing file
 
 </step_5_validate>
 
@@ -132,25 +131,31 @@ Self-check before delivery. Load `references/validation-checklist.md` for full c
 
 Connect skill to ecosystem.
 
-**Folder placement:**
-- Project-specific: `.github/skills/[name]/`
-- Personal (all projects): `~/.copilot/skills/[name]/`
+**Folder placement:** `.github/skills/[name]/`
 
-**Cross-references:**
-- Use markdown links: `[file.md](references/file.md)`
-- Use loading directives: `Load [file] for:`
+**Cross-references:** Use markdown links `[file.md](references/file.md)` and loading directives `Load [file] for:`
 
-**Tool references:**
-- Explicit need: `Use #tool:editFiles to update config`
-- Implicit (agent chooses): `Update the configuration file`
+**Tool references:** Use `#tool:name` when specific tool required. Describe action when any approach works.
 
 </step_6_integrate>
 
 </workflow>
 
----
+<error_handling>
 
-## Loading Directives
+If spec is ambiguous about artifact type: Ask "This sounds like [type] because [reason]. Confirm skill?"
+
+If name format is invalid: Suggest corrected format using lowercase-with-hyphens
+
+If description exceeds 1024 characters: Trim to essential content or ask user to shorten
+
+If referenced file does not exist: Create the file or update reference path
+
+If agent contamination detected (identity, safety, boundaries tags): Remove offending content and warn user
+
+</error_handling>
+
+<loading_directives>
 
 Use explicit loading directives in steps to trigger JIT context loading.
 
@@ -159,15 +164,17 @@ Use explicit loading directives in steps to trigger JIT context loading.
 - `Use template from [file]` — Load asset for output
 - `See [file](path)` — Cross-reference only, no automatic load
 
----
+</loading_directives>
 
-## When to Ask User
+<when_to_ask>
 
 - Capability unclear → "What does this skill do?"
 - Multiple domains → "Should this be one skill or separate skills?"
 - Triggers ambiguous → "When should agents invoke this?"
 
-## Quality Signals
+</when_to_ask>
+
+<quality_signals>
 
 **Minimum quality:**
 - Description follows [What it does] + [When to use it] + [Key capabilities]
@@ -182,14 +189,18 @@ Use explicit loading directives in steps to trigger JIT context loading.
 - Validation section with 3-5 verifiable checks
 - No agent contamination (identity, safety, boundaries)
 
----
+</quality_signals>
 
-## References
+<references>
 
 - [structure-reference.md](references/structure-reference.md) — Frontmatter, patterns, exclusions
 - [validation-checklist.md](references/validation-checklist.md) — P1/P2 checks
 
-## Assets
+</references>
+
+<assets>
 
 - [example-skeleton.md](assets/example-skeleton.md) — Annotated minimal template
 - [example-api-scaffold.md](assets/example-api-scaffold.md) — Full working skill
+
+</assets>

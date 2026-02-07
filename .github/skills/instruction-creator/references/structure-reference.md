@@ -1,70 +1,51 @@
-# Instruction Structure Reference
+This file defines syntax for both instruction types: Repo-Wide (global, no frontmatter) and Path-Specific (file-pattern triggered, YAML frontmatter). Start with `<two_instruction_types>` to determine which applies, then reference grouped format and glob patterns from subsequent sections.
 
-Syntax and format specifications for instruction files.
-
----
 
 <two_instruction_types>
 
-## Two Instruction Types
+**Repo-Wide** (`copilot-instructions.md`)
+- **Location:** `.github/copilot-instructions.md`
+- **Frontmatter:** NONE — first line must NOT be `---`
+- **Scope:** All chat requests in workspace when VS Code setting enabled
+- **Setting:** `github.copilot.chat.codeGeneration.useInstructionFiles`
 
-### Repo-Wide (`copilot-instructions.md`)
-
-**Location:** `.github/copilot-instructions.md`
-
-**Frontmatter:** NONE — plain Markdown only. First line must NOT be `---`.
-
-**Scope:** All chat requests in workspace when VS Code setting enabled.
-
-**Setting:** `github.copilot.chat.codeGeneration.useInstructionFiles`
-
-**Size:** Target 100-150 lines, maximum 200 lines.
-
-### Path-Specific (`*.instructions.md`)
-
-**Location:** `.github/instructions/*.instructions.md`
-
-**Frontmatter:** Optional YAML with `applyTo`, `name`, `description` fields.
-
-**Scope:** Files matching `applyTo` glob pattern.
-
-**Auto-apply:** Only when `applyTo` is specified.
-
-**Size:** Target 50-100 lines, maximum 150 lines.
+**Path-Specific** (`*.instructions.md`)
+- **Location:** `.github/instructions/*.instructions.md`
+- **Frontmatter:** YAML with `description` (required), `applyTo` (optional), `name` (optional)
+- **Scope:** Files matching `applyTo` glob pattern, or on-demand by task relevance
+- **Auto-apply:** Only when `applyTo` is specified; instructions without `applyTo` are on-demand only
 
 </two_instruction_types>
 
----
 
 <frontmatter_schema>
 
-## Frontmatter Schema (Path-Specific Only)
-
-All fields are optional, but `applyTo` is required for auto-apply behavior.
+Path-Specific only. The `description` field is required (enables on-demand discovery). The `applyTo` field is optional (enables file-triggered discovery). The `name` field is optional.
 
 ```yaml
 ---
-applyTo: "[GLOB_PATTERN]"    # Required for auto-apply
+description: "[PURPOSE]"     # Required, enables on-demand discovery
+applyTo: "[GLOB_PATTERN]"    # Optional, enables file-triggered discovery
 name: "[DISPLAY_NAME]"       # Optional, defaults to filename
-description: "[PURPOSE]"     # Optional, 50-150 characters
 ---
 ```
 
 **Field constraints:**
-- `applyTo` — Valid glob pattern (see Glob Reference below)
+- `description` — 50-150 characters, single-line. Use "Use when [TASK]. [SUMMARY]." pattern for on-demand discovery
+- `applyTo` — Valid glob pattern (see `<glob_pattern_reference>`)
 - `name` — 3-50 characters
-- `description` — 50-150 characters, single-line
+
+**Discovery modes:**
+- **On-demand** — `description` only, no `applyTo`. Discovered by task relevance matching.
+- **File-triggered** — `applyTo` only or both. Auto-loads when matching files in context.
+- **Hybrid** — Both fields. Supports both discovery methods.
 
 </frontmatter_schema>
 
----
 
 <glob_pattern_reference>
 
-## Glob Pattern Reference
-
-### Operators
-
+**Operators:**
 - `*` — Any characters in single path segment (`*.ts`)
 - `**` — Any path segments, recursive (`**/*.ts`)
 - `?` — Single character (`file?.ts`)
@@ -72,8 +53,7 @@ description: "[PURPOSE]"     # Optional, 50-150 characters
 - `[]` — Character set (`file[0-9].ts`)
 - `,` — Multiple patterns (`**/*.ts,**/*.tsx`)
 
-### Common Patterns
-
+**Common patterns:**
 - All TypeScript: `**/*.ts`
 - TypeScript + TSX: `**/*.{ts,tsx}`
 - Specific directory: `src/**/*.ts`
@@ -81,8 +61,7 @@ description: "[PURPOSE]"     # Optional, 50-150 characters
 - Config files: `**/*.config.{js,ts}`
 - Markdown in folder: `.github/**/*.md`
 
-### Invalid Patterns (P1 Blocking)
-
+**Invalid patterns (P1 blocking):**
 - `**` alone — Matches all files, defeats Path-Specific purpose
 - `*` alone — Too broad, no file type constraint
 - Regex syntax (`\d`, `^`, `$`) — Not supported
@@ -90,128 +69,196 @@ description: "[PURPOSE]"     # Optional, 50-150 characters
 
 </glob_pattern_reference>
 
----
 
-<layer_system>
+<grouped_format>
 
-## Layer System
+Both instruction types use named groups as their exclusive structural system. No markdown headings anywhere.
 
-Match output depth to specification complexity.
+**Group structure:**
 
-### L0 — Valid (Minimum Viable)
+```markdown
+<group_name>
 
-- Correct location and filename
-- Frontmatter format matches type (none for Repo-Wide)
-- Basic rules present (3+ items)
+<rules>
 
-**Use when:** Simple, focused rules for one concern.
+- [Rule 1 — imperative voice]
+- [Rule 2 — specific, actionable]
+- [Rule 3]
 
-### L1 — Good (Production-Ready)
+</rules>
 
-L0 requirements plus:
-- `applyTo` specified (Path-Specific)
-- Imperative voice throughout
-- Rules are specific and actionable
-- ALWAYS/NEVER for safety-critical rules
-- Size within limits
+<justification>
 
-**Use when:** Standard instruction file for team use.
+[2-4 sentences — include ONLY for rules that deviate from training defaults]
 
-### L2 — Excellent (Full Quality)
+</justification>
 
-L1 requirements plus:
-- Code examples (correct/incorrect pairs) for ambiguous rules
-- Anti-patterns section for common mistakes
-- Stackability verified (no conflicts with existing instructions)
-- Optimized token economy (no redundant content)
+<benefit>
 
-**Use when:** Complex standards, multiple team members, high visibility.
+[1-2 sentences stating concrete outcome]
 
-</layer_system>
+</benefit>
 
----
+<anti_patterns>
 
-<size_thresholds>
+- Wrong: [bad pattern] → Correct: [good pattern]
 
-## Size Thresholds
+</anti_patterns>
 
-**Path-Specific:**
-- Target: 50-100 lines (optimal)
-- Recommend split: 100 lines (evaluate by concern)
-- Maximum: 150 lines (mandatory split)
+</group_name>
+```
 
-**Repo-Wide:**
-- Target: 100-150 lines (optimal)
-- Recommend split: 150 lines (evaluate by concern)
-- Maximum: 200 lines (mandatory split)
+**Required elements:**
+- `<rules>` — Always required. Bullet list of imperative rules.
 
-**Splitting guidance:**
-- Split by file type when rules serve different extensions
-- Split by concern when rules cover distinct domains (security vs style)
-- Extract to Repo-Wide when rule applies to 3+ file types
+**Optional elements:**
+- `<justification>` — Include only when rules deviate from training defaults. 2-4 sentences.
+- `<benefit>` — 1-2 sentences stating concrete outcome. Include for non-obvious benefits.
+- `<anti_patterns>` — Wrong/Correct pairs with em-dash. Include for ambiguous rules.
 
-</size_thresholds>
+**Tag naming:**
+- Use domain-specific, descriptive names: `<type_safety>`, `<migration_rules>`, `<api_conventions>`
+- Avoid overly generic names that conflict when instructions stack: `<rules>` alone, `<examples>` alone
+- Pattern: `<{domain}_{concern}>` or `<{specific_concept}>`
 
----
+</grouped_format>
+
 
 <section_patterns>
 
-## Section Patterns
-
-### Repo-Wide Sections
+**Repo-Wide body:** Opening prose paragraph, then named groups. No frontmatter.
 
 ```markdown
-## Project Context
-[Project] uses [tech stack with versions].
+Opening prose paragraph stating project purpose and governing principle.
 
-## Code Style
-- [Rule 1]
-- [Rule 2]
 
-## Commands
+<project_context>
+
+<rules>
+
+- [Project] uses [tech stack with versions]
 - Build: `[command]`
 - Test: `[command]`
 
-## Safety Rules
-- NEVER [constraint]
-- ALWAYS [behavior]
-```
+</rules>
 
-### Path-Specific Sections
+</project_context>
 
-```markdown
-# [Title]
 
-[One-line summary]
+<code_style>
 
-## Core Rules
+<rules>
+
 - [Rule 1]
 - [Rule 2]
-- [Rule 3]
 
-## Code Standards
+</rules>
 
-### Correct
-```[language]
-[correct example]
+<anti_patterns>
+
+- Wrong: [bad pattern] → Correct: [good pattern]
+
+</anti_patterns>
+
+</code_style>
+
+
+<safety_constraints>
+
+<rules>
+
+- NEVER [constraint]
+- ALWAYS [behavior]
+
+</rules>
+
+</safety_constraints>
 ```
 
-### Incorrect
-```[language]
-[incorrect example]
-```
+**Path-Specific body:** Frontmatter, opening prose paragraph, then named groups.
 
-## Anti-Patterns
-- [Pattern to avoid]: [Why]
+```markdown
+---
+applyTo: "**/*.ts"
+description: "TypeScript coding standards for all TypeScript files"
+---
+
+Opening prose paragraph stating purpose and governing principle.
+
+
+<type_safety>
+
+<rules>
+
+- Use `interface` for object shapes that may be extended
+- Use `type` for unions, intersections, and mapped types
+- Prefer `unknown` over `any` — narrow types explicitly
+
+</rules>
+
+<justification>
+
+Strict typing prevents runtime errors that TypeScript is designed to catch at compile time. The interface/type distinction follows TypeScript team recommendations.
+
+</justification>
+
+<benefit>
+
+Type errors surface during development instead of production.
+
+</benefit>
+
+<anti_patterns>
+
+- Wrong: `function process(input: any)` → Correct: `function process(input: unknown)`
+- Wrong: `as Type` assertion → Correct: Type guard with narrowing
+
+</anti_patterns>
+
+</type_safety>
 ```
 
 </section_patterns>
 
----
 
-<loading_directives>
+<layer_system>
 
-## Loading Directives
+Match output depth to specification complexity.
+
+**L0 — Valid (minimum viable):**
+- Correct location and filename
+- Frontmatter format matches type (none for Repo-Wide)
+- Basic rules present (3+ items)
+
+**L1 — Good (production-ready):**
+- L0 + discovery mode configured (`applyTo` for file-triggered, description for on-demand)
+- Imperative voice throughout
+- Rules are specific and actionable
+- ALWAYS/NEVER for safety-critical rules
+
+**L2 — Excellent (full quality):**
+- L1 + Wrong/Correct example pairs for ambiguous rules
+- Stackability verified (no conflicts with existing instructions)
+- Optimized token economy (no redundant content)
+
+</layer_system>
+
+
+<size_thresholds>
+
+**Path-Specific:** Target up to 100 lines. Evaluate split at 100 lines. Maximum 150 lines.
+
+**Repo-Wide:** Target 100-150 lines. Evaluate split at 150 lines. Maximum 200 lines.
+
+**Splitting guidance:**
+- Split by file type when rules serve different extensions
+- Split by concern when rules cover distinct domains (security vs style)
+- Extract to Repo-Wide when rule applies to ≥3 file types
+
+</size_thresholds>
+
+
+<loading_behavior>
 
 Instructions auto-load based on:
 
@@ -221,15 +268,12 @@ Instructions auto-load based on:
 
 **Stacking:** Multiple instructions load simultaneously. Order is non-deterministic. Design rules to be self-contained.
 
-</loading_directives>
+</loading_behavior>
 
----
 
-<cross_references>
-
-## Cross-References
+<references>
 
 - [SKILL.md](../SKILL.md) — Parent skill entry point
 - [validation-checklist.md](validation-checklist.md) — P1/P2/P3 checks
 
-</cross_references>
+</references>

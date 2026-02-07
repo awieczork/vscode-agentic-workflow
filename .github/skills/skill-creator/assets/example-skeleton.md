@@ -1,42 +1,41 @@
-# Skill Skeleton
+Annotated structure showing all sections. Templates use `[UPPERCASE]` placeholders for required fields that must be replaced, lowercase for customizable examples. Copy the template and replace all placeholders.
 
-Annotated structure showing all sections. Copy and customize.
 
----
+<full_template>
 
 ```markdown
 ---
-name: 'skill-name'                                    # REQUIRED: matches folder
-description: '[What it does]. Use when [trigger phrases]. [Key capabilities].'  # REQUIRED: 1-1024 chars, single-line
-license: 'MIT'                                        # OPTIONAL
-compatibility: 'Requires Node.js 18+'                 # OPTIONAL: environment needs
-metadata:                                             # OPTIONAL
-  author: 'your-org'
-  version: '1.0.0'
-  tags: ['category']
+name: 'skill-name'
+description: '[What it does]. Use when [trigger phrases]. [Key capabilities].'
 ---
 
-# [SKILL_TITLE]
+[ONE_SENTENCE_OVERVIEW]. The governing principle is [CORE_PRINCIPLE].
 
-[ONE_SENTENCE_OVERVIEW]
+<workflow>
 
-<steps>
-
-## Steps
+<step_1_[ACTION]>
 
 1. [STEP_1_ACTION]
    - [Detail if needed]
 
+</step_1_[ACTION]>
+
+<step_2_[ACTION]>
+
 2. [STEP_2_ACTION]
    - [Detail if needed]
 
+</step_2_[ACTION]>
+
+<step_3_[ACTION]>
+
 3. [STEP_3_ACTION]
 
-</steps>
+</step_3_[ACTION]>
+
+</workflow>
 
 <error_handling>
-
-## Error Handling
 
 If [CONDITION_1]: [RECOVERY_ACTION]
 If [CONDITION_2]: [RECOVERY_ACTION]
@@ -44,17 +43,13 @@ If unknown error: Abort with error message and context
 
 </error_handling>
 
-<reference_files>
-
-## Reference Files
+<references>
 
 - [file-name.md](references/file-name.md) — [What it contains]
 
-</reference_files>
+</references>
 
 <validation>
-
-## Validation
 
 Before complete:
 - [ ] [VERIFIABLE_CHECK_1]
@@ -64,18 +59,17 @@ Before complete:
 
 <notes>
 
-## Notes
-
 - [PREREQUISITE_OR_CAVEAT]
 
 </notes>
 ```
 
----
+</full_template>
 
-## Minimal Template
 
-For simple skills under 50 lines, use this minimal structure:
+<minimal_template>
+
+For simple skills under 50 lines:
 
 ```markdown
 ---
@@ -83,52 +77,60 @@ name: 'skill-name'
 description: '[What it does]. Use when [trigger phrases]. [Key capabilities].'
 ---
 
-# [SKILL_TITLE]
-
 [OVERVIEW]
 
-<steps>
-
-## Steps
+<step_1_[ACTION]>
 
 1. [STEP_1]
+
+</step_1_[ACTION]>
+
+<step_2_[ACTION]>
+
 2. [STEP_2]
+
+</step_2_[ACTION]>
+
+<step_3_[ACTION]>
+
 3. [STEP_3]
 
-</steps>
+</step_3_[ACTION]>
 
 <error_handling>
-
-## Error Handling
 
 If [CONDITION]: [ACTION]
 
 </error_handling>
 ```
 
----
+</minimal_template>
 
-## Placeholder Conventions
+
+<placeholder_conventions>
 
 - `[UPPERCASE]` — Required placeholder, must replace
 - `[lowercase]` — Example text, customize as needed
-- `# OMIT` — Section is optional, remove if not needed
+- Optional sections (`<references>`, `<validation>`, `<notes>`) — Remove entirely if not needed
 
----
+</placeholder_conventions>
 
-## What NOT to Include
 
-Skills should NOT have:
+<scope_boundaries>
 
-- README.md
-- CHANGELOG.md
-- INSTALLATION_GUIDE.md
-- Any file besides SKILL.md and its resources
+**Skills contain:**
+- SKILL.md as entry point
+- Supporting resources in scripts/, references/, assets/ as needed
 
-Skills should NOT contain:
+**Skills use:**
+- Procedural structure with numbered steps
+- XML tags as exclusive structure (no markdown headings)
+- Imperative voice throughout
 
-- Identity statements ("You are...")
-- Safety sections (`<safety>`)
-- Boundary definitions (`<boundaries>`)
-- Handoff specifications
-- Mode variations
+**Skills never contain:**
+- Agent identity (`<identity>`, `<safety>`, `<boundaries>`)
+- Persona language ("You are a...")
+- External dependencies (`knowledge-base/`, `memory-bank/`)
+- Unsupported frontmatter fields (`license`, `compatibility`, `metadata`, `tools`, `model`)
+
+</scope_boundaries>

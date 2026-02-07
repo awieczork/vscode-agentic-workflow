@@ -1,102 +1,122 @@
-# Copilot Instructions
+This framework helps humans create effective agentic workflows. The artifacts themselves are written FOR AI agents TO execute — the reader of every file in this repository is ALWAYS an **AI Agent**, not a human.
 
-This file defines content generation rules for AI agents in this repository. All generated content optimizes for AI agent consumption, not human readers.
+AI agents fabricate when rules are incomplete and fail on edge cases when rules don't convey intent. This framework solves the precision-understanding tension: agents need enough structure to act without guessing, AND enough context to reason when structure doesn't anticipate the situation. Rules are organized into named groups with collective justification and benefit, so the agent internalizes principles at the group level rather than processing per-rule overhead. Provide what structure cannot — agents parse XML tags directly; prose supplies purpose, priority, and relationships that parsing misses.
 
-**Reader identity:** The reader of all files in `.github/` is ALWAYS an AI agent. Write TO the agent, not descriptions ABOUT the agent.
+The governing principle is: calibrate autonomy to confidence — proceed decisively when evidence is strong, escalate when uncertain, and prioritize safety over speed. Apply `<decision_making>` when rules conflict. Begin with `<governing_principles>` for structural rules, then apply patterns from remaining sections as situations arise.
 
-Apply rules from `<critical_rules>` when generating any content. Avoid human-centric patterns listed in `<forbidden_structures>`. Select artifact type using decision order in `<artifact_types>`. For extended conventions, follow [xml-structure.instructions.md](instructions/xml-structure.instructions.md) for XML syntax and [writing.instructions.md](instructions/writing.instructions.md) for writing patterns.
 
-<validation_checks>
+<governing_principles>
 
-## Content Validation
+<rules>
 
-Execute these checks at each generation phase:
+- copilot-instructions.md takes precedence over domain instruction files
+- Structure rules within named groups using `<rules>`, `<justification>`, `<benefit>`, and optional `<anti_patterns>` tags — include justification/benefit only for rules that deviate from training defaults
+- Trust documented structure without re-verification; verify all facts, file contents, and citations before citing
+- Do only what is requested or clearly necessary; treat undocumented features as unsupported
+- Include type-specific requirements for each document type: purpose statements for files, required/optional marking for templates, when-to-create criteria for patterns, P1/P2/P3 severity for checklists
 
-**Pre-generation:**
-- Verify content is clear and unambiguous for an AI agent
-- Confirm an AI agent can parse and act on this content without human interpretation
+</rules>
 
-**During generation:**
-- Apply XML tag structure per [xml-structure.instructions.md](instructions/xml-structure.instructions.md)
-- Use imperative verbs per `<critical_rules>`
-- Avoid patterns in `<forbidden_structures>`
+<justification>
 
-**Post-generation:**
-- Verify the AI agent can easily identify and locate specific content
-- Confirm another AI agent would understand this without additional context
+Domain instruction files refine within project-wide bounds — without explicit precedence, conflicts cause paralysis. The grouped format compresses justification to group level, reducing token cost while preserving the principle-not-command model. Fabricated citations destroy trust; structure is pre-verified.
 
-</validation_checks>
+</justification>
 
-<critical_rules>
+<benefit>
 
-## Core Generation Rules
+The agent resolves conflicts by checking project rules first, produces correctly structured documents, and grounds all factual claims in evidence.
 
-Before output, verify: "Executable by agent without human interpretation?" If no, revise.
+</benefit>
 
-**Language rules:**
-- Use imperative verbs — "Include X" not "X should be included"
-- State facts with evidence basis — avoid "typically" or "probably"
-- Quantify all guidance — "2-3 items" not "several"
-- Avoid emojis — emojis break parsing in some environments
+<anti_patterns>
 
-**Structure rules:**
-- Wrap all logical sections in XML tags per [xml-structure.instructions.md](instructions/xml-structure.instructions.md)
-- Apply XML tags when generating content or editing files
+- Wrong: Citing a source without retrieval, describing file contents without reading → Correct: Read the file, then cite specific content
+- Wrong: Adding features "while we're here", future-proofing not requested → Correct: Deliver exactly what was requested; note potential improvements only if asked
 
-**Validation:**
-- Spawn sub-agent with #tool:runSubagent before creating or editing content to verify clarity
+</anti_patterns>
 
-</critical_rules>
+</governing_principles>
 
-<forbidden_structures>
 
-## Patterns to Avoid
+<decision_making>
 
-These human-centric patterns break agent parseability. Use the positive alternatives.
+<rules>
 
-**Start with actionable content** — Begin files directly with purpose statement and rules.
-<example>
-- Avoid: "## Introduction\n\nThis guide will help you..."
-- Use: "## Purpose\n\nThis file defines validation rules for..."
-</example>
+- When rules conflict, apply: Safety → Accuracy → Clarity → Style — the first dimension that distinguishes options wins
+- Classify issues by impact: P1 blocks completion, P2 degrades quality, P3 is optional
+- Calibrate decisions to confidence: high confidence → proceed; medium confidence → flag uncertainty, ask; low confidence → stop, request clarification
+- When resources are unavailable, state the gap, provide an explicit workaround, continue
 
-**Write section content directly** — Start each section with its content, not commentary.
-<example>
-- Avoid: "This section covers the key patterns..."
-- Use: "Key patterns:\n- Pattern 1..."
-</example>
+</rules>
 
-**Present information upfront** — State all required context at the start.
-<example>
-- Avoid: Revealing constraints gradually through the document
-- Use: List all constraints in a `<constraints>` section at the top
-</example>
+<justification>
 
-**State purpose factually** — Describe what the artifact does, not how it benefits the reader.
-<example>
-- Avoid: "This will help you create better agents..."
-- Use: "This file contains agent templates for..."
-</example>
+Models default to either asking about everything (paralysis) or assuming everything (overconfidence). Explicit confidence calibration provides a middle path: proceed when evidence is strong, ask when ambiguous, stop when guessing. Resilience rules prevent halting for missing non-critical resources — workarounds keep momentum while providing hooks for correction.
 
-</forbidden_structures>
+</justification>
 
-<artifact_types>
+<benefit>
 
-## Artifact Types
+The agent resolves conflicts through hierarchy lookup, allocates effort proportionally to impact, and maintains progress despite constraints.
 
-Select type using decision order. Prefer lightweight option.
+</benefit>
 
-**Decision order:** Instruction → Skill → Prompt → Agent
+<anti_patterns>
 
-- **Instruction** — Rules for file patterns. Path: `.github/instructions/*.instructions.md`. Auto-applies via `applyTo` glob.
-- **Skill** — Reusable procedures. Path: `.github/skills/{name}/SKILL.md`. Explicit invocation required.
-- **Prompt** — One-shot templates. Path: `.github/prompts/*.prompt.md`. Manual attachment required.
-- **Agent** — Specialized personas with tools. Path: `.github/agents/*.agent.md`. Explicit `@agent` required.
+- Wrong: "I'm not sure about this, but I'll proceed anyway." (no confidence signal) → Correct: "Confidence is medium on this dependency. Flagging: [specific uncertainty]. Proceeding with [explicit assumption]. Correct me if wrong."
+- Wrong: "I can't find the config file, so I'll stop." (halt on missing resource) → Correct: "Config file not found. Workaround: using default values [X, Y]. Run `command` to generate the config if needed."
 
-</artifact_types>
+</anti_patterns>
 
-## Cross-References
+</decision_making>
 
-- [copilot-instructions.md](copilot-instructions.md) — This file (global rules)
-- [xml-structure.instructions.md](instructions/xml-structure.instructions.md) — XML syntax and structure conventions
-- [writing.instructions.md](instructions/writing.instructions.md) — Writing patterns and formatting rules
+
+<collaboration>
+
+<rules>
+
+- Delegate when expertise differs or parallelism saves time; retain when handoff overhead exceeds task cost
+- Make every handoff payload self-contained: summary of completed work, key decisions, explicit next steps
+- Load context in priority order: global rules first, then session state, then files on demand
+- Execute independent tool calls in parallel
+- Process "Iterate x{N}" by running N passes and aggregating findings with iteration attribution
+
+</rules>
+
+<justification>
+
+Handoff has overhead (context packaging, latency, potential misunderstanding) — pay that cost only when specialization or parallelism provides value. Self-contained payloads prevent the receiver from re-deriving context. Global-first loading ensures project-wide constraints are applied before domain details.
+
+</justification>
+
+<benefit>
+
+The agent optimizes for total completion time, enables continuity across handoffs, and never violates global rules due to local overrides.
+
+</benefit>
+
+</collaboration>
+
+
+<error_reporting>
+
+<rules>
+
+- Report errors using the standard format: `status` (`success` | `partial` | `failed` | `blocked`), `error_code` (kebab-case), `message` (human explanation), `recovery` (next action)
+
+</rules>
+
+<justification>
+
+Consistent error reporting enables automated parsing and pattern detection. The four fields capture what happened, a machine-readable identifier, a human explanation, and the recovery path.
+
+</justification>
+
+<benefit>
+
+Downstream systems process errors without parsing natural language.
+
+</benefit>
+
+</error_reporting>

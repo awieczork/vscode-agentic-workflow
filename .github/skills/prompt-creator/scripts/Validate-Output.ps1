@@ -112,6 +112,27 @@ if (-not $isReasonableSize) {
     Add-CheckResult -Priority "p1" -Check "size_limit" -Passed $true -Message "File size acceptable: $charCount chars"
 }
 
+# P2.1: Description length 50-150 characters
+if ($hasDescription) {
+    $descMatch = [regex]::Match($frontmatter, "(?m)^description\s*:\s*['""]?(.+?)['""]?\s*$")
+    if ($descMatch.Success) {
+        $descLength = $descMatch.Groups[1].Value.Trim().Length
+        if ($descLength -ge 50 -and $descLength -le 150) {
+            Add-CheckResult -Priority "p2" -Check "description_length" -Passed $true -Message "Description length acceptable: $descLength chars"
+        } else {
+            Add-CheckResult -Priority "p2" -Check "description_length" -Passed $false -Message "Description length should be 50-150 chars, got $descLength"
+        }
+
+        # P2.2: Description starts with verb
+        $startsWithVerb = $descMatch.Groups[1].Value.Trim() -match "^(Generate|Create|Analyze|Review|Build|Check|Convert|Deploy|Execute|Extract|Find|Format|Get|List|Parse|Process|Run|Search|Send|Test|Transform|Update|Validate|Verify)"
+        if ($startsWithVerb) {
+            Add-CheckResult -Priority "p2" -Check "description_starts_verb" -Passed $true -Message "Description starts with imperative verb"
+        } else {
+            Add-CheckResult -Priority "p2" -Check "description_starts_verb" -Passed $false -Message "Description should start with imperative verb"
+        }
+    }
+}
+
 # ============================================================================
 # P2 CHECKS (Quality)
 # ============================================================================
@@ -144,12 +165,12 @@ if ($hasTask -and $hasContext) {
     $contextIndex = $bodyContent.IndexOf("<context>")
 
     if ($taskIndex -lt $contextIndex) {
-        Add-CheckResult -Priority "p2" -Check "task_before_context" -Passed $true -Message "Task section appears before context (correct order)"
+        Add-CheckResult -Priority "p3" -Check "task_before_context" -Passed $true -Message "Task section appears before context (correct order)"
     } else {
-        Add-CheckResult -Priority "p2" -Check "task_before_context" -Passed $false -Message "Task section should appear before context section"
+        Add-CheckResult -Priority "p3" -Check "task_before_context" -Passed $false -Message "Task section should appear before context section"
     }
 } elseif ($hasTask -or $hasContext) {
-    Add-CheckResult -Priority "p2" -Check "task_before_context" -Passed $false -Message "Cannot verify order: missing task or context section"
+    Add-CheckResult -Priority "p3" -Check "task_before_context" -Passed $false -Message "Cannot verify order: missing task or context section"
 }
 
 # P2.4: No "[PLACEHOLDER]" text
@@ -168,16 +189,24 @@ if ($hasTodo) {
     Add-CheckResult -Priority "p2" -Check "no_todo_text" -Passed $true -Message "No TODO text found"
 }
 
+# P2.6: Variable syntax uses ${name} not {name}
+$incorrectVarSyntax = $bodyContent -match '\{[a-zA-Z_]+\}' -and $bodyContent -notmatch '\$\{[a-zA-Z_]+\}'
+if ($incorrectVarSyntax) {
+    Add-CheckResult -Priority "p2" -Check "variable_syntax" -Passed $false -Message "Variables should use \${name} syntax, not {name}"
+} else {
+    Add-CheckResult -Priority "p2" -Check "variable_syntax" -Passed $true -Message "Variable syntax correct"
+}
+
 # ============================================================================
 # P3 CHECKS (Optional)
 # ============================================================================
 
-# P3.1: Has <output_format> or <format> section
-$hasOutputFormat = $bodyContent -match "<output_format>|<format>"
-if (-not $hasOutputFormat) {
-    Add-CheckResult -Priority "p3" -Check "has_output_format_section" -Passed $false -Message "Missing <output_format> or <format> section (recommended)"
+# P3.1: Has <format> section
+$hasFormat = $bodyContent -match "<format>"
+if (-not $hasFormat) {
+    Add-CheckResult -Priority "p3" -Check "has_format_section" -Passed $false -Message "Missing <format> section (recommended)"
 } else {
-    Add-CheckResult -Priority "p3" -Check "has_output_format_section" -Passed $true -Message "Output format section present"
+    Add-CheckResult -Priority "p3" -Check "has_format_section" -Passed $true -Message "Format section present"
 }
 
 # P3.2: Has variables defined if using placeholders

@@ -1,42 +1,37 @@
-# Example: Prompt Skeleton
-
-Annotated template showing prompt structure with inline commentary.
+Annotated template showing prompt structure with inline commentary. HTML comments explain each element — remove them in final output.
 
 ---
 
-## Full Template
+<full_template>
 
 ```markdown
 ---
-# TLDR: description is the only field that affects discoverability
-# OMIT if: Never — always include description for /menu visibility
+<!-- description is the only field that affects discoverability -->
+<!-- NEVER omit — always include for /menu visibility -->
 description: "[VERB] [WHAT] [CONTEXT] — 50-150 characters, single-line"
 
-# TLDR: Custom display name after /
-# OMIT if: Filename is already a good name
+<!-- Custom display name after / -->
+<!-- OMIT if: Filename is already a good name -->
 name: "[lowercase-with-hyphens]"
 
-# TLDR: Placeholder text shown in chat input
-# OMIT if: Task is self-explanatory from description
+<!-- Placeholder text shown in chat input -->
+<!-- OMIT if: Task is self-explanatory from description -->
 argument-hint: "[Guidance for user input]"
 
-# TLDR: Execution mode — ask (read-only), edit (file changes), agent (full tools), or custom agent name
-# OMIT if: Default chat agent behavior is fine
-agent: "[ask|edit|agent|custom-agent-name]"
+<!-- Execution delegation — custom agent name -->
+<!-- OMIT if: Default chat agent behavior is fine -->
+agent: "[brain|architect|build|inspect|custom-agent-name]"
 
-# TLDR: Override language model
-# OMIT if: Default model is acceptable
+<!-- Override language model -->
+<!-- OMIT if: Default model is acceptable -->
 model: "[model-identifier]"
 
-# TLDR: Restrict tool access — prompt tools override agent defaults
-# OMIT if: No tool restrictions needed
-# RULE: If tools specified, set agent: agent
+<!-- Restrict tool access — prompt tools override agent defaults -->
+<!-- OMIT if: No tool restrictions needed -->
 tools: ["[tool-1]", "[tool-2]"]
 ---
 
-# [Title]
-
-# TLDR: Background info with variables — sets up context for the task
+<!-- Background info with variables — sets up context for the task -->
 <context>
 
 Working in ${workspaceFolder} with ${fileBasename}.
@@ -45,24 +40,24 @@ ${selection}
 
 </context>
 
-# TLDR: The actual instruction — verb-first, single clear goal
-# RULE: Place before <context> if task is complex (critical instruction first)
+<!-- The actual instruction — verb-first, single clear goal -->
+<!-- Place before <context> if task is complex (critical instruction first) -->
 <task>
 
 [Clear imperative instruction. What should be done?]
 
 </task>
 
-# TLDR: Expected output structure — how results should be formatted
-# OMIT if: Output format is obvious or flexible
+<!-- Expected output structure — how results should be formatted -->
+<!-- OMIT if: Output format is obvious or flexible -->
 <format>
 
 [Describe expected output structure]
 
 </format>
 
-# TLDR: Limits and rules — what to avoid, boundaries
-# OMIT if: No special constraints needed
+<!-- Limits and rules — what to avoid, boundaries -->
+<!-- OMIT if: No special constraints needed -->
 <constraints>
 
 - [Constraint 1]
@@ -71,9 +66,11 @@ ${selection}
 </constraints>
 ```
 
+</full_template>
+
 ---
 
-## Minimal Template
+<minimal_template>
 
 Use when: Simple single-purpose task with no special requirements.
 
@@ -81,8 +78,6 @@ Use when: Simple single-purpose task with no special requirements.
 ---
 description: "[VERB] [WHAT]"
 ---
-
-# [Title]
 
 <task>
 
@@ -94,19 +89,29 @@ Use ${file} for current file context.
 Use ${selection} for selected text.
 ```
 
-**Note:** XML tags are mandatory for prompts with 2+ logical sections. Even minimal prompts benefit from `<task>` to clearly delineate the instruction.
+XML tags are mandatory for prompts with 2+ logical sections. Even minimal prompts benefit from `<task>` to clearly delineate the instruction.
+
+</minimal_template>
 
 ---
 
-## What NOT to Include
+<exclusion_guide>
 
-- **`<identity>` section** — Prompts have no persona; this belongs in agents
-- **`<safety>` section** — Prompts delegate safety to agents; this belongs in agents
-- **`<boundaries>` section** — Prompts have no behavioral limits; this belongs in agents
-- **`<iron_law>` tags** — Prompts are one-shot; this belongs in agents
-- **`handoffs:` frontmatter** — Prompts cannot hand off; this belongs in agents
-- **`applyTo:` frontmatter** — Prompts don't auto-apply; this belongs in instructions
-- **`mode:` frontmatter** — Deprecated; use `agent:` instead
-- **README.md** — Skills include only SKILL.md and necessary assets
-- **Multi-step procedures** — If you need numbered steps with logic, use a skill instead
-- **Session persistence** — Prompts are stateless; if you need memory, use an agent
+Prompts must NOT contain patterns from other artifact types:
+
+- `<identity>`, `<safety>`, `<boundaries>`, `<iron_law>`, `<modes>` sections — belong in agents
+- `handoffs:` frontmatter — prompts cannot hand off; belongs in agents
+- `applyTo:` frontmatter — prompts don't auto-apply; belongs in instructions
+- `mode:` frontmatter — deprecated; use `agent:` instead
+- Multi-step numberd workflows — use a skill instead
+- Session persistence — prompts are stateless; use an agent if memory needed
+
+</exclusion_guide>
+
+
+<references>
+
+- [example-code-review.md](example-code-review.md) — Full working example
+- [frontmatter-reference.md](../references/frontmatter-reference.md) — Frontmatter fields, tools, variables
+
+</references>
