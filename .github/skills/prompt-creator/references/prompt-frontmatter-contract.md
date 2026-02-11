@@ -7,6 +7,8 @@ This file defines YAML frontmatter fields for `.prompt.md` files. The governing 
 - `name` — string, optional. Name shown after `/` in chat input. If omitted, then VS Code derives from filename. Use camelCase or lowercase-with-hyphens. Single-line only
 - `agent` — string, optional. Target custom agent for running the prompt. If omitted, then uses the current agent. Never use built-in agent names (`ask`, `edit`, `agent`). See `<agent_mode_guidance>` for selection rules
 - `argument-hint` — string, optional. Hint text shown in the chat input field to guide user interaction. Derive from the prompt's expected input. Single-line only
+- `tools` — array, optional. Restricts tool availability for the prompt. Example: `tools: ['codebase', 'terminal']`. When omitted, the agent's default tools apply
+- `model` — string, optional. Specifies the LLM model to use. Example: `model: 'claude-sonnet-4'`. When omitted, uses the agent's default model
 
 </frontmatter_fields>
 

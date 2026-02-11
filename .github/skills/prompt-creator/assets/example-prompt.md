@@ -22,7 +22,6 @@ Generate test cases that cover:
 - Happy path scenarios with expected inputs and outputs
 - Edge cases: empty inputs, boundary values, null/undefined
 - Error scenarios: invalid inputs, network errors, permission errors
-- Integration points: verify interactions with dependencies
 
 </task>
 

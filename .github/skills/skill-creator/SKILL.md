@@ -1,17 +1,17 @@
 ---
 name: 'skill-creator'
-description: 'Creates and refactors SKILL.md files that define reusable multi-step processes for AI agents. Use when asked to "create a skill", "build a skill", "refactor a skill", "update a skill", "improve a SKILL.md", or "scaffold a skill folder". Produces folder structure, YAML frontmatter, numbered workflow steps, error handling, and validation checks.'
+description: 'Creates and refactors SKILL.md files that define reusable multi-step processes for AI agents. Use when asked to "create a skill", "refactor a skill", "update a skill", or "scaffold a skill folder". Produces folder structure, YAML frontmatter, numbered `<workflow>` steps, error handling, and validation checks.'
 ---
 
-This skill creates well-structured SKILL.md files that define reusable procedures for AI agents. The governing principle is single-focused capability — each skill solves one problem within a standard folder structure. Begin with `<step_1_analyze>` to answer planning questions that orient subsequent steps.
+This skill creates well-structured SKILL.md files that define reusable processes for AI agents. The governing principle is single-focused capability — each skill solves one problem within a standard folder structure. Begin with `<step_1_analyze>` to answer planning questions.
 
 
 <use_cases>
 
-- Create a new skill from a requirements description or approved spec
+- Create or scaffold a skill folder from a requirements description or approved spec
 - Build a reusable multi-step process that any agent can invoke for a specific task
-- Scaffold a skill folder with SKILL.md, references, and assets
 - Convert a repeatable multi-step process into a standardized skill artifact
+- Refactor a skill to improve step granularity, add error handling, or update references
 
 </use_cases>
 
@@ -23,22 +23,26 @@ Execute steps sequentially. Each step verifies its own output before proceeding 
 
 <step_1_analyze>
 
-Answer the following questions about the target skill. Each answer informs decisions in subsequent steps — incomplete answers produce gaps in the final artifact.
+Verify this request creates a skill (`SKILL.md`). If it describes an agent, instruction, prompt, or general document, route to the appropriate creator skill instead.
+
+Answer the following questions about the target skill.
 
 - **What is this?** — Platform metadata enables discovery and matching
 - **What does the skill accomplish?** — A clear purpose statement orients every agent that invokes it
 - **When should it be used?** — Trigger phrases and use cases drive accurate skill selection
-- **How does it work?** — Step-by-step procedures are the skill's core value
+- **How does it work?** — Step-by-step processes are the skill's core value
 - **What resources does it use?** — External files need explicit references and relative paths
 - **What can go wrong?** — Known error conditions prevent agents from stalling on errors
 - **How to verify it worked?** — Observable success conditions confirm the skill completed correctly
+
+If any answer is unclear or contradictory, ask for clarification before proceeding to step_2.
 
 </step_1_analyze>
 
 
 <step_2_determine_structure>
 
-Load [skill-skeleton.md](./references/skill-skeleton.md) for: `<scaling>`, `<folder_patterns>`, `<core_principles>`.
+Load [skill-skeleton.md](./references/skill-skeleton.md) for: `<folder_patterns>`.
 
 Select scaling tier based on the skill's scope and content volume:
 
@@ -46,11 +50,7 @@ Select scaling tier based on the skill's scope and content volume:
 - **Medium** (~80 lines body) — `references/` subfolder, 4-6 steps, `<error_handling>` + `<validation>`
 - **Full** (~150 lines body) — all subfolders, 5-8 steps, progressive loading
 
-Apply folder creation thresholds from `<folder_patterns>` in [skill-skeleton.md](./references/skill-skeleton.md):
-
-- `scripts/` — code exceeds 20 lines, platform-dependent logic
-- `references/` — documentation exceeds 100 lines, JIT-loaded content
-- `assets/` — templates, configs, example outputs referenced by steps
+Apply folder creation thresholds from `<folder_patterns>` in [skill-skeleton.md](./references/skill-skeleton.md).
 
 Validate planned folder structure against actual content needs. Override if content signals do not justify a subfolder. Never create empty folders.
 
@@ -92,7 +92,7 @@ Load [example-skill.md](./assets/example-skill.md) for: annotated reference outp
 
 **`<workflow>`** — numbered `<step_N_verb>` steps:
 
-- Estimate step count from the skill's scope (may adjust)
+- Estimate step count from the skill's scope
 - Name each step with imperative verb: `<step_N_verb>`
 - Derive step content from the skill's required capabilities — one capability per step or logical grouping
 - Include `Load [file] for:` directives where JIT loading applies
@@ -108,6 +108,7 @@ Load [example-skill.md](./assets/example-skill.md) for: annotated reference outp
 
 - Each check is true/false based on observable output
 - Cover: frontmatter valid, name matches folder, no agent tags, no markdown headings, description follows formula
+- For Full-tier skills with severity-tiered validation, organize checks into P1 (blocking), P2 (quality), P3 (polish) groups
 
 **`<resources>`** — link all reference and asset files with relative `./` paths.
 
@@ -128,7 +129,9 @@ Load [example-skill.md](./assets/example-skill.md) for: annotated reference outp
 
 <step_5_validate>
 
-Run `<validation>` checks against the completed skill. Fix all P1 and P2 findings before delivery; flag P3 items without blocking. If any check fails, consult `<error_handling>` for recovery actions.
+Load [skill-skeleton.md](./references/skill-skeleton.md) for `<anti_patterns>`. Verify output against design violation patterns.
+
+Run `<validation>`. Fix P1/P2 before delivery; flag P3.
 
 </step_5_validate>
 
@@ -161,20 +164,20 @@ Run `<validation>` checks against the completed skill. Fix all P1 and P2 finding
 - `<workflow>` present with numbered `<step_N_verb>` tags
 - No hardcoded secrets or absolute paths
 - No references to specific agents (`@agentname`) — skill is agent-agnostic
+- No markdown headings — XML tags are exclusive structure
+- No agent tags: `<constraints>`, `<behaviors>`, `<outputs>`, `<termination>`, `<iron_law>`, `<mode>`, `<context_loading>`
 
 **P2 — Quality (fix before delivery):**
 
-- No markdown headings — XML tags are exclusive structure
 - No markdown tables outside `<resources>` — use bullet lists with em-dash definitions
-- No agent tags: `<constraints>`, `<behaviors>`, `<outputs>`, `<termination>`, `<iron_law>`, `<mode>`, `<context_loading>`
 - No identity prose (role, expertise, stance, anti-identity)
 - Description 1-1024 characters with 2-4 trigger phrases
 - Every `Load [file] for:` directive resolves to an existing file
 - No orphaned resources — every file in subfolders referenced from SKILL.md
 - No reference chains — reference files do not link to other reference files
 - Cross-file XML tag references use linked-file form: `<tag>` in [file.md](path) — same-file references use backticks only
-- `<resources>` entries use XML tag references consistent with Load directives in workflow steps
-- Numeric thresholds in workflow steps do not contradict thresholds in reference files
+- `<resources>` entries use XML tag references consistent with Load directives in `<workflow>` steps
+- Numeric thresholds in `<workflow>` steps do not contradict thresholds in reference files
 
 **P3 — Polish (flag, do not block):**
 
@@ -189,8 +192,8 @@ Run `<validation>` checks against the completed skill. Fix all P1 and P2 finding
 
 <resources>
 
-- [skill-frontmatter-contract.md](./references/skill-frontmatter-contract.md) — Defines the two YAML frontmatter fields for SKILL.md files (name and description) with format validation rules and the description formula for trigger-phrase construction. Load for `<frontmatter_fields>`, `<description_rules>`, `<name_rules>`
-- [skill-skeleton.md](./references/skill-skeleton.md) — Structural reference for SKILL.md body sections. Defines the closed tag vocabulary, scaling tiers (minimal/medium/full), folder extraction thresholds, and design rules that shape skill structure. Load for `<tag_vocabulary>`, `<prose_intro_pattern>`, `<visual_skeleton>`, `<scaling>`, `<folder_patterns>`, `<core_principles>`, `<anti_patterns>`
-- [example-skill.md](./assets/example-skill.md) — Ready-to-use API scaffold skill at medium scaling tier (~80 lines body). Demonstrates workflow steps, error handling, validation checks, and linked-file XML tag references
+- [skill-frontmatter-contract.md](./references/skill-frontmatter-contract.md) — Defines the two YAML frontmatter fields for SKILL.md files (name and description) with format validation rules and the description formula for trigger-phrase construction
+- [skill-skeleton.md](./references/skill-skeleton.md) — Structural reference for SKILL.md body sections. Defines the closed tag vocabulary, scaling tiers (minimal/medium/full), folder extraction thresholds, and design rules that shape skill structure
+- [example-skill.md](./assets/example-skill.md) — Ready-to-use API scaffold skill at medium scaling tier (~80 lines body). Demonstrates `<workflow>` steps, error handling, validation checks, and linked-file XML tag references
 
 </resources>

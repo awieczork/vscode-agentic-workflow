@@ -1,9 +1,9 @@
 ---
 name: 'instruction-creator'
-description: 'Creates and refactors .instructions.md files that define ambient constraints for AI agent behavior. Use when asked to "create an instruction", "refactor an instruction", "update coding standards", "improve an instruction file", or "add project conventions". Produces conditional frontmatter, custom XML groups with bullet rules, and validated output.'
+description: 'Creates and refactors .instructions.md files that define ambient constraints for AI agent behavior. Use when asked to "create an instruction", "build an instruction", "refactor an instruction", or "update coding standards". Produces conditional frontmatter, custom XML groups with bullet rules, and validated output.'
 ---
 
-This skill creates well-structured .instructions.md files that define ambient constraints shaping AI agent behavior. The governing principle is ambient constraints without identity — instructions carry rules, not personas. Begin with `<step_1_analyze>` to determine sub-type and orient subsequent steps.
+This skill creates well-structured .instructions.md files that define ambient constraints shaping AI agent behavior. The governing principle is ambient constraints without identity — instructions carry rules, not personas. Begin with `<step_1_analyze>` to determine sub-type.
 
 
 <use_cases>
@@ -13,6 +13,7 @@ This skill creates well-structured .instructions.md files that define ambient co
 - Define repo-wide conventions applied to every chat request
 - Create on-demand domain rules discoverable by task relevance
 - Convert existing coding rules into instruction files
+- Update existing coding standards or project conventions
 
 </use_cases>
 
@@ -24,7 +25,9 @@ Execute steps sequentially. Each step verifies its own output before proceeding 
 
 <step_1_analyze>
 
-Answer the following questions about the target instruction. Each answer informs decisions in subsequent steps — incomplete answers produce gaps in the final artifact.
+Verify this request creates an instruction file (`.instructions.md`). If it describes an agent, prompt, skill, or general document, route to the appropriate creator skill instead.
+
+Answer the following questions about the target instruction.
 
 - **What is this?** — Platform metadata (name, description, glob patterns) enables discovery and matching
 - **What does the instruction accomplish?** — Purpose statement orients the scope: repo-wide standards, file-type rules, or domain rules
@@ -33,12 +36,14 @@ Answer the following questions about the target instruction. Each answer informs
 - **How does discovery work?** — No frontmatter (repo-wide), `applyTo` + `description` (file-triggered), `description` only (on-demand)
 - **What must it NOT contain?** — Anti-contamination: no identity prose, no stance words, no tools, no variables, no agent/skill tags
 
+If any answer is unclear or contradictory, ask for clarification before proceeding to step_2.
+
 </step_1_analyze>
 
 
 <step_2_determine_structure>
 
-Load [instruction-skeleton.md](./references/instruction-skeleton.md) for: `<sub_type_decision>`, `<scaling>`, `<core_principles>`.
+Load [instruction-skeleton.md](./references/instruction-skeleton.md) for: `<sub_type_decision>`.
 
 Determine sub-type using `<sub_type_decision>` in [instruction-skeleton.md](./references/instruction-skeleton.md):
 
@@ -112,7 +117,7 @@ Load [example-repo-wide.md](./assets/example-repo-wide.md) or [example-path-spec
 
 <step_5_validate>
 
-Run `<validation>` checks against the completed instruction. Fix all P1 and P2 findings before delivery; flag P3 items without blocking. If any check fails, consult `<error_handling>` for recovery actions.
+Run `<validation>`. Fix P1/P2 before delivery; flag P3.
 
 </step_5_validate>
 
@@ -124,10 +129,7 @@ Run `<validation>` checks against the completed instruction. Fix all P1 and P2 f
 
 - If sub-type is ambiguous between file-triggered and on-demand, then prefer file-triggered with `applyTo` + `description` for dual discovery
 - If repo-wide instruction contains frontmatter, then remove `---` YAML block — P1 blocker
-- If agent contamination detected (`<constraints>`, `<behaviors>`, `<outputs>`, `<termination>`, `<iron_law>`, `<mode>` tags), then remove offending content — P1 blocker
-- If skill contamination detected (`<workflow>`, `<step_N_verb>`, `<use_cases>`, `<resources>` tags), then remove offending content — P1 blocker
-- If identity prose or stance words detected, then remove and rephrase as imperative rules — P1 blocker
-- If prompt variables detected (`${input:}`, `${selection}`, `${file}`), then remove — P1 blocker
+- If agent, skill, prompt, or identity contamination detected, then remove — P1 blocker
 - If markdown headings used as structure, then convert to XML group tags — P1 blocker
 - If `applyTo` uses regex instead of glob syntax, then convert to valid glob pattern
 - If instruction exceeds split threshold (~100 lines path-specific, ~150 lines repo-wide), then evaluate splitting by file type or concern
@@ -153,6 +155,7 @@ Run `<validation>` checks against the completed instruction. Fix all P1 and P2 f
 - No markdown headings — XML tags are exclusive structure
 - Body uses custom grouped format: `<group_name>` with bullet rules directly inside
 - No hardcoded secrets or absolute paths
+- No `@agentname` references — instruction is agent-agnostic
 
 **P2 — Quality (fix before delivery):**
 
@@ -183,8 +186,8 @@ Run `<validation>` checks against the completed instruction. Fix all P1 and P2 f
 
 <resources>
 
-- [instruction-frontmatter-contract.md](./references/instruction-frontmatter-contract.md) — Defines YAML frontmatter fields for .instructions.md files with conditional presence rules per sub-type. Covers the repo-wide exception (no frontmatter), discovery mode selection, description patterns, and glob syntax for `applyTo`. Load for `<frontmatter_fields>`, `<repo_wide_exception>`, `<discovery_mode_guidance>`, `<description_rules>`, `<glob_pattern_guidance>`
-- [instruction-skeleton.md](./references/instruction-skeleton.md) — Structural reference for .instructions.md body sections. Defines the 3 sub-types, scaling tiers, custom grouped body format, and anti-contamination patterns. Load for `<sub_type_decision>`, `<scaling>`, `<body_structure>`, `<prose_intro_pattern>`, `<core_principles>`, `<anti_patterns>`
+- [instruction-frontmatter-contract.md](./references/instruction-frontmatter-contract.md) — Defines YAML frontmatter fields for .instructions.md files with conditional presence rules per sub-type. Covers the repo-wide exception (no frontmatter), discovery mode selection, description patterns, and glob syntax for `applyTo`
+- [instruction-skeleton.md](./references/instruction-skeleton.md) — Structural reference for .instructions.md body sections. Defines the 3 sub-types, scaling tiers, custom grouped body format, and anti-contamination patterns
 - [example-repo-wide.md](./assets/example-repo-wide.md) — Ready-to-use repo-wide instruction with no frontmatter, 2 custom groups, and Wrong/Correct pairs. Demonstrates the prose intro + grouped body format for universal project rules
 - [example-path-specific.md](./assets/example-path-specific.md) — Ready-to-use path-specific file-triggered instruction for TypeScript files. Demonstrates `applyTo` + `description` frontmatter, single group, and ALWAYS/NEVER usage
 

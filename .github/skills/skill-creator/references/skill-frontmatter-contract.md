@@ -17,7 +17,7 @@ Set both fields during skill creation.
 
 **Rules:**
 
-- Include 2-4 trigger phrases in quotes — these are the words users say that should activate this skill
+- Include 2-4 trigger phrases in quotes — these are the words users say to activate this skill
 - List at least 3 concrete capabilities that the skill provides
 - Stay under 1024 characters
 - No negative triggers ("Don't use when...")

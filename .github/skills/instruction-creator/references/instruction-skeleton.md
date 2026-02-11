@@ -7,22 +7,10 @@ Determine instruction sub-type before drafting. Each sub-type has different rout
 
 **Decision tree:**
 
-- Rules apply to ALL chat requests regardless of file type? → **Repo-wide**
-- Rules apply only when specific file patterns appear in context? → **Path-specific file-triggered**
-- Rules apply when agent detects task relevance from description keywords? → **Path-specific on-demand**
-
-**Decision signals:**
-
-- Repo-wide — Universal rules, project architecture, and links to relevant files. Location: `.github/copilot-instructions.md`. Frontmatter: none. Loaded on every chat request
-- Path-specific file-triggered — File-type rules. Location: `.github/instructions/*.instructions.md`. Frontmatter: `applyTo` + `description`. Loaded only when matching files appear in context. Triggers on create/modify operations only, not read-only
-- Path-specific on-demand — Domain rules. Location: `.github/instructions/*.instructions.md`. Frontmatter: `description` only. Loaded only when agent detects task relevance from description keywords
-
-**Choosing between sub-types:**
-
-- If rules mention specific file extensions or directories → file-triggered
-- If rules apply broadly but not universally → on-demand with keyword-rich `description`
-- If rules are project-wide coding standards, conventions, or architecture documentation → repo-wide
-- If unsure between file-triggered and on-demand → prefer file-triggered with `applyTo` + `description` for dual discovery
+- Rules apply to ALL chat requests regardless of file type? → **Repo-wide** (location: `.github/copilot-instructions.md`, no frontmatter, loaded every request)
+- Rules apply only when specific file patterns appear in context? → **Path-specific file-triggered** (location: `.github/instructions/*.instructions.md`, frontmatter: `applyTo` + `description`, loaded on create/modify only)
+- Rules apply when agent detects task relevance from description keywords? → **Path-specific on-demand** (location: `.github/instructions/*.instructions.md`, frontmatter: `description` only, loaded on keyword match)
+- Unsure between file-triggered and on-demand? → Prefer file-triggered with `applyTo` + `description` for dual discovery
 
 </sub_type_decision>
 
@@ -60,96 +48,9 @@ Instructions use a grouped format: custom XML groups wrapping project-specific r
 </body_structure>
 
 
-<visual_skeleton>
-
-**Repo-wide variant:**
-
-```
-┌─────────────────────────────────────┐
-│  NO FRONTMATTER                     │  ← Repo-wide has no YAML header
-├─────────────────────────────────────┤
-│  PROSE INTRO (no tag)               │  ← Purpose + governing principle
-├─────────────────────────────────────┤
-│  <group_name>                       │
-│  ├── Bullet rules                   │
-│  └── <example> (optional)           │
-├─────────────────────────────────────┤
-│  <another_group>                    │
-│  └── ...                            │
-└─────────────────────────────────────┘
-```
-
-**Path-specific variant:**
-
-```
-┌─────────────────────────────────────┐
-│  FRONTMATTER (YAML)                 │  ← Discovery + routing
-│  description, name, applyTo         │
-├─────────────────────────────────────┤
-│  PROSE INTRO (no tag)               │  ← Purpose + governing principle
-├─────────────────────────────────────┤
-│  <group_name>                       │
-│  ├── Bullet rules                   │
-│  └── <example> (optional)           │
-└─────────────────────────────────────┘
-```
-
-</visual_skeleton>
-
-
-<scaling>
-
-**Minimal instruction (~15 lines body):** Frontmatter + 1 group with bullet rules only.
-
-- 3-5 imperative rules
-- No examples
-- Suitable for narrow file-type standards
-
-**Standard instruction (~50 lines body):** 2-3 groups with bullet rules + examples.
-
-- Discovery configured (`applyTo` for file-triggered, `description` for on-demand)
-- Imperative voice throughout
-- Wrong/Correct pairs for ambiguous rules
-
-**Full instruction (~100-150 lines body):** 3-5 groups, all with rules and examples.
-
-- All groups include rules + at least one example
-- Wrong/Correct pairs for every group
-- Token economy optimized — no redundant rules
-
-**When to split:** Evaluate splitting at ~100 lines (path-specific) or ~150 lines (repo-wide). Split by file type when rules serve different extensions. Split by concern when rules cover distinct domains. Extract to repo-wide when a rule applies to ≥3 file types.
-
-</scaling>
-
-
-<core_principles>
-
-7 design rules shape instruction structure — violating any one produces instructions that degrade under real usage.
-
-- **No identity, no tools, no state** — Instructions are pure ambient constraints. They carry no persona, invoke no tools, and maintain no session state. Every rule stands alone
-- **One concern per file** — Separate testing, styling, API design, and documentation into distinct instruction files. Mixing domains produces bloated files that load unnecessary rules
-- **Custom tags, no shared vocabulary** — Group tag names are project-specific (`<naming_conventions>`, `<type_safety>`). They must not overlap with agent or skill tag vocabularies — see `<anti_patterns>` for prohibited tags
-- **Imperative voice** — "Use X" not "You should use X". Specific quantities: "Maximum 3 levels" not "Avoid deep nesting". Versioned: "React 18+ hooks" not "modern React"
-- **One rule per bullet** — Compound rules split into separate bullets. Each bullet addresses exactly one concern
-- **ALWAYS/NEVER sparingly** — Reserve for safety-critical rules, 2-5 per file
-- **Fixed locations per sub-type** — See `<sub_type_decision>` for path mapping and filename pattern `[DOMAIN].instructions.md`
-
-</core_principles>
-
-
 <anti_patterns>
 
 Common mistakes that produce instructions that appear functional but fail in practice. Check the final instruction against this list before delivery.
-
-**Never use agent tags in instructions:**
-
-- `<constraints>`, `<behaviors>`, `<outputs>`, `<termination>` — Agent top-level structure
-- `<iron_law>`, `<mode>`, `<context_loading>`, `<on_missing>`, `<when_blocked>` — Agent sub-tags
-
-**Never use skill tags in instructions:**
-
-- `<workflow>`, `<step_N_verb>` — Skill procedural structure
-- `<use_cases>`, `<resources>` — Skill discovery and resource tags
 
 **Never include in instructions:**
 

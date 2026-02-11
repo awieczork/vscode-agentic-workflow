@@ -14,8 +14,17 @@ Set these fields during agent creation. Wrap all string values in single quotes:
 - `handoffs[].agent` — string, required when handoffs present. Target agent identifier. Single-line only
 - `handoffs[].prompt` — string, optional. Prompt text sent to target agent. Single-line only
 - `handoffs[].send` — boolean, optional, default `false`. Auto-submit prompt on handoff. Set `true` only when transition is low-risk and reversible
+- `agents` — string[], optional. Restricts which sub-agents this agent can invoke. Example: `agents: ['researcher', 'build']`
+- `user-invokable` — boolean, optional, default `true`. When `false`, agent is only available as a sub-agent, not selectable by users
+- `disable-model-invocation` — boolean, optional. When `true`, agent is only invokable by users, never auto-selected by model
+- `target` — string, optional. Restricts agent to a specific VS Code interface. Values: `cli` | `editor`
+- `mcp-servers` — string[], optional. List of MCP server names to enable for this agent. Example: `mcp-servers: ['github', 'filesystem']`
+- `model` — string, optional. Suggested LLM model. Example: `model: 'claude-sonnet-4'`
 
 </frontmatter_fields>
+
+
+`infer` — Deprecated. Use `user-invokable: true` combined with `disable-model-invocation: false` instead.
 
 
 <tool_sets>
@@ -31,6 +40,15 @@ Tool sets bundle related tools. Specifying a tool set enables all tools within i
 - `web` — External web and GitHub access. Includes: `fetch`, `githubRepo`
 
 Standalone tools not in any tool set: `todo`, `renderMermaidDiagram`
+
+**Tool alias groups** — Shorthand aliases that expand to common tool combinations. Use aliases in `tools` array for concise declarations.
+
+- `read` — Alias for: `readFile`, `listDirectory`, `searchFiles`, `getFileInfo`
+- `edit` — Alias for: `editFile`, `createFile`, `deleteFile`, `renameFile`
+- `execute` — Alias for: `runInTerminal`, `runProcess`
+- `search` — Alias for: `semanticSearch`, `grepSearch`, `fileSearch`
+- `agent` — Alias for: `runSubagent`
+- `web` — Alias for: `fetch`
 
 </tool_sets>
 
@@ -103,6 +121,10 @@ All individual tools organized by tool set. Use this list when selecting specifi
 - `todo` — Manage and track todo items
 - `renderMermaidDiagram` — Render interactive Mermaid diagrams in chat responses
 
+**MCP tools**
+
+- `context7/*` — MCP tool for library and framework documentation lookup. Provides up-to-date API references, usage patterns, and best practices for external dependencies
+
 </tools_list>
 
 
@@ -113,5 +135,6 @@ All individual tools organized by tool set. Use this list when selecting specifi
 - Use **individual tool** to enforce boundaries — omitting `editFiles` from `edit` set prevents modifications while allowing `createFile`
 - Combine tool sets and individual tools freely: `tools: ['search', 'editFiles', 'runInTerminal']`
 - Select the minimal set for the role — excess tools dilute focus and expand boundary surface
+- MCP tools (e.g., `context7/*`) provide access to external knowledge sources — use for agents that need library/framework API lookups
 
 </tools_selection_guidance>

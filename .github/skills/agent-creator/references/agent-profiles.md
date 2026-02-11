@@ -67,19 +67,15 @@ This file defines 6 reusable agent profiles — behavioral archetypes used as st
 - **Meta layer** — Core agents (@brain, @architect, @build, @inspect). Project-independent. Handle lifecycle: think → plan → implement → verify
 - **Domain layer** — Profile agents. Project-specific. Handle domain tasks. Created from profiles + domain knowledge
 
-Core agents interact with profile agents:
+Bidirectional interactions:
 
-- @brain: frames problems FOR @diagnostician/@analyst, interprets results FROM @analyst, routes work TO all
-- @architect: plans workflows coordinating @operator/@curator/@transformer
-- @build: writes code that @operator runs, @transformer converts, @curator organizes
-- @inspect: verifies output of @transformer/@operator/@analyst
-
-Profile agents hand off to core agents:
-
+- @brain ↔ @diagnostician/@analyst — frames problems, interprets results, routes work
+- @brain ↔ @curator — receives review proposals
+- @architect ↔ @analyst — receives findings requiring action, plans coordinating workflows
+- @architect → @operator/@curator/@transformer — plans workflows
+- @build → @operator/@transformer/@curator — writes code they run, convert, or organize
+- @inspect ← @transformer/@operator/@analyst — verifies their output
 - @diagnostician → @build (fix needed) or @operator (remediation needed)
-- @analyst → @architect (action needed based on findings)
 - @operator → @inspect (verify result)
-- @transformer → @inspect (verify output)
-- @curator → @brain (review proposal)
 
 </two_layers>

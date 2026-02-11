@@ -5,7 +5,7 @@ This file defines the structural skeleton of a `.prompt.md` artifact. Every prom
 
 Prompt bodies use one of two patterns. Choose based on task complexity.
 
-**Plain markdown** — Single-instruction prompts. Prose paragraphs with bullet lists. Best for focused tasks with clear output. Use for prompts under ~20 lines.
+**Prose format** — Single-instruction prompts. Prose paragraphs with bullet lists. Best for focused tasks with clear output. Use for prompts under ~20 lines.
 
 **XML-structured** — Multi-section prompts needing clear separation between context, task, and format. Tags are ad-hoc (author's choice for clarity) — no fixed vocabulary exists. Common choices: `<context>`, `<task>`, `<format>`, `<constraints>`, `<examples>`. Use for prompts exceeding ~20 lines where section boundaries improve clarity.
 
@@ -44,62 +44,6 @@ Variables use `${name}` syntax. The dollar prefix is required — `{name}` is in
 - Tool references: `#tool:<tool-name>` — Inline tool invocation. The agent running the prompt provides its available tools (e.g., `#tool:githubRepo`, `#tool:search`)
 
 </variable_system>
-
-
-<visual_skeleton>
-
-```
-┌─────────────────────────────────────┐
-│  FRONTMATTER (YAML, optional)       │  ← Discovery + agent selection
-│  description, name, agent           │
-├─────────────────────────────────────┤
-│  BODY (markdown)                    │  ← Task instructions
-│  ├── Plain prose                    │
-│  │   OR                             │
-│  ├── XML-structured sections        │
-│  ├── File refs: [name](./path)      │
-│  ├── Tool refs: #tool:<name>        │
-│  └── Variables: ${input:name}       │
-└─────────────────────────────────────┘
-```
-
-</visual_skeleton>
-
-
-<scaling>
-
-**Minimal prompt (~10 lines):** Description only + plain prose body.
-
-- Frontmatter: `description`
-- Body: 3-5 lines of prose instructions
-
-**Standard prompt (~30 lines):** Description + agent + XML body sections + variables.
-
-- Frontmatter: `description`, `agent`
-- Body: 2-3 XML-structured sections
-- Variables: `${selection}`, `${file}`, or `${input:name}`
-- File references: 1-2 workspace files
-
-**Full prompt (~50 lines):** All frontmatter fields + multi-section body + file refs + variables.
-
-- Frontmatter: `description`, `name`, `agent`, `argument-hint`
-- Body: 3-5 XML-structured sections with examples
-- Variables: mix of file, selection, and input variables
-- File references: 2-4 workspace files
-
-</scaling>
-
-
-<core_principles>
-
-4 design rules shape prompt structure — violating any one produces prompts that degrade under real usage.
-
-- **One task per prompt** — Multi-task prompts ("create, test, and deploy") dilute focus. Split into separate prompt files with distinct descriptions
-- **Task-first body** — State the task directly in the body — no "You are an expert..." preambles. Prompts can target custom agents via the `agent` field, but the body itself focuses on what to do, not who does it
-- **Verb-first descriptions** — Descriptions drive `/` command discovery. Start with an action verb, include domain keywords, 50-150 characters
-- **Variables over hardcoded values** — Use `${file}`, `${selection}`, `${input:name}` instead of hardcoded paths or values. Variables make prompts reusable across contexts
-
-</core_principles>
 
 
 <anti_patterns>

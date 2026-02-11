@@ -3,15 +3,15 @@ name: 'agent-creator'
 description: 'Creates and refactors .agent.md files that define autonomous AI agent personas with tools, constraints, and behavioral modes. Use when asked to "create an agent", "build an agent", "refactor an agent", "update an agent", "improve an agent file", or "scaffold an agent file". Produces frontmatter, identity prose, constraints, behaviors, outputs, and termination sections.'
 ---
 
-This skill creates well-structured .agent.md files that define autonomous AI agent personas. The governing principle is single role per agent — each agent has one focused identity with clear boundaries. Begin with `<step_1_analyze>` to answer planning questions that orient subsequent steps.
+This skill creates well-structured .agent.md files that define autonomous AI agent personas. The governing principle is single role per agent — each agent has one focused identity with clear boundaries. Begin with `<step_1_analyze>` to answer planning questions.
 
 
 <use_cases>
 
-- Create a new agent from a role description or requirements spec
+- Create or scaffold an agent file from a role description or requirements spec
 - Build a domain-specific agent using a behavioral profile archetype
-- Scaffold an agent file with frontmatter, identity, constraints, and behaviors
 - Define an agent's tools, modes, and handoff behavior
+- Refactor an existing agent to add modes, update tools, or restructure constraints
 
 </use_cases>
 
@@ -23,21 +23,25 @@ Execute steps sequentially. Each step verifies its own output before proceeding 
 
 <step_1_analyze>
 
-Answer the following questions about the target agent. Each answer maps to a section in the final agent file — a missing answer means a missing section.
+Verify this request creates an agent (`.agent.md`). If it describes an instruction, prompt, skill, or general document, route to the appropriate creator skill instead.
 
-- **What is this?** — Name, description, trigger words enable discovery and delegation
+Answer the following questions about the target agent.
+
+- **What is this?** — Name, description, trigger words enable discovery and handoff
 - **What role does the agent fill?** — Role, expertise, stance, and anti-identity define the agent's persona boundaries
 - **What must never happen?** — Safety priorities and prohibitions protect against harmful actions
 - **How does the agent behave?** — Core behaviors, modes, and context loading define execution patterns
 - **What does the agent produce?** — Output formats, confidence thresholds, and templates set consumer expectations
 - **When does the agent stop?** — Handoff targets, escalation conditions, and max cycles prevent unbounded execution
 
+If any answer is unclear or contradictory, ask for clarification before proceeding to step_2.
+
 </step_1_analyze>
 
 
 <step_2_determine_structure>
 
-Load [agent-skeleton.md](./references/agent-skeleton.md) for: `<scaling>`, `<tag_vocabulary>`, `<core_principles>`.
+Load [agent-skeleton.md](./references/agent-skeleton.md) for: `<tag_vocabulary>`.
 
 Load [agent-profiles.md](./references/agent-profiles.md) for: `<profiles>`, `<two_layers>`.
 
@@ -64,20 +68,20 @@ Load [agent-frontmatter-contract.md](./references/agent-frontmatter-contract.md)
 
 **Tools:** Select from `<tool_sets>` and `<tools_list>` in [agent-frontmatter-contract.md](./references/agent-frontmatter-contract.md). Use tool sets for broad capability, individual tools for boundary enforcement per `<tools_selection_guidance>` in [agent-frontmatter-contract.md](./references/agent-frontmatter-contract.md). Select the minimal set for the role — excess tools dilute focus.
 
-**Optional fields:** `argument-hint` (guide user input), `handoffs` (agent transitions — label, agent, prompt, send).
+**Optional fields:** `argument-hint` (guide user input), `handoffs` (agent transitions — label, agent, prompt, send), `agents` (restrict sub-agent access), `user-invokable` (hide from user selection), `disable-model-invocation` (prevent auto-selection), `target` (restrict to cli or editor), `mcp-servers` (enable MCP servers), `model` (suggest LLM model). If `infer` field is present, flag as deprecated — use `user-invokable` + `disable-model-invocation` instead.
 
 </step_3_write_frontmatter>
 
 
 <step_4_write_body>
 
-Load [agent-skeleton.md](./references/agent-skeleton.md) for: `<tag_vocabulary>`, `<prose_intro_pattern>`, `<visual_skeleton>`, `<attributes>`.
+Load [agent-skeleton.md](./references/agent-skeleton.md) for: `<tag_vocabulary>`, `<prose_intro_pattern>`, `<attributes>`.
 
 Load [example-agent.md](./assets/example-agent.md) for: annotated reference output.
 
-Write sections in this order per `<visual_skeleton>` in [agent-skeleton.md](./references/agent-skeleton.md):
+Write sections in this order per `<tag_vocabulary>` in [agent-skeleton.md](./references/agent-skeleton.md):
 
-1. **Identity prose** (no tag) — "{Role}. {Expertise}. {Stance}. {Anti-identity with delegation pointers}."
+1. **Identity prose** (no tag) — "{Role}. {Expertise}. {Stance}. {Anti-identity with handoff pointers}."
 
 2. **`<constraints>`** — Required. Prose intro: "Priority: {hierarchy}." Then NEVER/ALWAYS bullets. Add red flags (optional) and `<iron_law id="">` tags (optional — only for agents with destructive tools, citation authority, or approval authority)
 
@@ -94,7 +98,7 @@ Calibrate body length to tier from `<step_2_determine_structure>`.
 
 <step_5_validate>
 
-Run `<validation>` checks against the completed agent. Fix all P1 and P2 findings before delivery; flag P3 items without blocking. If any check fails, consult `<error_handling>` for recovery actions.
+Run `<validation>`. Fix P1/P2 before delivery; flag P3.
 
 </step_5_validate>
 
@@ -131,10 +135,11 @@ Run `<validation>` checks against the completed agent. Fix all P1 and P2 finding
 - `<behaviors>` present with executable actions
 - `<outputs>` present with at least one template or format definition
 - No references to specific agents (`@agentname`) in SKILL.md itself — skill is agent-agnostic (agent body MAY reference peers)
+- No markdown headings — XML tags are exclusive structure
+- If `infer` field used, flag as deprecated — use `user-invokable` + `disable-model-invocation` instead
 
 **P2 — Quality (fix before delivery):**
 
-- No markdown headings — XML tags are exclusive structure
 - No markdown tables outside `<outputs>` — use bullet lists with em-dash definitions
 - Identity prose includes: role, expertise, stance, anti-identity
 - If `tools` present, minimal set for role — no Swiss-army tooling
@@ -160,9 +165,9 @@ Run `<validation>` checks against the completed agent. Fix all P1 and P2 finding
 
 <resources>
 
-- [agent-frontmatter-contract.md](./references/agent-frontmatter-contract.md) — Defines all YAML frontmatter fields for .agent.md files, including the complete tools catalog with tool sets and individual tools. Load for `<frontmatter_fields>`, `<tool_sets>`, `<tools_list>`, `<tools_selection_guidance>`
-- [agent-skeleton.md](./references/agent-skeleton.md) — Structural reference for .agent.md body sections. Defines the closed tag vocabulary, scaling tiers (minimal/medium/full), and design rules that shape agent structure. Load for `<tag_vocabulary>`, `<scaling>`, `<core_principles>`, `<anti_patterns>`, `<prose_intro_pattern>`, `<visual_skeleton>`, `<attributes>`
-- [agent-profiles.md](./references/agent-profiles.md) — Six reusable behavioral archetypes (guide, transformer, curator, diagnostician, analyst, operator) that pre-configure constraint patterns, sub-tag sets, and tool selections. Load for `<profiles>`, `<two_layers>`
+- [agent-frontmatter-contract.md](./references/agent-frontmatter-contract.md) — Defines all YAML frontmatter fields for .agent.md files, including the complete tools catalog with tool sets and individual tools
+- [agent-skeleton.md](./references/agent-skeleton.md) — Structural reference for .agent.md body sections. Defines the closed tag vocabulary, scaling tiers (minimal/medium/full), and design rules that shape agent structure
+- [agent-profiles.md](./references/agent-profiles.md) — Six reusable behavioral archetypes (guide, transformer, curator, diagnostician, analyst, operator) that pre-configure constraint patterns, sub-tag sets, and tool selections
 - [example-agent.md](./assets/example-agent.md) — Ready-to-use Diagnostician profile agent at medium scaling tier (~120 lines body). Demonstrates identity prose in second-person voice, iron laws, context loading, modes, boundaries, and diagnosis report template
 
 </resources>

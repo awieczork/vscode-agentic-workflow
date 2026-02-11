@@ -61,32 +61,6 @@ Two patterns based on discovery mode.
 
 <glob_pattern_guidance>
 
-`applyTo` uses glob syntax for file pattern matching. Patterns match from the workspace root.
-
-**Syntax:**
-
-- `*` — Match any characters except path separator
-- `**` — Match any characters including path separator (recursive)
-- `?` — Match single character
-- `{}` — Brace expansion: `{ts,tsx}` matches either
-- `[]` — Character class: `[abc]` matches a, b, or c
-
-**Common patterns:**
-
-- `'**/*.ts'` — All TypeScript files
-- `'**/*.{ts,tsx}'` — All TypeScript and TSX files
-- `'**/*.py'` — All Python files
-- `'src/**'` — All files under `src/`
-- `'**/*.test.{ts,js}'` — All test files
-- `'docs/**/*.md'` — All markdown files under `docs/`
-- `'**/api/**/*.ts'` — All TypeScript files under any `api/` folder
-- `'**/*.{json,yaml,yml}'` — All config files
-
-**Invalid patterns:**
-
-- `*` alone — matches only root-level files, rarely intended
-- Regex syntax (`\.ts$`, `[0-9]+`) — globs, not regex
-
-**Array syntax for multiple patterns:** `applyTo: ['**/*.ts', '**/*.tsx']` — matches files matching ANY pattern (OR logic)
+`applyTo` uses VS Code glob syntax (not regex). Use array for multiple patterns: `applyTo: ['**/*.ts', '**/*.tsx']`.
 
 </glob_pattern_guidance>
