@@ -33,22 +33,13 @@ Tool sets bundle related tools. Specifying a tool set enables all tools within i
 
 - `agent` — Delegate tasks to other agents. Includes: `runSubagent`
 - `edit` — File and directory modifications. Includes: `createDirectory`, `createFile`, `createJupyterNotebook`, `editFiles`, `editNotebook`
-- `execute` — Code execution, terminal commands, tasks, and codebase memory. Includes: `awaitTerminal`, `createAndRunTask`, `getTerminalOutput`, `killTerminal`, `runInTerminal`, `runNotebookCell`, `testFailure`, `memory`
+- `execute` — Code execution, terminal commands, tasks, and codebase memory. Includes: `awaitTerminal`, `createAndRunTask`, `getTerminalOutput`, `killTerminal`, `runInTerminal`, `runNotebookCell`, `runTests`, `testFailure`, `memory`
 - `read` — Workspace content reading. Includes: `getNotebookSummary`, `problems`, `readFile`, `terminalLastCommand`, `terminalSelection`
 - `search` — Workspace search and file discovery. Includes: `changes`, `codebase`, `fileSearch`, `listDirectory`, `searchResults`, `searchSubagent`, `textSearch`, `usages`
 - `vscode` — VS Code integration and scaffolding. Includes: `askQuestions`, `extensions`, `getProjectSetupInfo`, `installExtension`, `newWorkspace`, `openSimpleBrowser`, `runCommand`, `switchAgent`, `vscodeAPI`
 - `web` — External web and GitHub access. Includes: `fetch`, `githubRepo`
 
 Standalone tools not in any tool set: `todo`, `renderMermaidDiagram`
-
-**Tool alias groups** — Shorthand aliases that expand to common tool combinations. Use aliases in `tools` array for concise declarations.
-
-- `read` — Alias for: `readFile`, `listDirectory`, `searchFiles`, `getFileInfo`
-- `edit` — Alias for: `editFile`, `createFile`, `deleteFile`, `renameFile`
-- `execute` — Alias for: `runInTerminal`, `runProcess`
-- `search` — Alias for: `semanticSearch`, `grepSearch`, `fileSearch`
-- `agent` — Alias for: `runSubagent`
-- `web` — Alias for: `fetch`
 
 </tool_sets>
 
@@ -92,6 +83,7 @@ All individual tools organized by tool set. Use this list when selecting specifi
 - `getTerminalOutput` — Get the output of a terminal command
 - `awaitTerminal` — Wait for a background terminal to complete
 - `killTerminal` — Kill a terminal by its ID
+- `runTests` — Run tests in the workspace — returns pass/fail results
 - `testFailure` — Include information about test failures
 - `memory` — Store facts about the codebase for future use
 

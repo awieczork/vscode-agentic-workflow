@@ -39,10 +39,14 @@ This file defines canonical vocabulary for all AI agent artifacts in this reposi
 Grep pattern to detect non-canonical alias usage across `.github/**/*.md`:
 
 ```
-exception|fault|problem|bug|defect|guideline|policy|directive|restriction|limitation|assistant|bot|procedure|workflow|recipe|guidance|rule-set|directive-file|delegation|transfer|dispatch|route|interrupt|hallucinate|invent|behavior-set|loaded-data|fence|guardrail
+exception|fault|problem|bug|defect|guideline|policy|directive|restriction|limitation|assistant|bot|procedure|recipe|guidance|rule-set|directive-file|delegation|transfer|dispatch|interrupt|hallucinate|invent|behavior-set|loaded-data|fence|guardrail
 ```
 
 **Excluded from pattern** — Common English words that produce false positives: pass, break, function, command, project, repository, codebase, state, limit, stage, stop, pause, ask, template, query, request, document, output, capability, failure ("plan failure" and "test failure" are idiomatic English distinct from canonical `error`). Review these manually when violations are suspected.
+
+**Excluded from pattern** — Canonical or plain-English terms with distinct meaning from their alias group:
+- workflow — Canonical term — distinct meaning from 'skill'; defined in `<canonical_terms>`
+- route — Plain English usage distinct from canonical 'handoff' — 'route to' means 'direct to a destination'
 
 **Usage:** Apply pattern against `.github/**/*.md` files. Exclude matches inside code blocks and quoted user input.
 

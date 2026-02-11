@@ -3,18 +3,28 @@ This file is the structural reference for building `.agent.md` artifacts. The go
 
 <tag_vocabulary>
 
-Tags are the agent's structural skeleton — fixed shapes filled with domain content. Domain extension happens through attribute values and prose content, not new tags. 4 top-level tags, 6 sub-tags, 4 attributes.
+Tags are the agent's structural skeleton. 4 structural tags (fixed, closed) define agent anatomy. 7+ recognized sub-tag patterns (open, extensible) provide domain-specific structure within those boundaries. 4 attributes.
 
-- `<constraints>` — Required. Prohibitions, limits, safety priority. Prose intro states priority hierarchy and primary risk
-  - `<iron_law id="IL_NNN">` — Optional. High-consequence non-negotiable rules with statement, red flags, rationalization counters. Use only for agents with destructive tools, citation authority, or approval authority
-- `<behaviors>` — Required. Everything the agent actively does. Prose intro states execution sequence
-  - `<context_loading>` — Optional. Initialization / boot sequence with load order and fallbacks
-    - `<on_missing context="[RESOURCE]">` — Optional. Fallback behavior for missing resources
-  - `<mode name="[DOMAIN_VERB]">` — Optional. Named behavioral configuration with trigger, steps, exit. Use only for multi-behavior agents
-- `<outputs>` — Required. Deliverable formats, confidence thresholds, handoff payload templates. Prose intro states consumer expectations
-- `<termination>` — Optional. Stopping conditions, handoff/escalation triggers, error recovery. Omit for solo agents. Prose intro states completion criteria and max cycles
-  - `<if condition="[ERROR_TYPE]">` — Optional. Deterministic condition-action pair for runtime recovery
-  - `<when_blocked>` — Optional. Structured template for reporting blocked state
+**Structural tags** (fixed — exactly these four):
+
+- `<constraints>` — Required. Hard limits and iron laws
+- `<behaviors>` — Required. Behavioral rules, modes, execution logic
+- `<outputs>` — Required. Deliverables and return formats
+- `<termination>` — Optional. Session-ending conditions
+
+**Domain sub-tags** (open — agents introduce sub-tags as needed within structural boundaries):
+
+Recognized patterns:
+
+- `<iron_law>` — Numbered constraint with rationale (inside `<constraints>`)
+- `<context_loading>` — Input processing rules (inside `<behaviors>`)
+- `<on_missing>` — Fallback behavior for missing context (inside `<behaviors>`)
+- `<mode>` — Behavioral variant with activation criteria (inside `<behaviors>`)
+- `<if>` / `<when_blocked>` — Conditional behavior (inside `<behaviors>`)
+- `<example>` — Annotated output sample (inside `<outputs>`)
+- `<return_format>` — Structured return contract (inside `<outputs>`)
+
+Agents may introduce additional domain sub-tags not listed here. Sub-tags must nest inside structural tags. Name sub-tags with snake_case.
 
 </tag_vocabulary>
 
