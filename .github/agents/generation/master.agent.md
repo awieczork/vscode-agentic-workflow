@@ -138,7 +138,7 @@ Update triggers:
 1. Generate `copilot-instructions.md` for the output project:
    - Extract project name from manifest
    - Build `<workspace>` section from output directory structure
-   - Include standard sections (`<decision_making>`, `<collaboration>`, `<error_reporting>`) adapted from existing patterns in the workspace `copilot-instructions.md`
+   - Include standard sections (`<workspace>`, `<constraints>`, `<decision_making>`) adapted from existing patterns in the workspace `copilot-instructions.md`
    - Fill with interview data from manifest metadata if available (project description, constraints, domain)
    - Write to `output/[PROJECT_NAME]/.github/copilot-instructions.md`
 2. Compile creation results into summary report
