@@ -19,7 +19,7 @@ flowchart LR
 3. `@interviewer` conducts 4-round expert interview (understand → explore artifacts → boundaries → propose)
 4. User approves artifact proposal
 5. `@interviewer` writes spec files + manifest to `.github/specs/`
-6. `@master` creates `output/[PROJECT_NAME]/.github/` and copies `templates/` content (core agents + instructions)
+6. `@master` creates `output/[PROJECT_NAME]/.github/` structure
 7. `@master` reads manifest, spawns `@creator` per artifact
 8. `@creator` selects correct skill per artifact type, executes the skill, creates artifact file
 9. `@master` compiles results, validates
@@ -108,7 +108,7 @@ The interview is the primary knowledge source. `@interviewer` is an expert inter
 **Actions:**
 
 1. Read manifest — list of all artifacts to create with paths to spec files
-2. Create `output/[PROJECT_NAME]/.github/` directory — copy core agents and instructions from `templates/` as baseline
+2. Create `output/[PROJECT_NAME]/.github/` directory structure
 3. For each artifact: spawn one generic `@creator` subagent with the spec file path
 4. `@creator` reads the spec → determines artifact type from `artifact_type` field → selects correct skill dynamically (agent-creator, prompt-creator, instruction-creator, or skill-creator) → executes the skill → creates the artifact file in `output/[PROJECT_NAME]/.github/` → returns summary + path to `@master`
 5. `@master` tracks progress: which artifacts succeeded, which encountered errors
