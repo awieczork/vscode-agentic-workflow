@@ -108,8 +108,8 @@ Load [example-repo-wide.md](./assets/example-repo-wide.md) or [example-path-spec
 - No identity prose: "You are...", role statements, expertise declarations
 - No stance words: "thorough", "cautious", "creative", "helpful"
 - No prompt variables: `${input:}`, `${selection}`, `${file}`
-- No agent tags: `<constraints>`, `<behaviors>`, `<outputs>`, `<termination>`, `<iron_law>`, `<mode>`
-- No skill tags: `<workflow>`, `<step_N_verb>`, `<use_cases>`, `<resources>`
+- No agent tags: `<constraints>`, `<behaviors>`, `<outputs>`, `<termination>`, `<iron_law>`, `<mode>`, `<context_loading>`, `<on_missing>`, `<when_blocked>`, `<if>`
+- No skill tags: `<workflow>`, `<step_N_verb>`, `<use_cases>`, `<resources>`, `<error_handling>`, `<validation>`
 - No markdown headings — XML tags are exclusive structure
 
 </step_4_write_body>
@@ -147,8 +147,8 @@ Run `<validation>`. Fix P1/P2 before delivery; flag P3.
 - Path-specific on-demand has `description` only in frontmatter
 - All YAML string values wrapped in single quotes: `description: 'value'`, `applyTo: '**/*.ts'`
 - `description` follows correct pattern for sub-type per `<description_rules>` in [instruction-frontmatter-contract.md](./references/instruction-frontmatter-contract.md)
-- No agent tags in output: `<constraints>`, `<behaviors>`, `<outputs>`, `<termination>`, `<iron_law>`, `<mode>`, `<context_loading>`, `<on_missing>`, `<when_blocked>`
-- No skill tags in output: `<workflow>`, `<step_N_verb>`, `<use_cases>`, `<resources>`
+- No agent tags in output: `<constraints>`, `<behaviors>`, `<outputs>`, `<termination>`, `<iron_law>`, `<mode>`, `<context_loading>`, `<on_missing>`, `<when_blocked>`, `<if>`
+- No skill tags in output: `<workflow>`, `<step_N_verb>`, `<use_cases>`, `<resources>`, `<error_handling>`, `<validation>`
 - No identity prose in output: "You are...", role statements, expertise declarations
 - No stance words in output: "thorough", "cautious", "creative", "helpful"
 - No prompt variables in output: `${input:}`, `${selection}`, `${file}`
@@ -168,7 +168,7 @@ Run `<validation>`. Fix P1/P2 before delivery; flag P3.
 - Specific quantities: "Maximum 3 levels" not "Avoid deep nesting"
 - One rule per bullet — no compound rules
 - Cross-file XML tag references use linked-file form: `<tag>` in [file.md](path)
-- Every `Load [file] for:` directive resolves to an existing file
+- Every `Load [file] for:` statement resolves to an existing file
 - No orphaned resources — every file in subfolders referenced from SKILL.md
 
 **P3 — Polish (flag, do not block):**

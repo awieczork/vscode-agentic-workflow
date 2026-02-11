@@ -1,6 +1,6 @@
 ---
 name: 'prompt-creator'
-description: 'Creates and refactors .prompt.md files that define reusable prompt files for AI agents. Use when asked to "create a prompt", "build a prompt", "refactor a prompt", "update a prompt file", "improve a prompt", or "scaffold a prompt". Produces YAML frontmatter, task body with optional variables and file references, and validated output.'
+description: 'Creates and refactors .prompt.md files that define reusable prompt files for AI agents. Use when asked to "create a prompt", "refactor a prompt", "update a prompt file", or "scaffold a prompt". Produces YAML frontmatter, task body with optional variables and file references, and validated output.'
 ---
 
 This skill creates well-structured .prompt.md files that define reusable on-demand prompt files. The governing principle is one task per prompt — each prompt file solves one focused task with parameterized inputs. Begin with `<step_1_analyze>` to determine the task scope.
@@ -61,7 +61,7 @@ Finalize: scaling tier, body format, variable needs.
 
 <step_3_write_frontmatter>
 
-Load [prompt-frontmatter-contract.md](./references/prompt-frontmatter-contract.md) for: `<frontmatter_fields>`, `<description_rules>`, `<agent_mode_guidance>`. Note: `tools` and `model` fields are now available in the reference file.
+Load [prompt-frontmatter-contract.md](./references/prompt-frontmatter-contract.md) for: `<frontmatter_fields>`, `<description_rules>`, `<agent_mode_guidance>`, including `tools` and `model` fields.
 
 **Description (required):**
 
@@ -146,7 +146,8 @@ Run `<validation>`. Fix P1/P2 before delivery; flag P3.
 - File location: `.github/prompts/[NAME].prompt.md`
 - `agent` field uses only custom agent names — never built-in names (`ask`, `edit`, `agent`)
 - No markdown headings — use XML tags for structure when body exceeds ~20 lines
-- No agent tags (`<constraints>`, `<behaviors>`, `<outputs>`, `<termination>`, `<iron_law>`, `<mode>`, `<context_loading>`) — agent structure contaminates prompt file
+- No agent tags (`<constraints>`, `<behaviors>`, `<outputs>`, `<termination>`, `<iron_law>`, `<mode>`, `<context_loading>`, `<on_missing>`, `<when_blocked>`, `<if>`) — agent structure contaminates prompt file
+- No skill tags (`<workflow>`, `<step_N_verb>`, `<use_cases>`, `<resources>`, `<error_handling>`, `<validation>`) — skill structure contaminates prompt file
 - No `@agentname` references — prompt is agent-agnostic
 
 **P2 — Quality (fix before delivery):**

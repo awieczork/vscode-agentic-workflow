@@ -91,5 +91,22 @@ Correct: `<example>` tag with Wrong/Correct contrast — e.g., `const x = getVal
 - Capitalize list items; omit trailing periods unless items are complete sentences
 - Start prohibitions with "No" or "Never"; include reason after em-dash: "No emojis — break parsing in some environments"
 - Format paths with forward slashes and backticks regardless of OS: `.github/instructions/*.instructions.md`
+- Replace vague language with explicit conditionals (`If X, then Y`) and precise quantities (`2-3 items`, not "several")
+- Match format to content: prose for causally linked ideas, bullets for parallel unordered items, numbered lists for sequential steps
+- Reference tag content by name (`"the schema in <contract>"`) — never by position ("above", "below")
 
 </formatting_conventions>
+
+
+<reference_notation>
+
+- Reference tools as `#tool:toolname`, agents as `@agentname`, files as markdown links `[display](path/file.md)`, code elements in backticks
+- Format definitions as `**term** — definition` (bold + em-dash); use backticks instead of bold for code identifiers: `` `term` — definition ``; use em-dash (—) not hyphen (-)
+- Format placeholders as `[UPPERCASE_PLACEHOLDER]` — brackets plus uppercase signal "replace this" distinctly from literal content
+- Agent files (`.agent.md`) use `{descriptive_lowercase}` placeholders in spawn templates and output formats — these describe contextual values shared between agents. `[UPPERCASE_PLACEHOLDER]` applies to documentation templates and user-facing instructions
+- Format line references as markdown links: single `[file.ts](file.ts#L10)`, range `[file.ts](file.ts#L10-L12)`; non-contiguous lines require separate links; no URI schemes like `file://` or `vscode://`
+- Reference XML tags in backticks with angle brackets: `<tag_name>`. Two forms:
+  - **Same file** — backticks only: "Begin with `<constraints>` for hard limits"
+  - **Linked file** — backticks plus markdown file link: "Follow `<canonical_terms>` in [glossary.md](glossary.md)"
+
+</reference_notation>

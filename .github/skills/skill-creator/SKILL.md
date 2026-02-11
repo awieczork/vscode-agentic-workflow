@@ -165,7 +165,7 @@ Run `<validation>`. Fix P1/P2 before delivery; flag P3.
 - No hardcoded secrets or absolute paths
 - No references to specific agents (`@agentname`) — skill is agent-agnostic
 - No markdown headings — XML tags are exclusive structure
-- No agent tags: `<constraints>`, `<behaviors>`, `<outputs>`, `<termination>`, `<iron_law>`, `<mode>`, `<context_loading>`
+- No agent tags: `<constraints>`, `<behaviors>`, `<outputs>`, `<termination>`, `<iron_law>`, `<mode>`, `<context_loading>`, `<on_missing>`, `<when_blocked>`, `<if>`
 
 **P2 — Quality (fix before delivery):**
 

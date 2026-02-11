@@ -34,7 +34,7 @@ Verify the target file context: new file (apply all rules from scratch) or exist
 </step_1_orient>
 
 
-<step_2_structure>
+<step_2_plan_structure>
 
 Apply XML structure rules from [artifact-structure.md](./references/artifact-structure.md):
 
@@ -44,28 +44,21 @@ Apply XML structure rules from [artifact-structure.md](./references/artifact-str
 4. Apply `<tag_design>` rules: separate instructions from data, design for modularity and reuse
 5. Reserve markdown tables for `<outputs>` and `<resources>` sections only — use bullet lists elsewhere
 
-</step_2_structure>
+</step_2_plan_structure>
 
 
 <step_3_draft>
 
 Write content applying formatting conventions. Load [artifact-structure.md](./references/artifact-structure.md) for: `<content_constraints>`, `<formatting_conventions>`.
 
-Apply:
+Load [example-artifact.md](./assets/example-artifact.md) for: annotated reference output.
 
-- No emojis, motivational phrases, leading special characters, or artificial markers
-- Label examples with contrast pairs: "Wrong:... Correct:..."
-- Express priority hierarchies with arrow notation: `Safety → Accuracy → Clarity → Style`
-- Separate enum values with pipe and backticks: `success` | `partial` | `failed`
-- Express thresholds consistently: `≥80%` for "at least", `50-80%` for ranges, `<50%` for "less than"
-- Capitalize list items; omit trailing periods unless complete sentences
-- Start prohibitions with "No" or "Never"; include reason after em-dash
-- Format paths with forward slashes and backticks regardless of OS
+Apply all rules from `<content_constraints>` and `<formatting_conventions>` in [artifact-structure.md](./references/artifact-structure.md).
 
 </step_3_draft>
 
 
-<step_4_terminology>
+<step_4_verify_terminology>
 
 Verify canonical vocabulary. Load [glossary.md](./references/glossary.md) for: `<canonical_terms>`, `<validation>`.
 
@@ -74,7 +67,7 @@ Verify canonical vocabulary. Load [glossary.md](./references/glossary.md) for: `
 3. Check conflict entries when terms overlap — apply the correct term for the context
 4. Exclude matches inside code blocks and quoted user input
 
-</step_4_terminology>
+</step_4_verify_terminology>
 
 
 <step_5_verify>
@@ -137,6 +130,6 @@ P3 (polish — fix when time permits):
 
 - [glossary.md](./references/glossary.md) — Canonical vocabulary with 17 term definitions, aliases, conflicts, and grep validation pattern
 - [artifact-structure.md](./references/artifact-structure.md) — XML structure rules, document anatomy patterns, tag design principles, content constraints, and formatting conventions
-- [example-artifact.md](assets/example-artifact.md) — Demonstrates correctly structured framework artifact
+- [example-artifact.md](./assets/example-artifact.md) — Demonstrates correctly structured framework artifact
 
 </resources>

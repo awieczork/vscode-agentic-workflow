@@ -1,6 +1,7 @@
+<!-- repo-wide instructions have NO frontmatter — content begins immediately with prose intro -->
 This project prioritizes type safety and explicit error handling across all code. Every module follows functional patterns unless framework constraints require otherwise.
 
-
+<!-- each XML group scopes one concern; domain-specific tag names replace markdown headings -->
 <naming_conventions>
 
 - Use PascalCase for types, interfaces, and class names

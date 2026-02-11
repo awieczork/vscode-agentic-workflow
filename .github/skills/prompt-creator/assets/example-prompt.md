@@ -1,3 +1,4 @@
+<!-- description targets discovery; agent field targets this prompt to a specific agent; argument-hint provides UI guidance -->
 ---
 description: 'Generate comprehensive test cases for selected code'
 agent: 'test-engineer'
@@ -15,6 +16,7 @@ Reference the project testing conventions: [testing-guide.md](../docs/testing-gu
 
 </context>
 
+<!-- task section uses bullet lists for clear, scannable requirements the agent can check off -->
 <task>
 
 Generate test cases that cover:

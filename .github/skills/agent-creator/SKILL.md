@@ -1,6 +1,6 @@
 ---
 name: 'agent-creator'
-description: 'Creates and refactors .agent.md files that define autonomous AI agent personas with tools, constraints, and behavioral modes. Use when asked to "create an agent", "build an agent", "refactor an agent", "update an agent", "improve an agent file", or "scaffold an agent file". Produces frontmatter, identity prose, constraints, behaviors, outputs, and termination sections.'
+description: 'Creates and refactors .agent.md files that define autonomous AI agent personas with tools, constraints, and behavioral modes. Use when asked to "create an agent", "refactor an agent", "update an agent", or "scaffold an agent file". Produces frontmatter, identity prose, constraints, behaviors, outputs, and termination sections.'
 ---
 
 This skill creates well-structured .agent.md files that define autonomous AI agent personas. The governing principle is single role per agent — each agent has one focused identity with clear boundaries. Begin with `<step_1_analyze>` to answer planning questions.
@@ -129,7 +129,7 @@ Run `<validation>`. Fix P1/P2 before delivery; flag P3.
 - If `tools` present, use inline array format: `tools: ['tool1', 'tool2']`
 - If `name` present, format valid: lowercase alphanumeric + hyphens, matches filename pattern
 - If `tools` present, every tool or tool-set name exists in `<tool_sets>` or `<tools_list>` in [agent-frontmatter-contract.md](./references/agent-frontmatter-contract.md)
-- No skill tags: `<workflow>`, `<step_N_verb>`, `<use_cases>`, `<resources>` — these belong to skills
+- No skill tags: `<workflow>`, `<step_N_verb>`, `<use_cases>`, `<resources>`, `<error_handling>`, `<validation>` — these belong to skills
 - No hardcoded secrets or absolute paths
 - `<constraints>` present with NEVER/ALWAYS prohibitions
 - `<behaviors>` present with executable actions
