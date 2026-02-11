@@ -9,14 +9,15 @@ The governing principle is: calibrate autonomy to confidence — proceed decisiv
 
 Workspace structure and folder purposes. Load this first to locate resources.
 
-- `.github/agents/` — Core agent definitions (`.agent.md` files) — `Active`
-- `.github/instructions/` — Instruction files — writing rules, structure conventions, glossary — `Active`
+- `.github/agents/core/` — Hub-and-spoke agent definitions (brain, researcher, architect, build, inspect, curator) — `Active`
+- `.github/agents/generation/` — Generation pipeline agents (creator, interviewer, master) — `Active`
+- `.github/instructions/` — Reserved for future instruction files — `Empty`
 - `.github/skills/` — Skill definitions (`SKILL.md` files) with `references/` and `assets/` subfolders — `Active`
 - `.github/prompts/` — Reusable prompt files (`.prompt.md` files) — `Active`
 - `.github/schema/` — Schema definitions for the generation pipeline (manifest, spec) — `Active`
 - `.github/decisions/` — Active design decisions and rationale — `Temporary`
 - `.github/specs/` — Output directory for interviewer-generated spec files — `Placeholder`
-- `templates/` — Repo-agnostic core agents and instructions for pipeline output — `Active`
+- `templates/` — Repo-agnostic templates for pipeline output — `Placeholder`
 - `output/` — Generated project output (gitignored) — `Placeholder`
 
 **Status meanings:**
@@ -24,6 +25,7 @@ Workspace structure and folder purposes. Load this first to locate resources.
 - `Active` — Authoritative, use as source of truth
 - `Temporary` — Will be cleaned up after current development cycle
 - `Placeholder` — Structure exists, content not yet generated
+- `Removed` — Previously existed, content redistributed to other files
 
 </workspace>
 
@@ -70,3 +72,33 @@ Wrong: "I can't find the config file, so I'll stop." (halt on missing resource) 
 - Report errors using the standard format: `status` (`success` | `partial` | `failed` | `blocked`), `error_code` (kebab-case), `message` (human explanation), `recovery` (next action)
 
 </error_reporting>
+
+
+<voice_and_precision>
+
+- Use one term per concept; consult `<canonical_terms>` in [glossary.md](.github/skills/artifact-author/references/glossary.md)
+- Replace vague language with explicit conditionals (`If X, then Y`) and precise quantities (`2-3 items`, not "several")
+- Write in active voice with positive framing and action verbs — no hedging or passive constructions. Prohibitions are the exception: use "No"/"Never" per `<formatting_conventions>` in [artifact-structure.md](.github/skills/artifact-author/references/artifact-structure.md)
+- Match format to content: prose for causally linked ideas, bullets for parallel unordered items, numbered lists for sequential steps
+- Reference tag content by name (`"the schema in <contract>"`) — never by position ("above", "below")
+
+Wrong: "Input should be checked" (passive voice) → Correct: "Check input"
+Wrong: "Agents should apply" (third-person) → Correct: "Apply"
+Wrong: "Perhaps we could try" (hedging) → Correct: "Use"
+Wrong: "Don't use bullets" (negative framing outside prohibitions) → Correct: "Use numbered lists for sequential steps"
+
+</voice_and_precision>
+
+
+<reference_notation>
+
+- Reference tools as `#tool:toolname`, agents as `@agentname`, files as markdown links `[display](path/file.md)`, code elements in backticks
+- Format definitions as `**term** — definition` (bold + em-dash); use backticks instead of bold for code identifiers: `` `term` — definition ``; use em-dash (—) not hyphen (-)
+- Format placeholders as `[UPPERCASE_PLACEHOLDER]` — brackets plus uppercase signal "replace this" distinctly from literal content
+- Agent files (`.agent.md`) use `{descriptive_lowercase}` placeholders in spawn templates and output formats — these describe contextual values shared between agents. `[UPPERCASE_PLACEHOLDER]` applies to documentation templates and user-facing instructions
+- Format line references as markdown links: single `[file.ts](file.ts#L10)`, range `[file.ts](file.ts#L10-L12)`; non-contiguous lines require separate links; no URI schemes like `file://` or `vscode://`
+- Reference XML tags in backticks with angle brackets: `<tag_name>`. Two forms:
+  - **Same file** — backticks only: "Begin with `<constraints>` for hard limits"
+  - **Linked file** — backticks plus markdown file link: "Follow `<canonical_terms>` in [glossary.md](.github/skills/artifact-author/references/glossary.md)"
+
+</reference_notation>
