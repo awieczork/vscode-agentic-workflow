@@ -7,6 +7,8 @@ This artifact defines the hub-and-spoke agent orchestration model. The governing
 
 <agent_inventory>
 
+*Note: Architectural reference view. The operational copy is `<agent_pool>` in [brain.agent.md](../agents/core/brain.agent.md).*
+
 One agent group operates in this workspace: core agents (hub-and-spoke lifecycle). Generation runs through these same core agents — no dedicated generation agents exist.
 
 **Core agents (6)** — Hub-and-spoke lifecycle: brainstorm → plan → implement → verify → maintain.
@@ -84,6 +86,8 @@ One agent group operates in this workspace: core agents (hub-and-spoke lifecycle
 
 <rework_model>
 
+*Note: Architectural reference view. The operational copy is `<rework_routing>` in [brain.agent.md](../agents/core/brain.agent.md).*
+
 Each spoke's return status determines @brain's next action. If the same spoke requires rework more than twice, escalate to the user — repeated failures suggest a structural issue that routing alone cannot fix.
 
 **@inspect verdict routing:**
@@ -120,6 +124,8 @@ Each spoke's return status determines @brain's next action. If the same spoke re
 
 <data_contracts>
 
+*Note: Architectural reference view. The operational copy is `<spawn_templates>` in [brain.agent.md](../agents/core/brain.agent.md).*
+
 What each spoke receives and returns. @brain mediates all transitions.
 
 All spokes receive two standard input fields in addition to their spoke-specific fields:
@@ -132,8 +138,8 @@ Spoke-specific contracts:
 - **@brain → @researcher:** Focus + Scope + Mode + Variant (optional — defaults per mode) → Returns: ≤10 findings with citations, markers (`[CONFLICT]`, `[OUT OF SCOPE]`, `[EMPTY]`)
 - **@brain → @architect:** Direction + Scope + Constraints (optional) → Returns: phased plan with per-task success criteria, dependency verification, risk assessment
 - **@brain → @build:** Plan (task subset) + Scope → Returns: build summary (files changed, tests, deviations, blockers)
-- **@brain → @inspect:** Plan + Build Summary → Returns: verdict with evidence-backed findings (severity: `Critical` | `Major` | `Minor`)
-- **@brain → @curator:** Action + Scope + Files Affected (required for sync-docs action only) → Returns: maintenance report with health scan
+- **@brain → @inspect:** Plan + Build Summary + Scope (optional) → Returns: verdict with evidence-backed findings (severity: `Critical` | `Major` | `Minor`)
+- **@brain → @curator:** Action + Scope + Files Affected (required for sync-docs) + Verdict (optional) + Build Summary (optional) → Returns: maintenance report with health scan
 - **@brain → domain agent:** See `<domain_agent_model>` in [generation-workflow.model.md](generation-workflow.model.md) for detailed domain agent contracts including mutation tiers, orchestration positions, and advisory patterns
 
 </data_contracts>

@@ -52,7 +52,7 @@ The previous model used three generation-specific agents — @interviewer, @mast
 
 Every capability from the dissolved agents redistributes to an existing component. Nothing is lost — knowledge moves, agents disappear.
 
-**Moved to `init-project.prompt.md`:**
+**Moved to `generation.workflow.md`:**
 
 - Interview expertise — artifact heuristics, profile assignment, question patterns (from @interviewer)
 - Spec field definitions — what to collect per artifact type during interview (from @interviewer)
@@ -89,6 +89,9 @@ Brief description of each generation phase and which spoke handles it.
 - **Phase 4b — Adaptation** — Runs as a final @build task after all domain artifacts exist. Brain adaptation injects domain agent entries into `<agent_pool>` and `<spawn_templates>` of copied brain.agent.md. `copilot-instructions.md` generation produces project workspace map, constraints, development commands, and agent listing. `.curator-scope` generation produces include/exclude patterns for edit boundaries
 - **Phase 5 — Verification** — @inspect checks all created artifacts against the plan's success criteria. Findings return to @brain for rework decisions
 - **Phase 6 — Summary** — @brain compiles creation results, verification outcomes, and any rework history into a summary presented to the user
+- **Phase 7 — Sync** — @curator syncs workspace docs, updates decision records. Final lifecycle step after @inspect PASS
+
+Note: The `<workflow_overview>` mermaid diagram shows all orchestration nodes (including sub-steps like RESEARCHER within Phase 2 and ADAPT within Phase 4b) while `<phases>` lists the major stages.
 
 </phases>
 
@@ -142,7 +145,7 @@ Advisory agents participate in rework loops. When @inspect returns REWORK NEEDED
 
 <reference_patterns>
 
-For interview-use versions with collection guidance, see `<reference_patterns>` in [init-project.prompt.md](../prompts/init-project.prompt.md).
+For interview-use versions with collection guidance, see `<reference_patterns>` in [generation.workflow.md](../agent-workflows/generation.workflow.md).
 
 These patterns illustrate how domain agents compose with core spokes in real workflows. Each demonstrates a distinct orchestration signature — the combination of mutation tiers, insertion points, and artifact types that defines how a project's agents collaborate. They serve as design vocabulary for the generation interview.
 
