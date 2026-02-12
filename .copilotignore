@@ -1,1 +1,4 @@
+output/
+
+# Preemptive exclusion — directory does not exist yet
 .tmp/
