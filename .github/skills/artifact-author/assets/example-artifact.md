@@ -16,7 +16,7 @@ All error reports use a three-field structure. Each field serves a distinct cons
 - **recovery** — Prescribed next action to resolve the failure
 
 Wrong: `{ "error": "something went wrong" }` — no classification, no recovery path
-Correct: `{ "status": "failed", "error_code": "missing-config", "message": "Config file not found at .github/config.yml", "recovery": "Create config file using template at templates/config.yml" }`
+Correct: `{ "status": "failed", "error_code": "missing-config", "message": "Config file not found at .github/config.yml", "recovery": "Create config file using template at .github/templates/config.yml" }`
 
 </error_format>
 

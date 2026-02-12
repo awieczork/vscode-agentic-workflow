@@ -1,9 +1,10 @@
 ---
 description: 'Test seed for a Python FastAPI backend project — exercises all artifact types during generation workflow'
 agent: 'brain'
+workflow: 'generation'
 ---
 
-Use the generation workflow defined in [init-project.prompt.md](init-project.prompt.md) with the following seed data.
+Follow the [generation workflow](../agent-workflows/generation.workflow.md) with the following seed data.
 
 ```yaml
 name: "fastapi-backend"

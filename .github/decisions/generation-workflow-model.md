@@ -327,9 +327,9 @@ Pipeline requirements the workflow must fulfill:
 - Prompts directory scaffolding — ensure `.github/prompts/` exists in output with generated prompt files
 - `.curator-scope` generation — generate plain text file with `include:` and `exclude:` sections containing glob patterns (one per line) from artifact paths + interview boundaries
 - `copilot-instructions.md` generation — generate via copilot-instructions-creator skill; include all core + domain agents with descriptions
-- Core agent templates — copy `templates/agents/` for core agents; copy creator skill folders from `.github/skills/` (agent-creator, artifact-author, instruction-creator, prompt-creator, skill-creator, copilot-instructions-creator); generate domain artifacts from creator skills during the build phase
+- Core agent templates — copy `.github/templates/agents/` for core agents; copy creator skill folders from `.github/skills/` (agent-creator, artifact-author, instruction-creator, prompt-creator, skill-creator, copilot-instructions-creator); generate domain artifacts from creator skills during the build phase
 - Constraints population — map interview Round 3 safety answers into `<constraints>` bullet rules
 - Creator skills — copy all 6 creator skill folders (agent-creator, artifact-author, instruction-creator, prompt-creator, skill-creator, copilot-instructions-creator) to output project for self-evolution capability
-- `templates/instructions/` is intentionally empty — instructions are interview-driven, generated per-project by instruction-creator skill
+- `.github/templates/instructions/` is intentionally empty — instructions are interview-driven, generated per-project by instruction-creator skill
 
 </self_containment_contract>

@@ -1,5 +1,6 @@
 include:
 .github/agents/**/*.agent.md
+.github/agent-workflows/*.workflow.md
 .github/skills/*/SKILL.md
 .github/prompts/*.prompt.md
 .github/instructions/*.instructions.md
@@ -8,4 +9,4 @@ include:
 
 exclude:
 output/
-templates/
+.github/templates/
