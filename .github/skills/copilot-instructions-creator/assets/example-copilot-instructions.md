@@ -57,4 +57,42 @@ Run:
 - `npm start` — start production server
 
 </commands>
+
+
+<environment>
+
+**Runtime environment**
+- Node.js 20 LTS via nvm — run `nvm use` to activate (version pinned in `.nvmrc`)
+- TypeScript compiled to `dist/` — agents should edit `.ts` source files, never `dist/`
+- Development uses `ts-node` for direct TypeScript execution without pre-compilation
+
+**Package management**
+- npm is the authoritative package manager — do not use yarn or pnpm
+- `package-lock.json` is committed — always run `npm install` after pulling to sync dependencies
+- To add a dependency: `npm install <package>` (runtime) or `npm install -D <package>` (dev)
+
+**Ad-hoc scripting**
+- Agents may run one-off scripts using `npx ts-node scripts/<name>.ts`
+- Utility scripts live in `scripts/` — seed data, migrations, one-time fixes
+- Prefer TypeScript for ad-hoc scripts to maintain type safety with project models
+
+**Environment variables**
+- `.env` file required for local development — copy from `.env.example`
+- Required variables: `DATABASE_URL`, `JWT_SECRET`, `PORT`, `REDIS_URL`
+- `.env` is gitignored — never commit it. Secrets are injected via CI environment in production
+- Use `process.env.VAR_NAME` with validation at startup — no direct access without config layer
+
+**Prerequisites**
+- PostgreSQL must be running — start with `docker compose up -d postgres`
+- Redis optional (caching layer) — start with `docker compose up -d redis` if testing cache behavior
+- No other external services required for local development
+
+**Common development patterns**
+- Hot reload: `npm run dev` uses nodemon + ts-node, restarts on `.ts` file changes
+- Database seeding: `npm run seed` populates test data — always run after fresh migration
+- Migration workflow: TypeORM migrations — generate with `npm run migration:generate`, apply with `npm run migration:run`
+- Testing: unit tests in `__tests__/` alongside source, e2e tests in `test/` at project root
+- Log level controlled by `LOG_LEVEL` env var — defaults to `info`, use `debug` during development
+
+</environment>
 ````

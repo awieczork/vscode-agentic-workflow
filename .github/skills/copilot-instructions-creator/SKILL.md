@@ -1,9 +1,9 @@
 ---
 name: 'copilot-instructions-creator'
-description: 'Generates project-level copilot-instructions.md files for output projects. Use when asked to "create copilot-instructions", "generate project instructions", or "scaffold workspace config". Produces workspace map, project constraints, decision framework, development commands, and agent listing.'
+description: 'Generates project-level copilot-instructions.md files for output projects. Use when asked to "create copilot-instructions", "generate project instructions", or "scaffold workspace config". Produces workspace map, project constraints, decision framework, development commands, environment context, and agent listing.'
 ---
 
-This skill produces the `.github/copilot-instructions.md` file for generated output projects. The governing principle is fixed structure with project-specific content — the file is a repo-wide instruction that VS Code loads on every chat request, providing all agents with workspace awareness, project constraints, decision-making guidance, and development commands. Begin with `<step_1_analyze>` to validate inputs and load section definitions.
+This skill produces the `.github/copilot-instructions.md` file for generated output projects. The governing principle is fixed structure with project-specific content — the file is a repo-wide instruction that VS Code loads on every chat request, providing all agents with workspace awareness, project constraints, decision-making guidance, development commands, and environment context. Begin with `<step_1_analyze>` to validate inputs and load section definitions.
 
 
 <use_cases>
@@ -36,6 +36,7 @@ Required inputs:
 Optional inputs:
 
 - `project_commands` — collected from interview — categorized development commands for the project's tech stack
+- `environment_context` — collected from interview — runtime environment details: interpreter conventions, package management, ad-hoc scripting, environment variables, prerequisites, common development patterns
 - `safety_constraints` — from interview Round 3
 - `quality_rules` — project-specific quality standards
 - `approval_requirements` — approval gates or review requirements
@@ -106,7 +107,21 @@ Generate the `<commands>` section from `project_commands` input. Apply format fr
 </step_5_generate_commands>
 
 
-<step_6_write>
+<step_6_generate_environment>
+
+Generate the `<environment>` section from `environment_context` input. Apply format from `<environment_section>` in [section-schema.md](./references/section-schema.md).
+
+- If `environment_context` is empty or not provided, SKIP this step entirely — no `<environment>` section in output
+- Group content by sub-area: Runtime environment, Package management, Ad-hoc scripting, Environment variables, Prerequisites, Common development patterns
+- Each sub-area as a bold header line, followed by prose bullets describing the context
+- Only include sub-areas where context was provided — omit empty sub-areas
+- Entry format: prose bullets (NOT command format — this describes how the environment works, not commands to run)
+- Close with `</environment>` tag
+
+</step_6_generate_environment>
+
+
+<step_7_write>
 
 Assemble and write the output file.
 
@@ -115,16 +130,16 @@ Load [example-copilot-instructions.md](./assets/example-copilot-instructions.md)
 - Location: `output/{project_name}/.github/copilot-instructions.md`
 - Format: NO frontmatter (no `---` YAML block). Content begins immediately with prose
 - Write prose intro (1-3 sentences): describes the project and its governing framework principle
-- Append sections in order: `<workspace>`, `<constraints>`, `<decision_making>`, `<commands>` (if `project_commands` provided)
+- Append sections in order: `<workspace>`, `<constraints>`, `<decision_making>`, `<commands>` (if `project_commands` provided), `<environment>` (if `environment_context` provided)
 - Optionally append agent listing after last XML section — brief description of each core agent and domain agent for cross-agent awareness. Follow `<agent_listing>` in [section-schema.md](./references/section-schema.md)
 - Validate output:
   - File starts with prose (no `---` at line 1)
-  - All 4 XML sections present when `project_commands` provided (3 sections when not)
+  - All 5 XML sections present when both `project_commands` and `environment_context` provided (count decreases by 1 for each omitted optional section, minimum 3 sections: workspace, constraints, decision_making)
   - All artifacts from `artifact_proposal` listed in `<workspace>`
   - Standard constraint rules present (3 required bullets)
   - Standard `<decision_making>` content present verbatim (4 required bullets)
 
-</step_6_write>
+</step_7_write>
 
 
 </workflow>
@@ -137,6 +152,7 @@ Load [example-copilot-instructions.md](./assets/example-copilot-instructions.md)
 - If `domain_agents` list is empty, then PROCEED — generate workspace with core agents only (valid for projects with no domain agents)
 - If safety constraints are not provided, then PROCEED — use standard rules only, note omission in build summary
 - If `project_commands` is empty or missing, then PROCEED — omit `<commands>` section entirely, note omission in build summary
+- If `environment_context` is empty or missing, then PROCEED — omit `<environment>` section entirely, note omission in build summary
 
 </error_handling>
 
@@ -146,7 +162,7 @@ Load [example-copilot-instructions.md](./assets/example-copilot-instructions.md)
 **P1 (blocking):**
 
 - Output file has NO frontmatter (no `---` at line 1)
-- All 4 sections present when `project_commands` provided: `<workspace>`, `<constraints>`, `<decision_making>`, `<commands>` (3 sections when not provided)
+- Required sections: `<workspace>`, `<constraints>`, `<decision_making>` (always). Optional sections: `<commands>` (when `project_commands` provided), `<environment>` (when `environment_context` provided). Total: 3 to 5 sections depending on optional inputs
 - Every artifact from `artifact_proposal` appears in `<workspace>` listing
 - Standard constraint rules present (3 required bullets with exact text)
 - Standard `<decision_making>` content present verbatim (4 required bullets)
@@ -156,6 +172,7 @@ Load [example-copilot-instructions.md](./assets/example-copilot-instructions.md)
 - Prose intro present before first XML tag
 - All workspace entries have status markers (`Active` or `Placeholder`)
 - Project-specific constraints from interview included when provided
+- Environment context sub-areas use prose format (not command format)
 
 **P3 (polish):**
 
@@ -167,7 +184,7 @@ Load [example-copilot-instructions.md](./assets/example-copilot-instructions.md)
 
 <resources>
 
-- [section-schema.md](./references/section-schema.md) — Section field definitions and output format specification. Load for `<step_1_analyze>`, `<step_2_generate_workspace>`, `<step_3_generate_constraints>`, `<step_4_generate_decision_making>`, `<step_5_generate_commands>`, `<step_6_write>`
+- [section-schema.md](./references/section-schema.md) — Section field definitions and output format specification. Load for `<step_1_analyze>`, `<step_2_generate_workspace>`, `<step_3_generate_constraints>`, `<step_4_generate_decision_making>`, `<step_5_generate_commands>`, `<step_6_generate_environment>`, `<step_7_write>`
 - [example-copilot-instructions.md](./assets/example-copilot-instructions.md) — Annotated reference output
 
 </resources>

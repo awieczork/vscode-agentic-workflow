@@ -59,6 +59,31 @@ Project-specific development commands for all agents. Ensures every agent can bu
 </commands_section>
 
 
+<environment_section>
+
+Runtime environment context for all agents. Describes how the project's development environment works — interpreter versions, package management, scripting conventions, and prerequisites — so agents can operate correctly without guessing.
+
+- Entry format: prose bullets grouped by sub-area (NOT command format — this is context about how the environment works, not commands to run)
+- Sub-areas (include only applicable ones):
+
+  **Runtime environment** — interpreter paths, version requirements (e.g., Python 3.12+, Node 20 LTS), virtual environment activation conventions, container usage (Docker, devcontainers), platform expectations
+
+  **Package management** — which package manager is authoritative (pip, uv, poetry, npm, pnpm), lock file conventions and whether lock files are committed, how to add or remove dependencies, monorepo package boundaries if applicable
+
+  **Ad-hoc scripting** — whether agents may run Python/shell/R/PowerShell scripts for one-off tasks, conventions for script location (e.g., `scripts/` directory), cleanup expectations, language preference for ad-hoc work
+
+  **Environment variables** — naming conventions, `.env` file patterns and whether `.env` is committed or gitignored, required variables for local development, secrets handling approach (vault, environment injection, never hardcoded)
+
+  **Prerequisites** — what must be running before agents can work (Docker containers, databases, message queues, external services), startup order if relevant, health-check conventions
+
+  **Common development patterns** — hot reload conventions, database seeding and fixture setup, migration workflow (auto-apply vs. manual), testing patterns (unit/integration/e2e separation), log levels and observability conventions
+
+- Each sub-area is a bold header followed by its prose bullets
+- Section is required when `environment_context` input is provided, omitted when not provided
+
+</environment_section>
+
+
 <agent_listing>
 
 Optional prose section after `</decision_making>`. Not wrapped in an XML tag in the output file.
