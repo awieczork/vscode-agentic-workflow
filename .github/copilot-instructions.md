@@ -9,21 +9,36 @@ Workspace structure and folder purposes. Load this first to locate resources.
 - `.github/agent-workflows/` — Workflow process definitions (`.workflow.md` files) — `Active`
 - `.github/.curator-scope` — Edit boundary file for @curator — `Active`
 - `.github/instructions/` — Reserved for future instruction files — `Empty`
-- `.github/skills/` — Skill definitions (`SKILL.md` files); `creators/` groups framework authoring skills, domain skills at root — `Active`
+- `.github/skills/` — Skill definitions (`SKILL.md` files); `creators/` groups framework authoring skills — `Active`
 - `.github/prompts/` — Reusable prompt files (`.prompt.md` files) — `Active`
 - `.github/models/` — Framework design models and architecture specs — `Active`
 - `.github/templates/` — Agent templates, instruction scaffolds, and VS Code settings template for pipeline output — `Active`
+- `.vscode/` — VS Code workspace settings for framework agent/skill/prompt discovery — `Active`
 - `output/` — Created on first generation run, gitignored — `Placeholder`
 - `.copilotignore` — Controls which files Copilot indexes — `Active`
 
 **Status meanings:**
 
 - `Active` — Authoritative, use as source of truth
-- `Temporary` — Will be cleaned up after current development cycle
+- `Temporary` — Will be cleaned up after current development cycle (reserved — used during active development)
 - `Placeholder` — Structure exists, content not yet generated
-- `Removed` — Previously existed, content redistributed to other files
+- `Removed` — Previously existed, content redistributed to other files (reserved — used during active development)
 
 </workspace>
+
+
+<agents>
+
+Core agents available in this workspace. @brain orchestrates all spokes via `runSubagent`.
+
+- `@brain` — Hub agent. Sole user-facing entry point and orchestrator of spoke agents
+- `@researcher` — Exploration spoke. Deep research, source synthesis, perspective analysis
+- `@architect` — Planning spoke. Decomposes changes into phased, dependency-verified plans
+- `@build` — Implementation spoke. Executes approved plans, produces working code
+- `@inspect` — Verification spoke. Final quality gate checking quality and plan compliance
+- `@curator` — Maintenance spoke. Syncs docs, cleans workspace, structures git commits
+
+</agents>
 
 
 <constraints>
