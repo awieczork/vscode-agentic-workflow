@@ -6,16 +6,14 @@ This framework helps humans create effective agentic workflows. The artifacts ar
 Workspace structure and folder purposes. Load this first to locate resources.
 
 - `.github/agents/core/` — Hub-and-spoke agent definitions (brain, researcher, architect, build, inspect, curator) — `Active`
-- `.github/curator-scope` — Edit boundary file for @curator — `Placeholder`
-- `.github/agents/generation/` — Generation pipeline agents (creator, interviewer, master) — `Active`
+- `.github/.curator-scope` — Edit boundary file for @curator — `Active`
 - `.github/instructions/` — Reserved for future instruction files — `Empty`
 - `.github/skills/` — Skill definitions (`SKILL.md` files) with `references/` and `assets/` subfolders — `Active`
 - `.github/prompts/` — Reusable prompt files (`.prompt.md` files) — `Active`
-- `.github/schema/` — Schema definitions for the generation pipeline (manifest, spec) — `Active`
 - `.github/decisions/` — Active design decisions and rationale — `Temporary`
-- `.github/specs/` — Output directory for interviewer-generated spec files — `Placeholder`
-- `templates/` — Repo-agnostic templates for pipeline output — `Placeholder`
-- `output/` — Generated project output (gitignored) — `Placeholder`
+- `templates/` — Agent templates and instruction scaffolds for pipeline output — `Active`
+- `output/` — Created on first generation run, gitignored — `Placeholder`
+- `.copilotignore` — Controls which files Copilot indexes — `Active`
 
 **Status meanings:**
 

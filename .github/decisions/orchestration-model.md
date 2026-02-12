@@ -2,12 +2,12 @@
 description: 'Hub-and-spoke agent orchestration model — @brain as sole orchestrator, spoke agents execute and return, domain plug-in architecture'
 ---
 
-This artifact defines the hub-and-spoke agent orchestration model. The governing principle is: @brain is the sole orchestrator; spokes execute and return. Users interact with @brain only — spoke agents are hidden from the UI. All inter-agent communication flows through @brain via `runSubagent`; no peer-to-peer routing exists. The generation pipeline has its own orchestration model documented in [generation-workflow-model.md](generation-workflow-model.md).
+This artifact defines the hub-and-spoke agent orchestration model. The governing principle is: @brain is the sole orchestrator; spokes execute and return. Users interact with @brain only — spoke agents are hidden from the UI. All inter-agent communication flows through @brain via `runSubagent`; no peer-to-peer routing exists. The generation pipeline runs through core spokes as a standard @brain-orchestrated workflow — see [generation-workflow-model.md](generation-workflow-model.md) for the refactored design.
 
 
 <agent_inventory>
 
-Two agent groups operate in this workspace: core agents (hub-and-spoke lifecycle) and generation agents (linear creation pipeline).
+One agent group operates in this workspace: core agents (hub-and-spoke lifecycle). Generation runs through these same core agents — no dedicated generation agents exist.
 
 **Core agents (6)** — Hub-and-spoke lifecycle: brainstorm → plan → implement → verify → maintain.
 
@@ -41,17 +41,11 @@ Two agent groups operate in this workspace: core agents (hub-and-spoke lifecycle
   - Tools: search, read, context7, runTests, testFailure, problems
   - Reference: [inspect.agent.md](../agents/core/inspect.agent.md)
 
-- **@curator** (spoke) — Maintenance spoke. Final lifecycle agent after @inspect PASS. Syncs docs, cleans workspace, structures git commits. Scope controlled by `.github/curator-scope`
+- **@curator** (spoke) — Maintenance spoke. Final lifecycle agent after @inspect PASS. Syncs docs, cleans workspace, structures git commits. Scope controlled by `.github/.curator-scope`
   - Mutation: high (git operations, file deletion)
   - `user-invokable: false`, `agents: []`
   - Tools: search, read, edit, execute
   - Reference: [curator.agent.md](../agents/core/curator.agent.md)
-
-**Generation agents (3)** — Linear creation pipeline: interview → orchestrate → create. Documented in detail in [generation-workflow-model.md](generation-workflow-model.md).
-
-- **@interviewer** — Conducts expert interview from seed prompt, produces specs and manifest. Has `handoffs` to @master. Tools: search, read, edit, web, askQuestions
-- **@master** — Pipeline orchestrator. Reads manifest, scaffolds output, spawns @creator per artifact. Tools: search, read, edit, execute, runSubagent
-- **@creator** — Artifact worker. Reads spec, fetches sources, selects creator skill via hard-coded mapping, produces artifact file. Tools: search, read, edit, web
 
 </agent_inventory>
 
@@ -90,13 +84,36 @@ Two agent groups operate in this workspace: core agents (hub-and-spoke lifecycle
 
 <rework_model>
 
-Verdict routing from @inspect determines next action.
+Each spoke's return status determines @brain's next action. If the same spoke requires rework more than twice, escalate to the user — repeated failures suggest a structural issue that routing alone cannot fix.
 
-- **PASS** → Proceed to @curator if docs affected, otherwise complete
-- **PASS WITH NOTES** → Surface Minor findings to user. If user requests fixes: @build → @inspect. If user accepts: proceed
-- **REWORK NEEDED** → @brain parses findings: plan flaws → @architect (re-plan), build issues → @build (rework). After rework → @inspect re-inspection
-- **BLOCKED** → @brain evaluates: clarify via #tool:askQuestions, re-spawn with narrowed scope, spawn @researcher for missing info, or accept gap
-- **Escalation** — If same spoke needs rework more than twice, escalate to user
+**@inspect verdict routing:**
+
+- **PASS** → Proceed to @curator if changed files affect docs or config, otherwise complete
+- **PASS WITH NOTES** → Surface Minor findings to user. If user requests fixes: spawn @build for the specific items then re-spawn @inspect. If user accepts notes: proceed to @curator if applicable
+- **REWORK NEEDED** → @brain parses findings into two categories: plan flaws → re-spawn @architect with `Rework: plan-flaw` + evidence + original plan; build issues → re-spawn @build with `Rework: build-issue` + findings + original plan. After rework → re-spawn @inspect with `Rework: re-inspection`
+
+**@researcher returns:**
+
+- **COMPLETE** → Use findings as input for next workflow step (e.g., feed to @architect as context)
+- **COMPLETE with insufficient findings** → Re-spawn with `Rework: research` + narrowed scope or adjusted Focus
+- **BLOCKED** → Required Focus missing or scope too vague. Re-spawn with corrected prompt or escalate to user for clarification
+
+**@architect returns:**
+
+- **COMPLETE** → Proceed to plan approval with user
+- **BLOCKED** → Diagnose missing fields or unclear requirements in the original spawn prompt. Re-spawn with corrected prompt including the missing information, or escalate to user if the gap requires information @brain does not have
+
+**@curator returns:**
+
+- **COMPLETE** → Maintenance done. Review health scan findings — if orphaned files or stale docs reported, decide: spawn @curator again with targeted action, surface to user, or defer
+- **PARTIAL** → Some tasks failed. Review maintenance report for what succeeded and what blocked. Re-spawn with `Rework: maintenance` + prior report for the failed tasks
+- **BLOCKED** → Required fields missing or critical error. Fix the gap and re-spawn
+
+**Any spoke BLOCKED (generic handling):**
+
+- Diagnose the missing fields or unclear requirements in the original spawn prompt
+- Re-spawn with corrected prompt including the missing information
+- If the gap requires information @brain does not have, escalate to the user with the BLOCKED reason and what is needed
 
 </rework_model>
 
@@ -105,11 +122,19 @@ Verdict routing from @inspect determines next action.
 
 What each spoke receives and returns. @brain mediates all transitions.
 
-- **@brain → @researcher:** Focus + Scope + Mode + Variant → Returns: ≤10 findings with citations, markers (`[CONFLICT]`, `[OUT OF SCOPE]`, `[EMPTY]`)
-- **@brain → @architect:** Direction + Scope + Constraints → Returns: phased plan with per-task success criteria, dependency verification, risk assessment
+All spokes receive two standard input fields in addition to their spoke-specific fields:
+
+- **Session ID** — `{flow-name}-{datetime}` format. Required for all spawns
+- **Context** — Prior findings, relevant code, or rework instructions. Prefix with `Rework:` variant when re-spawning (e.g., `Rework: research`, `Rework: build-issue`)
+
+Spoke-specific contracts:
+
+- **@brain → @researcher:** Focus + Scope + Mode + Variant (optional — defaults per mode) → Returns: ≤10 findings with citations, markers (`[CONFLICT]`, `[OUT OF SCOPE]`, `[EMPTY]`)
+- **@brain → @architect:** Direction + Scope + Constraints (optional) → Returns: phased plan with per-task success criteria, dependency verification, risk assessment
 - **@brain → @build:** Plan (task subset) + Scope → Returns: build summary (files changed, tests, deviations, blockers)
 - **@brain → @inspect:** Plan + Build Summary → Returns: verdict with evidence-backed findings (severity: `Critical` | `Major` | `Minor`)
-- **@brain → @curator:** Action + Scope + Files Affected → Returns: maintenance report with health scan
+- **@brain → @curator:** Action + Scope + Files Affected (required for sync-docs action only) → Returns: maintenance report with health scan
+- **@brain → domain agent:** See `<domain_agent_model>` in [generation-workflow-model.md](generation-workflow-model.md) for detailed domain agent contracts including mutation tiers, orchestration positions, and advisory patterns
 
 </data_contracts>
 
@@ -121,7 +146,7 @@ Core agents form a fixed scaffold. Domain-specific agents plug in without modify
 - **Discovery** — @brain uses `agents: ['*']` and discovers all agents in the workspace automatically
 - **Awareness** — `copilot-instructions.md` lists all agents with descriptions. Core agents load this in context. Adding a domain agent to the workspace makes it visible to all core agents
 - **Integration** — @architect plans reference domain agents by name. @brain spawns them per plan via `runSubagent`. No special wiring needed — the plan is the integration layer
-- **Generation pipeline** — Produces domain agents via @creator with creator skills. Generated agents plug directly into the core model
+- **Generation pipeline** — Produces domain agents via @build using 6 creator skills (agent-creator, artifact-author, skill-creator, instruction-creator, prompt-creator, copilot-instructions-creator). The pipeline is orchestrated by @brain through standard spokes — see [generation-workflow-model.md](generation-workflow-model.md)
 
 **Domain agent requirements for plug-in compatibility:**
 
@@ -129,6 +154,8 @@ Core agents form a fixed scaffold. Domain-specific agents plug in without modify
 - `agents: []` — domain agents execute, they do not orchestrate
 - Structured return format so @brain can evaluate results
 - Positive scope declaration in identity prose
+
+This section covers plug-in compatibility requirements. See `<domain_agent_model>` in [generation-workflow-model.md](generation-workflow-model.md) for detailed capability tiers and orchestration positions.
 
 </domain_plug_in>
 
@@ -140,8 +167,11 @@ VS Code frontmatter fields governing orchestration behavior.
 - **`user-invokable`** — Boolean. Controls visibility in agents dropdown. `false` for all spokes
 - **`disable-model-invocation`** — Boolean. Prevents being invoked as subagent. `true` only for @brain
 - **`agents`** — Array of agent names or `['*']`. Restricts subagent spawning. Only @brain gets `['*']`
-- **`handoffs`** — Declarative handoff with label + target agent + prompt. Used only by @interviewer → @master. Core model uses `runSubagent` instead
+- **`handoffs`** — Declarative handoff with label + target agent + prompt. Not used in the current model — all routing uses `runSubagent` instead
 - **`tools`** — Array of tool aliases. Each agent receives minimum required tools
-- **`argument-hint`** — Prompt text shown in UI. Only on user-invokable agents (@brain) and generation entry points
+- **`argument-hint`** — Prompt text shown in UI. Only on user-invokable agents (@brain)
+- **`model`** — Suggest LLM model for agent
+- **`mcp-servers`** — Enable MCP servers for agent
+- **`target`** — Restrict agent to `cli` or `editor`
 
 </platform_fields>

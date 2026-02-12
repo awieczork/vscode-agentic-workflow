@@ -146,8 +146,7 @@ Run `<validation>`. Fix P1/P2 before delivery; flag P3.
 - File location: `.github/prompts/[NAME].prompt.md`
 - `agent` field uses only custom agent names — never built-in names (`ask`, `edit`, `agent`)
 - No markdown headings — use XML tags for structure when body exceeds ~20 lines
-- No agent tags (`<constraints>`, `<behaviors>`, `<outputs>`, `<termination>`, `<iron_law>`, `<mode>`, `<context_loading>`, `<on_missing>`, `<when_blocked>`, `<if>`) — agent structure contaminates prompt file
-- No skill tags (`<workflow>`, `<step_N_verb>`, `<use_cases>`, `<resources>`, `<error_handling>`, `<validation>`) — skill structure contaminates prompt file
+- No agent or skill tags in output — verify against `<prompts_forbidden_tags>` in [forbidden-tags.md](../artifact-author/references/forbidden-tags.md)
 - No `@agentname` references — prompt is agent-agnostic
 
 **P2 — Quality (fix before delivery):**

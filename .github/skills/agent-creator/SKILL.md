@@ -129,7 +129,7 @@ Run `<validation>`. Fix P1/P2 before delivery; flag P3.
 - If `tools` present, use inline array format: `tools: ['tool1', 'tool2']`
 - If `name` present, format valid: lowercase alphanumeric + hyphens, matches filename pattern
 - If `tools` present, every tool or tool-set name exists in `<tool_sets>` or `<tools_list>` in [agent-frontmatter-contract.md](./references/agent-frontmatter-contract.md)
-- No skill tags: `<workflow>`, `<step_N_verb>`, `<use_cases>`, `<resources>`, `<error_handling>`, `<validation>` — these belong to skills
+- No skill tags in output — verify against `<agents_forbidden_tags>` in [forbidden-tags.md](../artifact-author/references/forbidden-tags.md)
 - No hardcoded secrets or absolute paths
 - `<constraints>` present with NEVER/ALWAYS prohibitions
 - `<behaviors>` present with executable actions

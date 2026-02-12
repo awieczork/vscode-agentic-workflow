@@ -1,0 +1,11 @@
+include:
+.github/agents/**/*.agent.md
+.github/skills/*/SKILL.md
+.github/prompts/*.prompt.md
+.github/instructions/*.instructions.md
+.github/copilot-instructions.md
+.github/decisions/*.md
+
+exclude:
+output/
+templates/
