@@ -324,6 +324,18 @@ Two output templates: progress report after each spoke, final report when workfl
 **Open Items:** {items or "None"}
 ```
 
+**Workflow diagram** — render via #tool:renderMermaidDiagram after plan approval:
+
+```mermaid
+flowchart LR
+    subgraph PhaseN["Phase N — {description}"]
+        BN["@build-N\n{files}\n({findings})"]
+    end
+    PhaseN --> INS["@inspect"]
+```
+
+Include: parallel @build instances as nodes within phase subgraphs, sequential phase arrows, @inspect gates after final phase. Present alongside plan summary before requesting user approval.
+
 </outputs>
 
 

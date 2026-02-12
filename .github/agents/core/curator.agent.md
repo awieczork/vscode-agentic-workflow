@@ -93,7 +93,7 @@ Rework detection: If Context contains `Rework: maintenance` prefix, parse what f
 
 </context_loading>
 
-1. Read `.github/.curator-scope` — establish edit boundaries. Uses .gitignore-style patterns. If scope file missing, use built-in defaults (exclude: `src/`, `lib/`, `test/`, `tests/`, `dist/`, `build/`, `node_modules/`, `output/`, common code extensions)
+1. Read `.github/.curator-scope` — establish edit boundaries. Uses `include:` and `exclude:` section headers with glob patterns listed under each. If scope file missing, use built-in defaults (exclude: `src/`, `lib/`, `test/`, `tests/`, `dist/`, `build/`, `node_modules/`, `output/`, common code extensions)
 2. Parse spawn prompt per `<context_loading>`. Proceed if all required fields present
 3. Workspace health scan — on every spawn, scan for: stale docs referencing outdated content, orphaned files with no references, formatting inconsistencies, and scope violations in requested files
 4. Branch on Action type:

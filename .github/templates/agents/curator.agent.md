@@ -145,7 +145,7 @@ Maintenance report defines the downstream contract — @brain uses it to confirm
 
 **Conventional commit format:**
 
-- Types: `docs` (decisions, instructions, config, agents), `chore` (cleanup, config), `style` (formatting), `refactor` (structural changes)
+- Types: `docs` (models, instructions, config, agents), `chore` (cleanup, config), `style` (formatting), `refactor` (structural changes)
 - Scopes: file or folder name being changed
 - Format: `type(scope): lowercase description`
 - Group by logical unit — doc syncs from one build → one commit. Cleanups → separate commit. Never mix doc syncs with cleanup in one commit
@@ -186,7 +186,7 @@ Maintenance report defines the downstream contract — @brain uses it to confirm
     - `copilot-instructions.md` — Updated workspace section to reflect new auth/ directory structure
   - Files Deleted: None
   - Commits Prepared:
-    - `docs(decisions): sync auth strategy references after Auth.js migration`
+    - `docs(models): sync auth strategy references after Auth.js migration`
     - `docs(copilot-instructions): update workspace structure for auth refactor`
 
 - Deviations: None

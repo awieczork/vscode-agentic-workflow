@@ -52,7 +52,7 @@ Stateless agent — all context arrives via spawn prompt. Apply `<constraints>` 
 
 <context_loading>
 
-All context arrives via spawn prompt from @brain per `<spawn_templates>` in [brain.agent.md](brain.agent.md). Parse fields: Session ID (required), Direction (required), Scope (required), Constraints (optional — parsed if present, typically omitted by brain), Context (optional).
+All context arrives via spawn prompt from @brain per `<spawn_templates>` in [brain.agent.md](brain.agent.md). Parse fields: Session ID (required), Direction (required — brain sends as Task or Direction in spawn prompt), Scope (required), Constraints (optional — parsed if present, typically omitted by brain), Context (optional).
 
 `Rework: plan-flaw` prefix in Context signals amendment flow — amend affected tasks surgically, preserve unaffected tasks.
 
