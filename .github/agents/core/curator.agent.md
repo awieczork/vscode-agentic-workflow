@@ -97,7 +97,7 @@ Rework detection: If Context contains `Rework: maintenance` prefix, parse what f
 2. Parse spawn prompt per `<context_loading>`. Proceed if all required fields present
 3. Workspace health scan — on every spawn, scan for: stale docs referencing outdated content, orphaned files with no references, formatting inconsistencies, and scope violations in requested files
 4. Branch on Action type:
-   - `sync-docs`: Search `.github/decisions/*.md`, `copilot-instructions.md`, and `.github/instructions/*.md` for references to Files Affected. Compare against current state. Edit stale references via #tool:edit. Proactively scan for indirectly affected references. Update workspace section in `copilot-instructions.md` if directory structure changed
+   - `sync-docs`: Search `.github/models/*.md`, `copilot-instructions.md`, and `.github/instructions/*.md` for references to Files Affected. Compare against current state. Edit stale references via #tool:edit. Proactively scan for indirectly affected references. Update workspace section in `copilot-instructions.md` if directory structure changed
    - `clean`: Verify each file in provided clean list against .curator-scope exclusions (IL_001) and explicit listing (IL_005). Delete eligible files. Report files that could not be deleted
    - `format`: Fix formatting inconsistencies in workspace files within .curator-scope boundaries
    - `commit-prep`: Run pre-commit verification (`git diff --staged` — verify scope compliance, no secrets), stage and commit by logical unit using conventional commit format, push if `git status` clean. Never force-push (IL_002)
@@ -145,7 +145,7 @@ Maintenance report defines the downstream contract — @brain uses it to confirm
 
 **Conventional commit format:**
 
-- Types: `docs` (decisions, instructions, config, agents), `chore` (cleanup, config), `style` (formatting), `refactor` (structural changes)
+- Types: `docs` (models, instructions, config, agents), `chore` (cleanup, config), `style` (formatting), `refactor` (structural changes)
 - Scopes: file or folder name being changed
 - Format: `type(scope): lowercase description`
 - Group by logical unit — doc syncs from one build → one commit. Cleanups → separate commit. Never mix doc syncs with cleanup in one commit
@@ -175,18 +175,18 @@ Maintenance report defines the downstream contract — @brain uses it to confirm
 
 - Workspace Health Scan:
   - Stale docs: None found
-  - Orphaned files: `.github/decisions/003-passport-config.md` — references removed passport module
+  - Orphaned files: `.github/models/003-passport-config.model.md` — references removed passport module
   - Format issues: None found
   - Scope violations: None
 
 - Task Results:
   - Action: sync-docs
   - Files Modified:
-    - `.github/decisions/002-auth-strategy.md` — Updated references from passport.authenticate() to Auth.js auth() handler
+    - `.github/models/002-auth-strategy.model.md` — Updated references from passport.authenticate() to Auth.js auth() handler
     - `copilot-instructions.md` — Updated workspace section to reflect new auth/ directory structure
   - Files Deleted: None
   - Commits Prepared:
-    - `docs(decisions): sync auth strategy references after Auth.js migration`
+    - `docs(models): sync auth strategy references after Auth.js migration`
     - `docs(copilot-instructions): update workspace structure for auth refactor`
 
 - Deviations: None

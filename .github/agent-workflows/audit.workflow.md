@@ -13,8 +13,8 @@ phases: ['parse-sources', 'parallel-research', 'deduplicate', 'classify', 'synth
 Load these files as the authoritative references for repository structure, orchestration contracts, and generation workflow:
 
 - [copilot-instructions.md](../copilot-instructions.md) — workspace map, constraints, decision framework
-- [orchestration-model.md](../decisions/orchestration-model.md) — hub-and-spoke agent contracts
-- [generation-workflow-model.md](../decisions/generation-workflow-model.md) — generation pipeline stages
+- [orchestration.model.md](../models/orchestration.model.md) — hub-and-spoke agent contracts
+- [generation-workflow.model.md](../models/generation-workflow.model.md) — generation pipeline stages
 
 </sources_of_truth>
 
@@ -29,7 +29,7 @@ Assign each dimension to a separate researcher instance. Each instance scans eve
 
 - **D1 — Cross-file consistency** — Verify all file references, relative paths, and citations between artifacts resolve to existing files. Check that XML tag cross-references (e.g., "`<tag>` in [file.md](path)") point to real tags in real files. Confirm agent spawn templates reference correct agent files
 - **D2 — Redundancy** — Identify duplicated content across files. Flag overlapping responsibilities between agents, skills, instructions, or prompts. Detect copy-pasted sections that should be single-sourced
-- **D3 — Component compatibility** — Verify agents, skills, instructions, prompts, decisions, and templates form a coherent system. Check that spawn templates match agent input contracts. Confirm skill references in copilot-instructions.md match actual skill folders. Validate that prompt `agent` fields reference existing agents
+- **D3 — Component compatibility** — Verify agents, skills, instructions, prompts, models, and templates form a coherent system. Check that spawn templates match agent input contracts. Confirm skill references in copilot-instructions.md match actual skill folders. Validate that prompt `agent` fields reference existing agents
 - **D4 — Naming conventions** — Audit file naming patterns (kebab-case, extensions), XML tag naming (snake_case, no conflicts with reserved tags), YAML field naming (consistent casing and quoting). Flag deviations from established patterns
 - **D5 — Stale content** — Find references to deleted or renamed files, outdated terminology, orphaned artifacts (files not referenced from anywhere), and TODO/FIXME markers. Check workspace map in copilot-instructions.md against actual directory contents
 - **D6 — Completeness** — Identify missing fields in frontmatter, incomplete contracts (e.g., agent missing iron laws, skill missing validation), partial implementations, and gaps where documented structure promises content that does not exist

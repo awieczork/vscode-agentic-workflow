@@ -179,7 +179,7 @@ Session ID: auth-refactor-20260211
 Context: Build and inspect complete. 2 files modified.
 Action: sync-docs
 Files Affected: src/auth/middleware.ts, src/auth/session.ts
-Scope: IN: .github/decisions/, .github/instructions/, copilot-instructions.md. OUT: All source code.
+Scope: IN: .github/models/, .github/instructions/, copilot-instructions.md. OUT: All source code.
 Verdict: PASS
 Build Summary: middleware.ts — replaced passport.authenticate() with Auth.js auth() handler. session.ts — updated session shape.
 ```

@@ -9,10 +9,10 @@ Workspace structure and folder purposes. Load this first to locate resources.
 - `.github/agent-workflows/` — Workflow process definitions (`.workflow.md` files) — `Active`
 - `.github/.curator-scope` — Edit boundary file for @curator — `Active`
 - `.github/instructions/` — Reserved for future instruction files — `Empty`
-- `.github/skills/` — Skill definitions (`SKILL.md` files) with `references/` and `assets/` subfolders — `Active`
+- `.github/skills/` — Skill definitions (`SKILL.md` files); `creators/` groups framework authoring skills, domain skills at root — `Active`
 - `.github/prompts/` — Reusable prompt files (`.prompt.md` files) — `Active`
-- `.github/decisions/` — Active design decisions and rationale — `Temporary`
-- `.github/templates/` — Agent templates and instruction scaffolds for pipeline output — `Active`
+- `.github/models/` — Framework design models and architecture specs — `Active`
+- `.github/templates/` — Agent templates, instruction scaffolds, and VS Code settings template for pipeline output — `Active`
 - `output/` — Created on first generation run, gitignored — `Placeholder`
 - `.copilotignore` — Controls which files Copilot indexes — `Active`
 

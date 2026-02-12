@@ -201,7 +201,7 @@ Iterate until user approves.
 
 <profile_assignment>
 
-When assigning profiles to agent artifacts, select from the 6 archetypes defined in [agent-profiles.md](../skills/agent-creator/references/agent-profiles.md):
+When assigning profiles to agent artifacts, select from the 6 archetypes defined in [agent-profiles.md](../skills/creators/agent-creator/references/agent-profiles.md):
 
 - Guide — Linear teaching/onboarding, step-by-step guidance. Keywords: teach, learn, help me understand, walk through
 - Transformer — Input-to-output conversion, format migration, deterministic mapping. Keywords: convert, migrate, transform, map
@@ -298,7 +298,7 @@ After artifact approval, collect information about how domain agents connect to 
 
 <reference_patterns>
 
-For detailed pattern specifications with architecture diagrams, see `<reference_patterns>` in [generation-workflow-model.md](../decisions/generation-workflow-model.md).
+For detailed pattern specifications with architecture diagrams, see `<reference_patterns>` in [generation-workflow.model.md](../models/generation-workflow.model.md).
 
 Use these reference patterns to help users visualize how their artifacts will compose. Present relevant patterns during the interview when users select composition options in Round 2.
 
@@ -444,7 +444,7 @@ Each artifact type maps to a creator skill:
 Include in the @architect plan as generation pipeline tasks. These tasks run as @build instances and produce the self-contained output project.
 
 - Copy core agents — copy `.github/templates/agents/` to `output/${input:projectName}/.github/agents/core/`. These are the 6 core hub-and-spoke agents. Brain template contains injection markers (`<!-- DOMAIN_AGENT_POOL -->`, `<!-- DOMAIN_SPAWN_TEMPLATES -->`) for the adaptation step
-- Copy creator skills — copy all 6 creator skill folders from `.github/skills/` to `output/${input:projectName}/.github/skills/`: agent-creator, artifact-author, instruction-creator, prompt-creator, skill-creator, copilot-instructions-creator. These enable the project to self-evolve by creating new artifacts
+- Copy creator skills — copy all 6 creator skill folders from `.github/skills/creators/` to `output/${input:projectName}/.github/skills/creators/`: agent-creator, artifact-author, instruction-creator, prompt-creator, skill-creator, copilot-instructions-creator. These enable the project to self-evolve by creating new artifacts
 - Scaffold domain skill directories — for each domain skill in the artifact proposal, create `output/${input:projectName}/.github/skills/{skill-name}/` with `SKILL.md` and `references/` subdirectory
 - Scaffold prompts directory — ensure `output/${input:projectName}/.github/prompts/` exists for generated prompt files
 - Place domain agents — create domain agent files using flat convention: `output/${input:projectName}/.github/agents/{name}.agent.md` alongside `agents/core/`. Domain agents are NOT nested in a subdirectory
