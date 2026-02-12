@@ -1,4 +1,4 @@
-This file defines YAML frontmatter fields for `.instructions.md` files. The governing principle is conditional presence — repo-wide instructions have no frontmatter; path-specific instructions require 1-2 fields for discovery and routing.
+This file defines YAML frontmatter fields for path-specific `.instructions.md` files. The governing principle is conditional presence — path-specific instructions require 1-2 fields for discovery and routing.
 
 
 <frontmatter_fields>
@@ -12,26 +12,14 @@ All fields are determined during instruction creation. No user-decided fields ex
 </frontmatter_fields>
 
 
-<repo_wide_exception>
-
-Repo-wide instructions (`copilot-instructions.md`) have NO frontmatter — the only artifact type with a frontmatter-free variant.
-
-- Location: `.github/copilot-instructions.md` (fixed path, fixed filename)
-- No `---` YAML block — content begins immediately with prose
-- If instruction type is repo-wide → produce no frontmatter. If path-specific-triggered or path-specific-on-demand → produce frontmatter per `<frontmatter_fields>`
-
-</repo_wide_exception>
-
-
 <discovery_mode_guidance>
 
 Select frontmatter configuration based on how the instruction should be discovered.
 
 - `applyTo` + `description` → File-triggered with on-demand fallback. Most common configuration. Auto-attaches when matching files appear in context AND discoverable by task relevance
 - `description` only → On-demand discovery. Agent detects task relevance from description keywords. Use for domain rules not tied to specific file types
-- No frontmatter → Repo-wide. Universal rules applied to every chat request. Only `copilot-instructions.md`
 
-**Decision rule:** If rules mention specific file extensions → use `applyTo`. If rules apply to a task type regardless of files → use `description` only. If rules apply universally → use repo-wide.
+**Decision rule:** If rules mention specific file extensions → use `applyTo`. If rules apply to a task type regardless of files → use `description` only.
 
 </discovery_mode_guidance>
 
@@ -64,3 +52,6 @@ Two patterns based on discovery mode.
 `applyTo` uses VS Code glob syntax (not regex). Use array for multiple patterns: `applyTo: ['**/*.ts', '**/*.tsx']`.
 
 </glob_pattern_guidance>
+
+
+For instructions targeting the project-level copilot-instructions.md file, see the copilot-instructions-creator skill.

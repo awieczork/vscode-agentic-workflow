@@ -1,4 +1,4 @@
-This file defines the structural skeleton of an `.instructions.md` artifact. Instructions are ambient constraints that shape agent behavior without explicit invocation. The governing principle is body complexity is minimal, routing complexity is maximal — instructions use custom XML groups for project-specific rules, but have 3 sub-types with conditional frontmatter.
+This file defines the structural skeleton of a path-specific `.instructions.md` artifact. Instructions are ambient constraints that shape agent behavior without explicit invocation. The governing principle is body complexity is minimal, routing complexity is maximal — instructions use custom XML groups for project-specific rules, with 2 sub-types that determine frontmatter configuration.
 
 
 <sub_type_decision>
@@ -7,7 +7,6 @@ Determine instruction sub-type before drafting. Each sub-type has different rout
 
 **Decision tree:**
 
-- Rules apply to ALL chat requests regardless of file type? → **Repo-wide** (location: `.github/copilot-instructions.md`, no frontmatter, loaded every request)
 - Rules apply only when specific file patterns appear in context? → **Path-specific file-triggered** (location: `.github/instructions/*.instructions.md`, frontmatter: `applyTo` + `description`, loaded on create/modify only)
 - Rules apply when agent detects task relevance from description keywords? → **Path-specific on-demand** (location: `.github/instructions/*.instructions.md`, frontmatter: `description` only, loaded on keyword match)
 - Unsure between file-triggered and on-demand? → Prefer file-triggered with `applyTo` + `description` for dual discovery
@@ -19,8 +18,7 @@ Determine instruction sub-type before drafting. Each sub-type has different rout
 
 Every instruction file opens with 1-3 sentences of prose before the first XML group. The intro states purpose and governing principle — no tag wraps it.
 
-- **Repo-wide:** "This project follows [principle]. [Primary constraint]. [Scope statement]."
-- **Path-specific:** "This file defines [domain] rules for [scope]. The governing principle is [principle]."
+- "This file defines [domain] rules for [scope]. The governing principle is [principle]."
 
 **Examples:**
 
@@ -41,9 +39,9 @@ Instructions use a grouped format: custom XML groups wrapping project-specific r
   - Optional Wrong/Correct pairs inline — contrast examples with em-dash
   - Optional `<example>` sub-tags for complex code demonstrations
 
-**Referencing:** Use markdown links to reference specific files or URLs — VS Code resolves them as context. Example: `[See config](./config.json)` or `[API spec](./docs/api.md)`. Repo-wide instructions commonly link to architecture docs, key directories, and other instruction files.
+**Referencing:** Use markdown links to reference specific files or URLs — VS Code resolves them as context. Example: `[See config](./config.json)` or `[API spec](./docs/api.md)`.
 
-**Examples:** See [example-repo-wide.md](../assets/example-repo-wide.md) for a repo-wide instruction and [example-path-specific.md](../assets/example-path-specific.md) for a path-specific file-triggered instruction.
+**Examples:** See [example-path-specific.md](../assets/example-path-specific.md) for a path-specific file-triggered instruction.
 
 </body_structure>
 
