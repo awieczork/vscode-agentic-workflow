@@ -136,21 +136,18 @@ Run `<validation>`. Fix P1/P2 before delivery; flag P3.
 
 <validation>
 
+Load [shared-validation-rules.md](../artifact-author/references/shared-validation-rules.md) for: shared P1/P2/P3 validation rules
+
 **P1 — Blocking (fix before delivery):**
 
 - Sub-type correctly determines frontmatter configuration
 - Path-specific file-triggered has both `applyTo` and `description` in frontmatter
 - Path-specific on-demand has `description` only in frontmatter
-- All YAML string values wrapped in single quotes: `description: 'value'`, `applyTo: '**/*.ts'`
 - `description` follows correct pattern for sub-type per `<description_rules>` in [instruction-frontmatter-contract.md](./references/instruction-frontmatter-contract.md)
-- No agent or skill tags in output — verify against `<instructions_forbidden_tags>` in [forbidden-tags.md](../artifact-author/references/forbidden-tags.md)
 - No identity prose in output: "You are...", role statements, expertise declarations
 - No stance words in output: "thorough", "cautious", "creative", "helpful"
 - No prompt variables in output: `${input:}`, `${selection}`, `${file}`
-- No markdown headings — XML tags are exclusive structure
 - Body uses custom grouped format: `<group_name>` with bullet rules directly inside
-- No hardcoded secrets or absolute paths
-- No `@agentname` references — instruction is agent-agnostic
 
 **P2 — Quality (fix before delivery):**
 
@@ -162,9 +159,6 @@ Run `<validation>`. Fix P1/P2 before delivery; flag P3.
 - Rules use imperative voice: "Use X" not "You should use X"
 - Specific quantities: "Maximum 3 levels" not "Avoid deep nesting"
 - One rule per bullet — no compound rules
-- Cross-file XML tag references use linked-file form: `<tag>` in [file.md](path)
-- Every `Load [file] for:` statement resolves to an existing file
-- No orphaned resources — every file in subfolders referenced from SKILL.md
 
 **P3 — Polish (flag, do not block):**
 
@@ -173,8 +167,6 @@ Run `<validation>`. Fix P1/P2 before delivery; flag P3.
 - Token economy: no redundant rules across groups
 - Markdown links reference relevant files and docs
 - Prose intro follows `<prose_intro_pattern>` in [instruction-skeleton.md](./references/instruction-skeleton.md) for sub-type
-- Active voice throughout, no hedging
-- Every file in the skill folder opens with a prose intro containing governing principle
 
 </validation>
 
@@ -184,5 +176,6 @@ Run `<validation>`. Fix P1/P2 before delivery; flag P3.
 - [instruction-frontmatter-contract.md](./references/instruction-frontmatter-contract.md) — Defines YAML frontmatter fields for .instructions.md files with conditional presence rules per sub-type. Covers discovery mode selection, description patterns, and glob syntax for `applyTo`
 - [instruction-skeleton.md](./references/instruction-skeleton.md) — Structural reference for .instructions.md body sections. Defines the 2 sub-types, scaling tiers, custom grouped body format, and anti-contamination patterns
 - [example-path-specific.md](./assets/example-path-specific.md) — Ready-to-use path-specific file-triggered instruction for TypeScript files. Demonstrates `applyTo` + `description` frontmatter, single group, and ALWAYS/NEVER usage
+- [shared-validation-rules.md](../artifact-author/references/shared-validation-rules.md) — Shared P1/P2/P3 validation rules applied across all creator skills
 
 </resources>

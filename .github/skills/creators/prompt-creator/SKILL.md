@@ -133,21 +133,18 @@ Run `<validation>`. Fix P1/P2 before delivery; flag P3.
 
 <validation>
 
+Load [shared-validation-rules.md](../artifact-author/references/shared-validation-rules.md) for: shared P1/P2/P3 validation rules
+
 **Output validation:**
 
 **P1 — Blocking (fix before delivery):**
 
 - `description` present in frontmatter, single-line string in single quotes
-- All YAML string values wrapped in single quotes: `description: 'value'`
 - Description is verb-first, 50-150 characters, action-oriented
 - No multi-task scope in description or body
-- No hardcoded secrets or absolute paths
 - Variable syntax uses `${name}` not `{name}`
 - File location: `.github/prompts/[NAME].prompt.md`
 - `agent` field uses only custom agent names — never built-in names (`ask`, `edit`, `agent`)
-- No markdown headings — use XML tags for structure when body exceeds ~20 lines
-- No agent or skill tags in output — verify against `<prompts_forbidden_tags>` in [forbidden-tags.md](../artifact-author/references/forbidden-tags.md)
-- No `@agentname` references — prompt is agent-agnostic
 
 **P2 — Quality (fix before delivery):**
 
@@ -162,19 +159,6 @@ Run `<validation>`. Fix P1/P2 before delivery; flag P3.
 - Output format specified when quality depends on structure
 - Examples included for complex or ambiguous tasks
 - `argument-hint` provided when prompt expects user input
-- Active voice throughout, no hedging
-
-**Skill self-checks:**
-
-**P2 — Quality (fix before delivery):**
-
-- Cross-file XML tag references use linked-file form: `<tag>` in [file.md](path)
-- Every `Load [file] for:` directive resolves to an existing file
-- No orphaned resources — every file in subfolders referenced from SKILL.md
-
-**P3 — Polish (flag, do not block):**
-
-- Every file in the skill folder opens with a prose intro containing governing principle
 
 </validation>
 
@@ -184,5 +168,6 @@ Run `<validation>`. Fix P1/P2 before delivery; flag P3.
 - [prompt-frontmatter-contract.md](./references/prompt-frontmatter-contract.md) — Defines YAML frontmatter fields for .prompt.md files with description formula and agent selection rules
 - [prompt-skeleton.md](./references/prompt-skeleton.md) — Structural reference for .prompt.md body sections. Defines body format options (Prose format vs XML-structured), variable system, scaling tiers, and design rules
 - [example-prompt.md](./assets/example-prompt.md) — Ready-to-use prompt file demonstrating full scaling tier with custom agent, file references, and selection variables
+- [shared-validation-rules.md](../artifact-author/references/shared-validation-rules.md) — Shared P1/P2/P3 validation rules applied across all creator skills
 
 </resources>

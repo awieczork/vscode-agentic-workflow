@@ -153,29 +153,24 @@ Run `<validation>`. Fix P1/P2 before delivery; flag P3.
 
 <validation>
 
+Load [shared-validation-rules.md](../artifact-author/references/shared-validation-rules.md) for: shared P1/P2/P3 validation rules
+
 **P1 — Blocking (fix before delivery):**
 
 - `name` + `description` present in frontmatter, both single-line strings
-- All YAML string values wrapped in single quotes: `name: 'value'`, `description: 'value'`
 - `name` matches parent folder name exactly
 - Name format: `[a-z0-9]+(-[a-z0-9]+)*`, 1-64 chars
 - Description follows `<description_rules>` in [skill-frontmatter-contract.md](./references/skill-frontmatter-contract.md): `[What] + [When] + [Capabilities]`, ≤1024 chars, no negative triggers
 - No unsupported frontmatter fields (no `tools`, `model`, `applyTo`, `handoffs`)
 - `<workflow>` present with numbered `<step_N_verb>` tags
-- No hardcoded secrets or absolute paths
 - No references to specific agents (`@agentname`) — skill is agent-agnostic
-- No markdown headings — XML tags are exclusive structure
-- No agent tags in output — verify against `<skills_forbidden_tags>` in [forbidden-tags.md](../artifact-author/references/forbidden-tags.md)
 
 **P2 — Quality (fix before delivery):**
 
 - No markdown tables outside `<resources>` — use bullet lists with em-dash definitions
 - No identity prose (role, expertise, stance, anti-identity)
 - Description 1-1024 characters with 2-4 trigger phrases
-- Every `Load [file] for:` directive resolves to an existing file
-- No orphaned resources — every file in subfolders referenced from SKILL.md
 - No reference chains — reference files do not link to other reference files
-- Cross-file XML tag references use linked-file form: `<tag>` in [file.md](path) — same-file references use backticks only
 - `<resources>` entries use XML tag references consistent with Load directives in `<workflow>` steps
 - Numeric thresholds in `<workflow>` steps do not contradict thresholds in reference files
 
@@ -184,8 +179,6 @@ Run `<validation>`. Fix P1/P2 before delivery; flag P3.
 - Prose intro follows `<prose_intro_pattern>` in [skill-skeleton.md](./references/skill-skeleton.md) exactly
 - Steps use imperative verbs
 - `<use_cases>` align with description triggers
-- Active voice throughout, no hedging
-- Every file in the skill folder opens with a prose intro containing governing principle
 
 </validation>
 
@@ -195,5 +188,6 @@ Run `<validation>`. Fix P1/P2 before delivery; flag P3.
 - [skill-frontmatter-contract.md](./references/skill-frontmatter-contract.md) — Defines the two YAML frontmatter fields for SKILL.md files (name and description) with format validation rules and the description formula for trigger-phrase construction
 - [skill-skeleton.md](./references/skill-skeleton.md) — Structural reference for SKILL.md body sections. Defines the closed tag vocabulary, scaling tiers (minimal/medium/full), folder extraction thresholds, and design rules that shape skill structure
 - [example-skill.md](./assets/example-skill.md) — Ready-to-use API scaffold skill at medium scaling tier (~80 lines body). Demonstrates `<workflow>` steps, error handling, validation checks, and linked-file XML tag references
+- [shared-validation-rules.md](../artifact-author/references/shared-validation-rules.md) — Shared P1/P2/P3 validation rules applied across all creator skills
 
 </resources>

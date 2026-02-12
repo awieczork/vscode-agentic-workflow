@@ -122,20 +122,18 @@ Run `<validation>`. Fix P1/P2 before delivery; flag P3.
 
 <validation>
 
+Load [shared-validation-rules.md](../artifact-author/references/shared-validation-rules.md) for: shared P1/P2/P3 validation rules
+
 **P1 — Blocking (fix before delivery):**
 
 - `description` present in frontmatter, single-line string
-- All YAML string values wrapped in single quotes: `name: 'value'`, `description: 'value'`
 - If `tools` present, use inline array format: `tools: ['tool1', 'tool2']`
 - If `name` present, format valid: lowercase alphanumeric + hyphens, matches filename pattern
 - If `tools` present, every tool or tool-set name exists in `<tool_sets>` or `<tools_list>` in [agent-frontmatter-contract.md](./references/agent-frontmatter-contract.md)
-- No skill tags in output — verify against `<agents_forbidden_tags>` in [forbidden-tags.md](../artifact-author/references/forbidden-tags.md)
-- No hardcoded secrets or absolute paths
 - `<constraints>` present with NEVER/ALWAYS prohibitions
 - `<behaviors>` present with executable actions
 - `<outputs>` present with at least one template or format definition
 - No references to specific agents (`@agentname`) in SKILL.md itself — skill is agent-agnostic (agent body MAY reference peers)
-- No markdown headings — XML tags are exclusive structure
 - If `infer` field used, flag as deprecated — use `user-invokable` + `disable-model-invocation` instead
 
 **P2 — Quality (fix before delivery):**
@@ -148,17 +146,12 @@ Run `<validation>`. Fix P1/P2 before delivery; flag P3.
 - Mode triggers (if present) are unambiguous — no overlapping activation phrases
 - No scope bleed — agent body stays within declared role
 - No circular handoffs without progress criteria
-- Cross-file XML tag references use linked-file form: `<tag>` in [file.md](path) — same-file references use backticks only
-- Every `Load [file] for:` directive resolves to an existing file
-- No orphaned resources — every file in subfolders referenced from SKILL.md
 
 **P3 — Polish (flag, do not block):**
 
 - Prose intros follow `<prose_intro_pattern>` in [agent-skeleton.md](./references/agent-skeleton.md)
 - Anti-identity explicitly names which peer agent to delegate to
-- Active voice throughout, no hedging
 - Constraint priority hierarchy stated explicitly
-- Every file in the skill folder opens with a prose intro containing governing principle
 
 </validation>
 
@@ -169,5 +162,6 @@ Run `<validation>`. Fix P1/P2 before delivery; flag P3.
 - [agent-skeleton.md](./references/agent-skeleton.md) — Structural reference for .agent.md body sections. Defines the closed tag vocabulary, scaling tiers (minimal/medium/full), and design rules that shape agent structure
 - [agent-profiles.md](./references/agent-profiles.md) — Six reusable behavioral archetypes (guide, transformer, curator, diagnostician, analyst, operator) that pre-configure constraint patterns, sub-tag sets, and tool selections
 - [example-agent.md](./assets/example-agent.md) — Ready-to-use Diagnostician profile agent at medium scaling tier (~120 lines body). Demonstrates identity prose in second-person voice, iron laws, context loading, modes, boundaries, and diagnosis report template
+- [shared-validation-rules.md](../artifact-author/references/shared-validation-rules.md) — Shared P1/P2/P3 validation rules applied across all creator skills
 
 </resources>
