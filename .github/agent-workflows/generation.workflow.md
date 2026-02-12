@@ -62,6 +62,19 @@ Adapt the example options to match the user's `tech` stack from the seed. Think 
 </round_1>
 
 
+<interview_pacing>
+
+After completing the Round 1 questions, present a pacing checkpoint via `#tool:askQuestions`:
+
+- I've gathered the core project context. Before we move to artifact exploration — is there anything else about your project I should understand?
+  - A) I'm good — move on to artifact exploration
+  - B) I have more to share — ask me more about the project
+
+**When the user selects B:** Probe areas Round 1 did not cover or only touched lightly. Generate novel questions — do not repeat Round 1 questions in different wording. Instead, explore adjacent dimensions: architecture decisions and tradeoffs the user has made, team conventions that aren't captured in tooling, past failures or incidents that shaped current practices, integration points with external systems, performance or scale requirements, monitoring and observability patterns, or anything the user's responses hinted at but didn't fully develop. Adapt each follow-up batch to what the user just shared — dig deeper, not wider, when the user signals depth in a specific area. Repeat the checkpoint after each follow-up batch until the user selects A.
+
+</interview_pacing>
+
+
 <round_2 name="Explore artifact opportunities">
 
 Proactively suggest artifacts using expertise in agentic workflows. Apply the artifact type heuristic to identify opportunities across ALL 4 types. Present as option-based questions.
