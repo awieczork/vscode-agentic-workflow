@@ -36,7 +36,7 @@ Agents may introduce additional domain sub-tags not listed here. Sub-tags must n
 
 Attributes address specific instances within tags. 4 names are closed (only these four exist); values are open (any kebab-case domain term).
 
-- `name` — Labels instances. Used on `<mode>`. Domain verb as value (e.g., `explore`, `triage`, `deploy`)
+- `name` — Labels instances. Used on `<mode>`. Domain verb as value (e.g., `explore`, `triage`, `deploy`). Agent-scoped — other artifact types (workflows, models) use `name` freely on tags like `<step_N>`, `<round_N>`, `<pattern>`
 - `id` — References instances. Used on `<iron_law>`. Sequential identifier (e.g., `IL_001`)
 - `condition` — Conditional logic key. Used on `<if>`. Error type as value (e.g., `3-consecutive-errors`, `confidence-below-50`)
 - `context` — Scopes fallback behavior. Used on `<on_missing>`. Resource name as value (e.g., `copilot-instructions`, `session-state`)

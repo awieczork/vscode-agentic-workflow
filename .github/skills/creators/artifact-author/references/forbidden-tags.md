@@ -89,3 +89,21 @@ Skill tags:
 - `<validation>`
 
 </instructions_forbidden_tags>
+
+
+<platform_reserved>
+
+VS Code injects these tags into agent system prompts. Using them in authored artifacts causes unpredictable collision. Treat as globally reserved.
+
+- `<instructions>` — Wraps agent mode instructions
+- `<skills>` — Platform-injected skill listing
+- `<modeInstructions>` — Agent mode-specific instructions
+- `<toolUseInstructions>` — Tool usage guidelines
+- `<communicationStyle>` — Communication formatting
+- `<outputFormatting>` — Output format rules
+- `<repoMemory>` — Memory system instructions
+- `<reminderInstructions>` — Reminder system
+- `<workflowGuidance>` — Workflow tracking guidance
+- `<agents>` — Agent listing injected by platform. **Exception:** `<agents>` is used deliberately in `copilot-instructions.md` as a framework convention to list available spoke agents. This collision is mitigated because VS Code injects `copilot-instructions.md` content within `<attachment>` wrappers, so the framework's `<agents>` tag operates in attachment scope rather than at the system-prompt top level where the platform reserves it.
+
+</platform_reserved>

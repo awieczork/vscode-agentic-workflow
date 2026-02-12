@@ -186,5 +186,6 @@ Load [example-copilot-instructions.md](./assets/example-copilot-instructions.md)
 
 - [section-schema.md](./references/section-schema.md) — Section field definitions and output format specification. Load for `<step_1_analyze>`, `<step_2_generate_workspace>`, `<step_3_generate_constraints>`, `<step_4_generate_decision_making>`, `<step_5_generate_commands>`, `<step_6_generate_environment>`, `<step_7_write>`
 - [example-copilot-instructions.md](./assets/example-copilot-instructions.md) — Annotated reference output
+- [settings-readme.md](../../../templates/vscode/settings-readme.md) — Documents the VS Code settings template structure and key purposes for framework workspace discovery configuration
 
 </resources>

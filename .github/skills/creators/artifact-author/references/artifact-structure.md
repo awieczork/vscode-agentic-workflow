@@ -94,6 +94,8 @@ Correct: `<example>` tag with Wrong/Correct contrast — e.g., `const x = getVal
 - Replace vague language with explicit conditionals (`If X, then Y`) and precise quantities (`2-3 items`, not "several")
 - Match format to content: prose for causally linked ideas, bullets for parallel unordered items, numbered lists for sequential steps
 - Reference tag content by name (`"the schema in <contract>"`) — never by position ("above", "below")
+- XML attribute values follow context-appropriate casing: lowercase for programmatic identifiers in agents and skills (e.g., `<mode name="research">`); Title Case for human-facing labels in workflows and models (e.g., `<step_1 name="Analyze requirements">`, `<pattern name="E-commerce Platform">`)
+- HTML comment injection markers use SCREAMING_SNAKE_CASE (e.g., `<!-- DOMAIN_AGENT_POOL -->`) — distinct from snake_case XML tags; these markers serve as insertion points for template adaptation during the generation pipeline
 
 </formatting_conventions>
 
