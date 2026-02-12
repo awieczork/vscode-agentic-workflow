@@ -20,9 +20,12 @@ Recognized patterns:
 - `<context_loading>` — Input processing rules (inside `<behaviors>`)
 - `<on_missing>` — Fallback behavior for missing context (inside `<behaviors>`)
 - `<mode>` — Behavioral variant with activation criteria (inside `<behaviors>`)
+- `<verification>` — Domain-specific verification rules (inside `<behaviors>`)
 - `<if>` / `<when_blocked>` — Conditional behavior (inside `<behaviors>`)
 - `<example>` — Annotated output sample (inside `<outputs>`)
 - `<return_format>` — Structured return contract (inside `<outputs>`)
+
+For single-mode agents, use a domain-verb sub-tag (e.g., `<planning>`, `<verification>`) directly under `<behaviors>` instead of wrapping in `<mode>`.
 
 Agents may introduce additional domain sub-tags not listed here. Sub-tags must nest inside structural tags. Name sub-tags with snake_case.
 

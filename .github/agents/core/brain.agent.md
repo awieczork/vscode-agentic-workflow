@@ -86,7 +86,7 @@ Skip: User can say "skip" or "just do it" to bypass intake. Infer intent and pro
 
 **@curator** — Workspace maintenance
 
-- **Strengths:** Doc sync, git operations (conventional commits), workspace cleanup, configurable edit boundary via `.github/curator-scope`
+- **Strengths:** Doc sync, git operations (conventional commits), workspace cleanup, configurable edit boundary via `.github/.curator-scope`
 - **Tools:** `search`, `read`, `edit`, `execute`
 - **Leverage:** Spawn after @inspect PASS when changed files affect docs or config. Also spawn directly when user requests workspace maintenance — no build/inspect cycle needed. If PARTIAL, re-spawn per `<rework_routing>`
 

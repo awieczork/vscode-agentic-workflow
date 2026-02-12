@@ -45,6 +45,7 @@ exception|fault|problem|bug|defect|guideline|policy|directive|restriction|limita
 **Excluded from pattern** — Common English words that produce false positives: pass, break, function, command, project, repository, codebase, state, limit, stage, stop, pause, ask, template, query, request, document, output, capability, failure ("plan failure" and "test failure" are idiomatic English distinct from canonical `error`). Review these manually when violations are suspected.
 
 **Excluded from pattern** — Canonical or plain-English terms with distinct meaning from their alias group:
+
 - workflow — Canonical term — distinct meaning from 'skill'; defined in `<canonical_terms>`
 - route — Plain English usage distinct from canonical 'handoff' — 'route to' means 'direct to a destination'
 
