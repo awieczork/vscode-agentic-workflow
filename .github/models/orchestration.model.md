@@ -2,7 +2,7 @@
 description: 'Hub-and-spoke agent orchestration model — @brain as sole orchestrator, spoke agents execute and return, domain plug-in architecture'
 ---
 
-This artifact defines the hub-and-spoke agent orchestration model. The governing principle is: @brain is the sole orchestrator; spokes execute and return. Users interact with @brain only — spoke agents are hidden from the UI. All inter-agent communication flows through @brain via `runSubagent`; no peer-to-peer routing exists. The generation pipeline runs through core spokes as a standard @brain-orchestrated workflow — see [generation-workflow-model.md](generation-workflow-model.md) for the refactored design.
+This artifact defines the hub-and-spoke agent orchestration model. The governing principle is: @brain is the sole orchestrator; spokes execute and return. Users interact with @brain only — spoke agents are hidden from the UI. All inter-agent communication flows through @brain via `runSubagent`; no peer-to-peer routing exists. The generation pipeline runs through core spokes as a standard @brain-orchestrated workflow — see [generation-workflow.model.md](generation-workflow.model.md) for the refactored design.
 
 
 <agent_inventory>
@@ -134,7 +134,7 @@ Spoke-specific contracts:
 - **@brain → @build:** Plan (task subset) + Scope → Returns: build summary (files changed, tests, deviations, blockers)
 - **@brain → @inspect:** Plan + Build Summary → Returns: verdict with evidence-backed findings (severity: `Critical` | `Major` | `Minor`)
 - **@brain → @curator:** Action + Scope + Files Affected (required for sync-docs action only) → Returns: maintenance report with health scan
-- **@brain → domain agent:** See `<domain_agent_model>` in [generation-workflow-model.md](generation-workflow-model.md) for detailed domain agent contracts including mutation tiers, orchestration positions, and advisory patterns
+- **@brain → domain agent:** See `<domain_agent_model>` in [generation-workflow.model.md](generation-workflow.model.md) for detailed domain agent contracts including mutation tiers, orchestration positions, and advisory patterns
 
 </data_contracts>
 
@@ -146,7 +146,7 @@ Core agents form a fixed scaffold. Domain-specific agents plug in without modify
 - **Discovery** — @brain uses `agents: ['*']` and discovers all agents in the workspace automatically
 - **Awareness** — `copilot-instructions.md` lists all agents with descriptions. Core agents load this in context. Adding a domain agent to the workspace makes it visible to all core agents
 - **Integration** — @architect plans reference domain agents by name. @brain spawns them per plan via `runSubagent`. No special wiring needed — the plan is the integration layer
-- **Generation pipeline** — Produces domain agents via @build using 6 creator skills (agent-creator, artifact-author, skill-creator, instruction-creator, prompt-creator, copilot-instructions-creator). The pipeline is orchestrated by @brain through standard spokes — see [generation-workflow-model.md](generation-workflow-model.md)
+- **Generation pipeline** — Produces domain agents via @build using 6 creator skills (agent-creator, artifact-author, skill-creator, instruction-creator, prompt-creator, copilot-instructions-creator). The pipeline is orchestrated by @brain through standard spokes — see [generation-workflow.model.md](generation-workflow.model.md)
 
 **Domain agent requirements for plug-in compatibility:**
 
@@ -155,7 +155,7 @@ Core agents form a fixed scaffold. Domain-specific agents plug in without modify
 - Structured return format so @brain can evaluate results
 - Positive scope declaration in identity prose
 
-This section covers plug-in compatibility requirements. See `<domain_agent_model>` in [generation-workflow-model.md](generation-workflow-model.md) for detailed capability tiers and orchestration positions.
+This section covers plug-in compatibility requirements. See `<domain_agent_model>` in [generation-workflow.model.md](generation-workflow.model.md) for detailed capability tiers and orchestration positions.
 
 </domain_plug_in>
 
