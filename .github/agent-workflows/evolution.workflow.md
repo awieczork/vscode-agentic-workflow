@@ -285,6 +285,28 @@ Findings route back through @brain for rework if needed.
 
 
 <!-- ═══════════════════════════════════════════════════════════════════ -->
+<!-- OUTPUT FORMAT — what @brain presents after evolution completes     -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+
+<output_format>
+
+Present the evolution outcome to the user in this structure:
+
+- **Session summary** — Session ID, number of rework cycles completed
+
+- **Artifacts** — One row per artifact, as a table:
+  - Path — file path relative to workspace root
+  - Action — `Created` | `Modified` | `Deleted`
+  - Verification — `Passed` | `Failed` | `Skipped`
+
+- **Verification outcome** — @inspect verdict (`Passed` | `Failed`), any notes or caveats from the inspection
+
+- **Open items** — Items deferred or flagged during evolution that require future attention (or "None")
+
+</output_format>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
 <!-- SCOPE BOUNDARY — hard limits on what evolution touches -->
 <!-- ═══════════════════════════════════════════════════════════════════ -->
 
