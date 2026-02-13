@@ -1,61 +1,25 @@
-This framework helps humans create effective agentic workflows. The artifacts are written FOR AI agents TO execute — the reader of every file is an AI agent. The governing principle is: calibrate autonomy to confidence — proceed decisively when evidence is strong, escalate when uncertain, prioritize safety over speed.
+This workspace is a framework for building agentic workflows in VS Code. It provides a set of AI agent definitions, reusable skills, prompt templates, and design models that together enable a hub-and-spoke orchestration pattern. The orchestrator (@brain) receives user requests and delegates work to specialized subagents — @researcher for context gathering, @architect for planning, @build for implementation, @inspect for verification, and @curator for workspace maintenance.
 
+Every artifact in this repository is written FOR AI agents TO execute. Agent definitions live in `.github/agents/core/`, each following a consistent structure: identity prose, bullet rules, a numbered workflow, behavioral guidelines, and a self-contained output template. Skills in `.github/skills/` provide step-by-step processes for specific domains like creating new agents, writing prompts, or authoring documentation.
 
 <workspace>
 
-Workspace structure and folder purposes. Load this first to locate resources.
+Resources that agents should discover and leverage when relevant:
 
-- `.github/agents/core/` — Hub-and-spoke agent definitions (brain, researcher, architect, build, inspect, curator) — `Active`
-- `.github/agent-workflows/` — Workflow process definitions (`.workflow.md` files) — `Active`
-- `.github/.curator-scope` — Edit boundary file for @curator — `Active`
-- `.github/instructions/` — Reserved for future instruction files — `Empty`
-- `.github/skills/` — Skill definitions (`SKILL.md` files); `creators/` groups framework authoring skills — `Active`
-- `.github/prompts/` — Reusable prompt files (`.prompt.md` files) — `Active`
-- `.github/models/` — Framework design models and architecture specs — `Active`
-- `.github/templates/` — Agent templates, instruction scaffolds, and VS Code settings template for pipeline output — `Active`
-- `.vscode/` — VS Code workspace settings for framework agent/skill/prompt discovery — `Active`
-- `output/` — Created on first generation run, gitignored — `Placeholder`
-- `.copilotignore` — Controls which files Copilot indexes — `Active`
-
-**Status meanings:**
-
-- `Active` — Authoritative, use as source of truth
-- `Temporary` — Will be cleaned up after current development cycle (reserved — used during active development)
-- `Placeholder` — Structure exists, content not yet generated
-- `Removed` — Previously existed, content redistributed to other files (reserved — used during active development)
+- `.github/skills/artifact-creator/` — Unified skill for creating and refactoring all VS Code Copilot customization artifacts (agents, skills, prompts, instructions, copilot-instructions)
+- `.github/skills/creators/` — Archived individual creator skills (superseded by artifact-creator)
+- `.github/instructions/` — Path-specific instruction files (reserved for future use)
 
 </workspace>
 
 
-<agents>
+<rules>
 
-Core agents available in this workspace. @brain orchestrates all spokes via `runSubagent`.
-
-- `@brain` — Hub agent. Sole user-facing entry point and orchestrator of spoke agents
-- `@researcher` — Exploration spoke. Deep research, source synthesis, perspective analysis
-- `@architect` — Planning spoke. Decomposes changes into phased, dependency-verified plans
-- `@build` — Implementation spoke. Executes approved plans, produces working code
-- `@inspect` — Verification spoke. Final quality gate checking quality and plan compliance
-- `@curator` — Maintenance spoke. Syncs docs, cleans workspace, structures git commits
-
-</agents>
-
-
-<constraints>
-
-- copilot-instructions.md takes precedence over domain instruction files
-- Trust documented structure without re-verification; verify all facts, file contents, and citations before citing — never fabricate sources, file paths, or quotes
-- Do only what is requested or clearly necessary; treat undocumented features as unsupported
-- Include type-specific requirements for each document type: purpose statements for files, required/optional marking for templates, when-to-create criteria for patterns, P1/P2/P3 severity for checklists
-
-</constraints>
-
-
-<decision_making>
-
+- This file takes precedence over all other instruction files in the workspace
+- Never fabricate sources, file paths, or quotes — verify before citing
+- Do only what is requested or clearly necessary — treat undocumented features as unsupported
 - When rules conflict, apply: Safety → Accuracy → Clarity → Style — the first dimension that distinguishes options wins
-- Classify issues by impact: P1 blocks completion, P2 degrades quality, P3 is optional
-- Calibrate decisions to confidence: high confidence → proceed; medium confidence → flag uncertainty, ask; low confidence → stop, request clarification
-- When resources are unavailable, state the gap, provide an explicit workaround, continue
+- When uncertain: high confidence → proceed; medium → flag and ask; low → stop and clarify
+- When resources are unavailable, state the gap and continue with an explicit workaround
 
-</decision_making>
+</rules>
