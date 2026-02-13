@@ -1,22 +1,30 @@
 Cross-cutting writing quality rules for all VS Code Copilot customization artifacts. The governing principle is: consistent structure and vocabulary across every artifact type — XML tags navigate, prose explains, and validation enforces uniform standards.
 
 
-<xml_conventions>
+<xml_tags>
 
-XML tags are the exclusive structural system for artifact bodies. No markdown headings (`#`, `##`, etc.) inside artifact content — tags replace headings entirely.
+XML tags are the structural skeleton of every artifact. They replace markdown headings entirely — no `#`, `##`, etc. inside artifact content. Tags navigate, prose explains.
 
-| Rule | Detail |
-|---|---|
-| Tag naming | `snake_case`, domain-specific, self-explanatory — tag names are project vocabulary, not magic keywords |
-| Nesting depth | 1-2 levels preferred; 3 maximum — split into separate files rather than exceeding depth |
-| Prose intros | 1-3 sentences inside each tag before structured content — state purpose, not section enumeration |
-| One concern per tag | No multi-topic tags — separate distinct concepts into distinct tags |
-| Tag references | Same-file: backticks only (`<tag_name>`). Cross-file: backticks + markdown link (`<tag>` in [file.md](path)) |
-| Structural vs inline | Raw XML for structural definitions; backticks for inline prose references to tags |
+**Freedom principle:** Tags are free-form and domain-specific. There is no closed vocabulary per artifact type. Authors choose tag names that describe their content. A skill can use `<resources>` or `<constraints>` if those names fit. An agent can use `<error_handling>` if it has error handling guidance. The tag's name should communicate what's inside — that is the only naming rule.
 
-Tags describe content — they do not impose rigid vocabulary. Choose meaningful names that communicate what the section contains.
+**Design guidelines:**
 
-</xml_conventions>
+- `snake_case`, self-explanatory names — a reader should guess the content from the tag name alone
+- Prefer domain-specific names over generic ones (`<investigation_approach>` over `<section_1>`)
+- 4-8 top-level tags is the typical range for a well-structured artifact
+- 1-2 nesting levels preferred, 3 maximum — split into separate files rather than exceeding depth
+- One concern per tag — separate distinct concepts into distinct tags
+- Prose intro (1-3 sentences) inside each tag before structured content — state purpose, not section enumeration
+- Tag references: same-file backticks only (`<tag_name>`), cross-file backticks + markdown link (`<tag>` in [file.md](path))
+- Structural XML for definitions; backticks for inline prose references to tags
+
+**Platform-reserved tags** — the ONLY hard constraint. VS Code injects these into system prompts; never use them in authored artifacts — they cause collisions with the runtime environment:
+
+`<instructions>`, `<skills>`, `<modeInstructions>`, `<toolUseInstructions>`, `<communicationStyle>`, `<outputFormatting>`, `<repoMemory>`, `<reminderInstructions>`, `<workflowGuidance>`, `<agents>`
+
+Exception: `<agents>` is permitted in `copilot-instructions.md` because VS Code wraps that file in `<attachment>` scope, avoiding collision with the platform-level `<agents>` tag.
+
+</xml_tags>
 
 
 <formatting>
@@ -61,27 +69,6 @@ Formatting rules ensure artifacts are parseable by both AI agents and human revi
 </formatting>
 
 
-<forbidden_tags>
-
-Each artifact type has a closed tag vocabulary. Tags from other types must not appear — this prevents cross-contamination and preserves type boundaries.
-
-| Artifact type | Forbidden tags (belong to other types) |
-|---|---|
-| `.agent.md` | `<step_N_*>`, `<use_cases>`, `<resources>`, `<error_handling>`, `<validation>` |
-| `SKILL.md` | `<constraints>`, `<behaviors>`, `<outputs>`, `<termination>`, `<iron_law>`, `<mode>`, `<context_loading>`, `<on_missing>`, `<when_blocked>`, `<if>` |
-| `.prompt.md` | All agent tags above + all skill tags above |
-| `.instructions.md` | All agent tags above + all skill tags above |
-| `copilot-instructions.md` | No type-specific forbidden tags — uses project-domain XML freely |
-
-**Platform-reserved tags** — VS Code injects these into system prompts. Never use them in authored artifacts:
-
-`<instructions>`, `<skills>`, `<modeInstructions>`, `<toolUseInstructions>`, `<communicationStyle>`, `<outputFormatting>`, `<repoMemory>`, `<reminderInstructions>`, `<workflowGuidance>`, `<agents>`
-
-Exception: `<agents>` is permitted in `copilot-instructions.md` because VS Code wraps that file in `<attachment>` scope, avoiding collision with the platform-level `<agents>` tag.
-
-</forbidden_tags>
-
-
 <glossary>
 
 Canonical terms prevent vocabulary drift across artifacts. Use only these terms — understand aliases in input but always respond with the canonical form.
@@ -120,7 +107,7 @@ Every artifact passes the same quality gates regardless of type. Fix all P1 and 
 | Frontmatter format | All YAML string values single-quoted |
 | File extension | Matches artifact type (`.agent.md`, `SKILL.md`, `.prompt.md`, `.instructions.md`) |
 | No headings | Zero markdown headings in artifact body — XML tags only |
-| No cross-contamination | No forbidden tags from other artifact types (see `<forbidden_tags>`) |
+| No platform-reserved tags | None of the VS Code system prompt tags used in authored artifacts (see `<xml_tags>`) |
 | No secrets | No hardcoded credentials or absolute paths |
 
 **P2 — Quality** (fix before finalizing):

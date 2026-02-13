@@ -8,7 +8,7 @@ Directory map — load this first to locate resources.
 - `.github/agents/core/` — Core agent definitions (brain, researcher, architect, build, inspect, curator)
 - `.github/agent-workflows/` — Multi-agent workflow orchestrations (evolution, generation)
 - `.github/instructions/` — Path-specific instruction files — `Reserved`
-- `.github/prompts/` — One-shot prompt templates (evolve, init-project)
+- `.github/prompts/` — One-shot prompt templates (evolve, init-project, calibrate)
 - `.github/skills/artifact-creator/` — Unified skill for creating/refactoring all artifact types
 
 </workspace>
