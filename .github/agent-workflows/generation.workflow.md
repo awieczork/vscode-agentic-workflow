@@ -1,526 +1,276 @@
 ---
-description: 'Generation workflow — expert interview, artifact proposal, orchestrated creation pipeline'
-triggers: ['init-project']
-phases: ['interview', 'research', 'plan', 'build', 'verify', 'finalize']
+name: 'generation'
+description: 'Project generation guidance — expert interview, artifact heuristic, orchestrated creation via @brain lifecycle'
+version: '2.0.0'
+tags: ['generation', 'interview', 'artifact-creation', 'project-scaffolding']
 ---
 
-<!-- ═══════════════════════════════════════════════════════════════════ -->
-<!-- INTERVIEW GUIDANCE — @brain follows this structure using askQuestions -->
-<!-- ═══════════════════════════════════════════════════════════════════ -->
+This workflow provides generation-specific guidance that @brain applies during its standard lifecycle phases. Generation is not a separate process — it is @brain orchestrating project-specific artifact creation through the same hub-and-spoke pattern used for all tasks. Each section below maps to a phase @brain already executes: interview maps to discovery, heuristic maps to analysis, output and adaptation map to planning, build directives map to execution, and verification maps to inspection.
+
 
 <interview_guidance>
 
-Drive a multi-round expert interview to understand the project and identify artifact opportunities. The seed is a springboard — conversation is the primary knowledge source. Use `#tool:askQuestions` for all interview questions. Frame every question with at least 2 curated options + a custom input option. Allow multi-select where appropriate — phrase as "Select all that apply" with lettered options + custom.
-
-Limit each `#tool:askQuestions` call to a maximum of 3 questions. Present follow-up questions in subsequent batches — progressive disclosure prevents overwhelming the user with too many multi-select decisions at once. If more than 3 questions are needed for a round, split into 2 batches and process responses before continuing.
-
-Assess seed richness — thin seed (1-2 sentences) triggers more probing. Rich seed (detailed description) triggers fewer rounds and more confirmation.
+Drive a multi-round expert interview to understand the project and identify artifact opportunities. Use option-based questions — max 3 questions per batch, each with 2-5 options. Pre-select one option as recommended where applicable. Allow multi-select with lettered options where appropriate.
 
 
-<round_1 name="Understand the project">
+<seed_adaptive_depth>
 
-Dig into the description and goal. Frame questions with curated options based on seed content.
+Assess the user's initial seed to calibrate interview depth:
 
-Example question formats:
+- **Rich seed** (detailed description, tech stack, requirements, workflow details) — reduce rounds, confirm understanding with targeted options rather than broad questions. Skip areas already covered
+- **Thin seed** (1-2 sentences, vague scope) — probe deeper, ask more rounds, explore adjacent dimensions before moving to artifact exploration
+- **Medium seed** — standard depth, 2-3 rounds with follow-up batches as needed
 
-- What is your primary development workflow?
-  - A) Solo developer — I build, test, and deploy everything
-  - B) Team — PRs, code reviews, CI/CD pipeline
-  - C) Monorepo with multiple services
-  - D) Data science — notebooks, experiments, model training
-  - E) Custom — describe your workflow
+Adapt question options to the seed's tech stack and domain. Never ask questions the seed already answers.
 
-- What frustrates you most day-to-day? (Select all that apply)
-  - A) Manual repetitive tasks
-  - B) Inconsistent code quality across the team
-  - C) Slow debugging cycles
-  - D) Deployment and environment issues
-  - E) Documentation falling out of sync
-  - F) Something else — describe your pain points
-
-Adapt options to the `tech` and `area` from the seed. If the user provided a rich description, confirm understanding with targeted options instead of broad questions.
-
-- Tell me about your development workflow commands. For each category that applies to your project, what command(s) do you use? (Share what applies)
-  - A) Environment setup — e.g., `conda activate myenv`, `nvm use 18`, `docker compose up -d`
-  - B) Build / Compile — e.g., `npm run build`, `cargo build`, `go build ./...`
-  - C) Test — e.g., `pytest tests/`, `npm test`, `dotnet test`
-  - D) Lint / Format — e.g., `black .`, `eslint src/`, `gofmt -w .`
-  - E) Run / Serve — e.g., `uvicorn main:app`, `npm run dev`, `flask run`
-  - F) Deploy — e.g., `docker push`, `terraform apply`, `fly deploy`
-
-Adapt the example commands to match the user's `tech` stack from the seed. Allow free-form input for each selected category to capture exact commands with flags and arguments. Store collected commands as `project_commands` grouped by category.
-
-- What does an agent need to know to work smoothly in your project environment? (Select all that apply)
-  - A) Virtual environment / container setup — how to activate the dev environment (e.g., `source .venv/bin/activate`, `conda activate myenv`, Docker dev container)
-  - B) Environment variables — required `.env` files, variables needed for local dev, secrets handling approach
-  - C) Services and prerequisites — what must be running (e.g., Docker for PostgreSQL, Redis, message broker)
-  - D) Ad-hoc scripting — can agents run scripts? Conventions for one-off Python/shell/R scripts, script directories
-  - E) Interpreter and runtime specifics — version pinning, PATH requirements, multiple runtime needs
-  - F) Database workflow — how to get a working local DB (migrations, seed data, fixtures, test DB setup)
-  - G) Custom — describe your environment details
-
-Adapt the example options to match the user's `tech` stack from the seed. Think about what agents will need to operate autonomously in this project — environment activation, available tooling, required services, scripting conventions. Collect enough detail so that agents reading copilot-instructions.md can set up and work in the project without asking the user. Store collected data as `environment_context` with category labels.
-
-</round_1>
+</seed_adaptive_depth>
 
 
-<interview_pacing>
+<question_topics>
 
-After completing the Round 1 questions, present a pacing checkpoint via `#tool:askQuestions`:
+Cover these areas across interview rounds, adapting order and depth to what the seed leaves uncovered:
 
-- I've gathered the core project context. Before we move to artifact exploration — is there anything else about your project I should understand?
-  - A) I'm good — move on to artifact exploration
-  - B) I have more to share — ask me more about the project
+- **Project type and domain** — what the project does, who it serves, primary workflows
+- **Tech stack** — languages, frameworks, infrastructure, services, runtime environment
+- **Team workflow** — solo vs team, PR process, CI/CD, deployment strategy
+- **Development commands** — build, test, lint, run, deploy commands grouped by category
+- **Environment context** — virtual environments, required services, secrets handling, prerequisites
+- **Key domain concepts** — terms, entities, and relationships agents need to understand
+- **Agent specializations** — where dedicated AI assistance would reduce friction
+- **Constraints and safety** — what agents must NEVER do, what requires explicit approval
 
-**When the user selects B:** Probe areas Round 1 did not cover or only touched lightly. Generate novel questions — do not repeat Round 1 questions in different wording. Instead, explore adjacent dimensions: architecture decisions and tradeoffs the user has made, team conventions that aren't captured in tooling, past failures or incidents that shaped current practices, integration points with external systems, performance or scale requirements, monitoring and observability patterns, or anything the user's responses hinted at but didn't fully develop. Adapt each follow-up batch to what the user just shared — dig deeper, not wider, when the user signals depth in a specific area. Repeat the checkpoint after each follow-up batch until the user selects A.
-
-</interview_pacing>
-
-
-<round_2 name="Explore artifact opportunities">
-
-Proactively suggest artifacts using expertise in agentic workflows. Apply the artifact type heuristic to identify opportunities across ALL 4 types. Present as option-based questions.
-
-Example format:
-
-- I identified these potential artifacts based on your project. Which interest you? (Select all that apply)
-  - A) Code review agent — reviews PRs for style and logic
-  - B) Test creation skill — generates test files for [framework]
-  - C) Deployment operator — automates your deploy pipeline
-  - D) [framework]-standards instruction — enforces coding conventions
-  - E) Quick-review prompt — one-shot lightweight code check
-  - F) Something else — describe what you need
-
-Generate options grounded in the user's tech stack and description. Push beyond what the user explicitly asked for — surface 2-3 opportunities they likely did not consider. Each option should map to a specific artifact type.
-
-For each selected option, follow up to refine scope:
-
-- For the code review agent — what should it focus on?
-  - A) Style and formatting only
-  - B) Logic errors and edge cases
-  - C) Security vulnerabilities
-  - D) All of the above
-  - E) Custom focus — describe what matters most
+</question_topics>
 
 
-<artifact_type_heuristic>
+<proactive_suggestion>
 
-Apply during Round 2 to classify artifact opportunities:
+After gathering project context, proactively suggest artifacts the user likely has not considered. Ground suggestions in interview findings:
 
-- Agent — Ongoing interactive assistance, multi-turn conversations, stateful workflows. "Help me debug", "Review this PR", "Guide me through deployment"
-- Skill — Repeatable multi-step procedure with validation. Clear inputs, steps, and a verifiable output. "Create unit tests for X", "Generate API client from spec", "Set up CI pipeline"
-- Prompt — One-shot parameterized task. No multi-turn conversation needed. "Summarize this file", "Generate commit message", "Quick code review"
-- Instruction — Cross-cutting conventions that multiple agents follow. Coding standards, documentation rules, naming conventions. Applied globally via file patterns
+- "Your e-commerce project would benefit from a checkout-flow skill and an API-design instruction set"
+- "Given your team's PR workflow, a code-review agent and a PR-conventions instruction could enforce consistency"
+- "Your data pipeline has migration risks — a safety-gated deployment prompt and a migration-testing skill would reduce incidents"
 
-</artifact_type_heuristic>
+Present suggestions as option-based questions — the user selects which to include. Each suggestion must map to a specific artifact type with a one-line justification.
 
-
-<orchestration_composition>
-
-After identifying individual artifacts, explore how they compose into orchestration systems. The artifacts being created will work alongside core spokes (@brain, @architect, @build, @inspect, @curator, @researcher) in the user's project. Understanding composition patterns ensures the right relationships are built in.
-
-Present orchestration patterns as options after artifact selection using `#tool:askQuestions`:
-
-- Looking at your selected artifacts, I see potential orchestration patterns. Which composition patterns match your project? (Select all that apply)
-  - A) Advisory + Build loop — domain agent advises before planning, reviews after build, feeds corrections back (e.g., code reviewer that shapes plans and reviews output)
-  - B) Safety-gated execution — domain agent executes high-risk operations with dry-run → approval → apply ceremony (e.g., deployment, database migration)
-  - C) Multi-agent pipeline — multiple domain agents at different stages: one advises, another transforms, instructions enforce conventions silently (e.g., designer + generator + standards)
-  - D) Standalone expert — domain agents answer questions independently, no build cycle needed (e.g., "what's the best pattern for X?")
-  - E) None of these — my artifacts work independently
-  - F) Custom — describe how your artifacts should work together
-
-For each selected pattern, ask about domain-specific adaptations:
-
-- For Advisory + Build loop: which agent advises pre-planning vs post-build? What does it review for?
-- For Safety-gated execution: what's the dry-run step? What requires user approval? What's the rollback strategy?
-- For Multi-agent pipeline: what's the sequence? Where do instructions auto-load? Where does the user approve?
-- For Standalone expert: what kinds of questions? Does the expert ever feed into a build cycle?
-
-Reference patterns in `<orchestration_design>` → `<reference_patterns>` provide concrete examples for each composition. Use them to ground the conversation.
-
-</orchestration_composition>
-
-</round_2>
+</proactive_suggestion>
 
 
-<round_3 name="Boundaries, safety, and finalize">
+<finalization>
 
-Probe for constraints and risk tolerance, then compile findings into a final artifact proposal for approval.
+Compile all findings into a proposal table before proceeding:
 
-Constraint questions:
+- **Name** — artifact name (lowercase-with-hyphens)
+- **Type** — agent, skill, instruction, or prompt
+- **Justification** — one-line reason this artifact exists
 
-- What should agents NEVER do in this project? (Select all that apply)
-  - A) Delete or overwrite files without confirmation
-  - B) Execute shell commands without approval
-  - C) Push directly to main/production branches
-  - D) Access or modify environment variables or secrets
-  - E) Make external API calls or network requests
-  - F) Additional restrictions — describe them
+Present the total: N artifacts (X agents, Y skills, Z instructions, W prompts). Get explicit approval before generation begins. Iterate until the user approves.
 
-- Which actions need your explicit approval before executing?
-  - A) Any file modification
-  - B) Only destructive operations (delete, overwrite, deploy)
-  - C) Operations affecting production environments only
-  - D) No approval needed — agents can act autonomously
-  - E) Custom approval policy — describe it
-
-Adapt options to the user's area and selected artifacts. Higher-risk domains (devops, fintech) should front-load more safety options.
-
-Present the final artifact proposal table:
-
-- Name — artifact name
-- Type — agent, skill, prompt, or instruction
-- Profile — archetype (agents only, em-dash for non-agents)
-- Justification — one-line reason this artifact exists
-
-Example:
-
-- deployer — agent — operator — Deployment process with safety gates
-- test-shiny — skill — — — Repeatable shinytest2 test creation
-- r-standards — instruction — — — R coding conventions across all R agents
-- quick-deploy — prompt — — — One-shot deployment checklist
-
-Total: N artifacts (X agents, Y skills, Z instructions, W prompts)
-
-Get approval via `#tool:askQuestions`:
-
-- Review the proposed artifacts above.
-  - A) Approve all — proceed to generation
-  - B) Remove some — tell me which to drop
-  - C) Add more — describe what is missing
-  - D) Modify — tell me what to change
-
-Iterate until user approves.
-
-</round_3>
+</finalization>
 
 </interview_guidance>
 
 
-<!-- ═══════════════════════════════════════════════════════════════════ -->
-<!-- PROFILE ASSIGNMENT — for agent artifacts -->
-<!-- ═══════════════════════════════════════════════════════════════════ -->
+<artifact_heuristic>
 
-<profile_assignment>
+Apply this 4-type heuristic to classify every artifact opportunity. Classification drives creation — each type has a distinct purpose, and mis-classification produces artifacts that do not fit their context.
 
-When assigning profiles to agent artifacts, select from the 6 archetypes defined in [agent-profiles.md](../skills/creators/agent-creator/references/agent-profiles.md):
+- **Agent** — For recurring multi-step workflows that benefit from a dedicated persona. The agent receives tasks, applies domain expertise across multiple turns, and produces structured output. Examples: @api-designer for API architecture guidance, @test-strategist for test planning and coverage analysis, @security-auditor for vulnerability assessment
+- **Skill** — For domain-specific knowledge that multiple agents might invoke. A repeatable process with clear inputs, steps, and verifiable output. Examples: database-optimization skill, accessibility-audit skill, migration-testing skill
+- **Instruction** — For path-scoped coding standards and conventions that auto-attach based on file patterns. Ambient constraints that shape behavior without explicit invocation. Examples: "all files in src/api/ must include error handling middleware", "TypeScript files follow strict null checks"
+- **Prompt** — For one-shot task templates users trigger directly. No multi-turn conversation needed — parameterized input, focused output. Examples: "generate a migration script", "scaffold a new endpoint", "run a quick security check"
 
-- Guide — Linear teaching/onboarding, step-by-step guidance. Keywords: teach, learn, help me understand, walk through
-- Transformer — Input-to-output conversion, format migration, deterministic mapping. Keywords: convert, migrate, transform, map
-- Curator — Collection management, organization, maintenance. Keywords: organize, maintain, inventory, clean up
-- Diagnostician — Troubleshooting, root cause analysis, read-only investigation. Keywords: debug, investigate, diagnose, find why
-- Analyst — Data analysis, metrics, reporting, evaluation. Keywords: analyze, measure, report, evaluate
-- Operator — Procedural execution with safety gates, deployments, migrations. Keywords: deploy, run, execute, migrate data
 
-Match the profile to the behavioral shape of the workflow, not the domain. An agent that guides users through deployment is a Guide, not an Operator. An agent that executes deployment pipelines autonomously is an Operator.
+<when_not_to_create>
 
-</profile_assignment>
+Avoid over-generation. Do NOT create an artifact when:
 
+- The capability is already covered by a core agent's existing behavior
+- A single instruction rule would suffice instead of a full agent
+- The use case is too narrow for a skill — a prompt handles it better
+- Two proposed artifacts overlap significantly — merge them or pick the stronger fit
 
-<!-- ═══════════════════════════════════════════════════════════════════ -->
-<!-- FIELD COLLECTION — what data to collect per artifact type -->
-<!-- ═══════════════════════════════════════════════════════════════════ -->
+</when_not_to_create>
 
-<field_collection>
 
-During the interview, collect the following data per artifact type. These fields feed directly into downstream creation tasks.
+<minimum_viable_set>
 
-<all_types>
+The smallest useful artifact set for any project is:
 
-Required for every artifact regardless of type:
+1. Project-specific `copilot-instructions.md` — provides workspace context that makes core agents effective
+2. 1-2 domain instructions — codifies the project's most important conventions
+3. 1-2 prompts — automates the most common one-shot tasks
 
-- name — lowercase-with-hyphens, derived from capability or task description
-- purpose — one sentence: what this artifact does
-- domain — operating area (translated from seed `area`)
-- tech — subset of seed `tech` relevant to this specific artifact
-- sources — URLs routed per-artifact with relevance notes
-- concepts — domain terms with relevance context
+Domain agents and skills are added only when interview findings reveal workflows that core agents cannot cover with general-purpose behavior.
 
-</all_types>
+</minimum_viable_set>
 
-<agent_fields>
+</artifact_heuristic>
 
-Additional fields for agent artifacts:
 
-- profile — one of the 6 archetypes (see `<profile_assignment>`)
-- capabilities — action verbs: what the agent can do
-- mutation_level — `none` (read-only), `low` (edits files), `high` (runs commands, deletes data, deploys)
-- safety_rules — hard constraints (NEVER bullets), promote high-consequence ones to iron laws
-- quality_rules — soft rules (ALWAYS bullets)
-- trigger — what starts this agent's work
-- stance — tone/posture (cautious, proactive, strict)
-- expertise — domain knowledge areas
+<output_structure>
 
-</agent_fields>
+Generated projects are self-contained — a user copies the `.github/` folder into their project and it works immediately. All output goes to `output/{projectName}/.github/`.
 
-<tool_inference>
 
-Infer the minimum required tool set for each agent artifact from collected fields. Apply these rules after field collection and before passing data to @architect:
+<directory_layout>
 
-- If `sources` contains URLs → include `web` in tools (agent needs to fetch external references)
-- If the agent advises on libraries, APIs, or frameworks with external documentation → include `context7` in tools
-- If `mutation_level` is `low` or `high` → include `edit` in tools
-- If `mutation_level` is `high` → include `execute` in tools
-- If `mutation_level` is `none` → limit to `search`, `read`, plus `web`/`context7` per rules above
-- Default base tool set: `search`, `read`
+```
+output/{projectName}/
+├── .github/
+│   ├── agents/
+│   │   ├── core/               # COPIED — all 6 core agents
+│   │   │   ├── brain.agent.md
+│   │   │   ├── researcher.agent.md
+│   │   │   ├── architect.agent.md
+│   │   │   ├── build.agent.md
+│   │   │   ├── inspect.agent.md
+│   │   │   └── curator.agent.md
+│   │   └── {name}.agent.md     # GENERATED — supplementary agents (flat)
+│   ├── skills/
+│   │   ├── artifact-creator/   # COPIED — full skill with references + examples
+│   │   │   ├── SKILL.md
+│   │   │   ├── references/
+│   │   │   └── assets/
+│   │   └── {domain-skill}/     # GENERATED — per interview findings
+│   │       └── SKILL.md
+│   ├── instructions/           # GENERATED — domain instructions
+│   ├── prompts/                # GENERATED — domain prompts
+│   └── copilot-instructions.md # GENERATED — project-specific workspace context
+└── README.md                   # GENERATED — human-friendly project guide
+```
 
-Never assign tools beyond what the agent's capabilities require. Surface the inferred tool set to the user during Round 3 proposal for confirmation.
+</directory_layout>
 
-</tool_inference>
 
-<skill_fields>
+<copy_rules>
 
-Additional fields for skill artifacts:
+These are copied verbatim — no modifications:
 
-- capabilities — action verbs: what the skill enables
-- complexity_signals — indicators of structural needs (needs templates, has decision rules)
-- step_count — estimated number of workflow steps
-- error_modes — known failure scenarios
+- **Core agents** — copy all 6 from `.github/agents/core/` to `output/{projectName}/.github/agents/core/`. Core agents are generic by design and work across any project
+- **Artifact-creator skill** — copy the entire `.github/skills/artifact-creator/` directory (SKILL.md, all references, all example assets). This enables the output project to create new artifacts post-generation
 
-</skill_fields>
+</copy_rules>
 
-<instruction_fields>
 
-Additional fields for instruction artifacts:
+<generation_rules>
 
-- instruction_type — `path-specific-triggered` or `path-specific-on-demand`
-- applies_to — agents and file patterns this instruction targets
-- rules — safety rules, quality rules, and conventions to encode
-- discovery_mode — `file-triggered` or `on-demand`
+These are created fresh based on interview findings:
 
-</instruction_fields>
+- **copilot-instructions.md** — tailored to the project's tech stack, conventions, domain context, development commands, environment setup, and agent listing. Every line must earn its token cost
+- **Supplementary agents** — placed flat in `agents/` alongside `agents/core/`. Each gets positioning guidance relative to core agents
+- **Domain skills** — placed in `skills/{skill-name}/` with SKILL.md. Create `references/` subdirectory only if the skill requires reference materials
+- **Domain instructions** — placed in `instructions/`. File-triggered via `applyTo` patterns where applicable
+- **Domain prompts** — placed in `prompts/`. One task per prompt file
+- **README.md** — placed at project root. Explains what was generated, how the hub-and-spoke model works, and provides 2-3 concrete quick-start examples tailored to the project domain. Under 80 lines, written for developers unfamiliar with the framework
 
-<prompt_fields>
+</generation_rules>
 
-Additional fields for prompt artifacts:
+</output_structure>
 
-- task_description — detailed description of what the prompt instructs
-- agent_mode — custom agent name for execution (if any)
-- tools_needed — tools the prompt references
-- variables — variables the prompt uses
-- output_format — expected output shape
 
-</prompt_fields>
+<core_agent_adaptation>
 
-</field_collection>
+Core agents are copied as-is — they are generic and project-agnostic by design. Project specificity comes from three sources that shape core agent behavior without modifying core agent files.
 
 
-<!-- ═══════════════════════════════════════════════════════════════════ -->
-<!-- ORCHESTRATION DESIGN — agent relationships and workflows -->
-<!-- ═══════════════════════════════════════════════════════════════════ -->
+<project_context_layer>
 
-<orchestration_design>
+The generated `copilot-instructions.md` provides the project context that makes core agents effective. It includes:
 
-After artifact approval, collect information about how domain agents connect to each other and to core spokes.
+- Workspace map with all generated directories and artifacts
+- Tech stack, conventions, and domain concepts from interview findings
+- Development commands grouped by category (build, test, lint, deploy)
+- Environment context (runtime, prerequisites, services)
+- Agent listing cross-referencing all available agents (core + supplementary)
 
-<reference_patterns>
+This file loads on every request — core agents read it and adapt their behavior to the project without needing project-specific modifications.
 
-For detailed pattern specifications with architecture diagrams, see `<reference_patterns>` in [generation-workflow.model.md](../models/generation-workflow.model.md).
+</project_context_layer>
 
-Use these reference patterns to help users visualize how their artifacts will compose. Present relevant patterns during the interview when users select composition options in Round 2.
 
-<pattern name="E-commerce Platform">
+<supplementary_agent_positioning>
 
-- Composition: @fraud-analyst (Analyst, read-only), @checkout-flow (Operator, safety-gated), checkout-conventions (instruction)
-- How it works: Analyst advises @brain pre-planning with domain-specific risk analysis. @build creates the implementation. Operator validates post-build with a dry-run of the full pipeline — if the dry-run fails, @brain loops fixes through @build until it passes. Instruction silently enforces conventions on all @build output.
-- What to collect if selected: What domain risks need pre-planning analysis? What's the full pipeline the Operator should dry-run? What constitutes a pass/fail? What conventions should the instruction enforce?
+Supplementary agents extend the core set. Each supplementary agent must be positioned relative to a core agent following the guidance in `body-patterns.md` → `<positioning>`:
 
-</pattern>
+- Define the role relative to an existing core agent — a `@python-dev` replaces `@build` for Python projects, a `@security-auditor` extends `@inspect` with security focus
+- Specify when @brain should prefer this agent over the core alternative — include selection criteria in identity prose
+- Follow the same interface patterns as the core agent being extended — status codes (`COMPLETE` | `BLOCKED`), session ID echo, output template structure — so @brain routes seamlessly
+- Supplementary agents never modify core agents — they provide alternative handoff targets that @brain selects based on task context
 
-<pattern name="Data Pipeline">
+</supplementary_agent_positioning>
 
-- Composition: @terraform-ops (Operator, appears twice), terraform-patterns (instruction)
-- How it works: @build creates infrastructure-as-code files while the instruction auto-enforces patterns via `applyTo`. Operator runs a read-only dry-run to verify. @brain asks user for approval. Operator then executes with safety gates (rollback on failure). @build wires application config.
-- What to collect if selected: What's the dry-run command? What requires user approval before execution? What's the rollback strategy? What file patterns trigger the instruction?
+</core_agent_adaptation>
 
-</pattern>
 
-<pattern name="API Platform">
+<build_directives>
 
-- Composition: @api-designer (Guide, read-only), @schema-gen (Transformer, scoped-write), api-conventions (instruction)
-- How it works: Guide produces an upfront design that the user approves before any building starts. @build implements while instruction enforces conventions. Transformer generates derived artifacts (e.g., OpenAPI spec) from the implementation. Guide returns for post-build review against the original design — issues loop through @build.
-- What to collect if selected: What should the Guide design upfront? What derived artifacts does the Transformer produce? What source does it transform from? What conventions should the instruction enforce? What does the Guide's review check for?
+Instructions for @brain when orchestrating artifact creation during generation. @build is stateless — it receives WHAT to create, never HOW.
 
-</pattern>
 
-</reference_patterns>
+<handoff_pattern>
 
-<entry_points>
+- @build uses the artifact-creator skill (`.github/skills/artifact-creator/SKILL.md`) for all artifact creation. The skill handles classify-then-specialize — @build does not need type-specific creation instructions
+- Each artifact is a separate @build handoff with clear scope: artifact type, purpose, domain context, and relevant interview findings
+- @build receives the artifact-creator skill reference and the specific artifact requirements — the skill provides structure, conventions, and validation
+- After each @build batch completes, @inspect verifies all created artifacts before @brain proceeds to the next batch
 
-Which agents do users invoke directly? Define the trigger intent for each:
+</handoff_pattern>
 
-- agent — agent name from the approved list
-- trigger — what user intent routes here
 
-</entry_points>
+<parallel_execution>
 
-<workflows>
+Batch independent @build spawns into parallel tool-call blocks. Never spawn them sequentially when they have non-overlapping file sets:
 
-Named sequences of agents that execute together:
+1. **Phase 1** — Copy operations (core agents, artifact-creator skill) — these have no dependencies
+2. **Phase 2** — Generate supplementary artifacts (agents, skills, instructions, prompts) — independent of each other, parallel within this phase
+3. **Phase 3** — Generate copilot-instructions.md — depends on all artifacts from Phase 2 being complete (references them in workspace map and agent listing)
+4. **Phase 4** — Generate README.md — depends on copilot-instructions.md and full artifact inventory
 
-- name — workflow identifier
-- sequence — ordered list of agent names
-- style — `checkpoint` (pause for approval between steps) or `autonomous` (run without pauses)
-- core_touchpoints — where core agents integrate (after which domain agent, to which core agent, why)
+@inspect runs after each phase. Findings route back through @brain for rework — @build fixes only the flagged issues, then @inspect re-verifies.
 
-</workflows>
+</parallel_execution>
 
-<handoffs>
+</build_directives>
 
-Explicit edges between agents:
 
-- from — source agent name
-- to — target agent name
-- when — condition that triggers the handoff
+<verification_criteria>
 
-</handoffs>
+What @inspect checks for generated projects. Each criterion is binary — PASS or FAIL with specific details.
 
-<instruction_bindings>
 
-Which instructions apply to which agents and file patterns:
+<artifact_quality>
 
-- instruction — instruction artifact name
-- agents — list of agent names this instruction applies to
-- file_patterns — glob patterns for file-triggered discovery
+- All artifacts follow framework conventions: XML tags (snake_case, domain-specific), canonical terms (constraint, skill, handoff, escalate, fabricate), no markdown headings inside artifact bodies
+- YAML frontmatter parses correctly with single-quoted string values
+- No hardcoded secrets, credentials, or absolute paths
+- Each artifact has a clear purpose that does not overlap with other artifacts
+- Agent artifacts include identity prose, bullet constraints, `<workflow>`, domain tags, and output template
+- Skill artifacts include prose intro, `<workflow>` with numbered steps, and `<resources>` linking all subfiles
+- Instruction artifacts use domain-specific XML groups with imperative NEVER/ALWAYS rules
+- Prompt artifacts have one task per file with verb-first heading
 
-</instruction_bindings>
+</artifact_quality>
 
-<core_integration>
 
-How domain agents connect to core spokes — define the fixed mapping:
+<structural_integrity>
 
-- @brain — routes user requests to domain agent entry points
-- @architect — plans multi-agent sequences and phased creation
-- @build — handles implementation tasks domain agents identify
-- @inspect — verifies domain agent outputs and created artifacts
+- Output directory structure matches the `<directory_layout>` specification
+- All 6 core agents are present in `agents/core/`
+- Artifact-creator skill is present with all references and example assets
+- No circular dependencies between generated artifacts
+- copilot-instructions.md accurately references all generated artifacts in its workspace map and agent listing
+- All cross-references between artifacts resolve to existing files
+- Supplementary agents follow positioning guidance — defined relative to core agents with matching interface patterns
 
-</core_integration>
+</structural_integrity>
 
-</orchestration_design>
 
+<self_containment>
 
-<!-- ═══════════════════════════════════════════════════════════════════ -->
-<!-- WORKFLOW ROUTING — post-approval generation pipeline -->
-<!-- ═══════════════════════════════════════════════════════════════════ -->
+- The output `.github/` folder works immediately when copied into a project — no external dependencies on the source framework
+- copilot-instructions.md provides sufficient project context for core agents to operate without additional setup
+- README.md explains the system in plain language for developers unfamiliar with the framework
 
-<workflow_routing>
+</self_containment>
 
-After interview approval, execute the generation pipeline using core spokes.
-
-<step_1 name="Research">
-
-Spawn parallel @researcher instances to analyze the project domain and enrich collected data. Three categories of researchers run simultaneously:
-
-**Per-URL researchers** — For EACH URL in the user's `sources` list, spawn a dedicated @researcher instance:
-
-- Focus: scoped to that specific URL and its subpages
-- Instructions: Use `#tool:web` to fetch the URL. Identify relevant subpages, navigation links, and documentation sections. Follow each subpage that could inform artifact generation — API references, configuration guides, best practices, migration guides, tutorials, and examples. Do NOT stop at the landing page
-- Return: structured findings tagged with the source URL — conventions, patterns, API details, configuration requirements, warnings, and gotchas discovered, recommended_tools per artifact (inferred from discovered APIs, documentation sources, or integration patterns that suggest web/context7 access)
-- Mode: research, Variant: deep
-
-**Exploratory researchers** — Spawn at least 2 additional @researcher instances with focus areas derived from the project's tech stack, area, and goal:
-
-- @brain synthesizes focus areas from interview data. Each exploratory researcher gets a distinct, non-overlapping focus area (e.g., for a FastAPI project: one on "FastAPI production best practices, async patterns, common pitfalls, project structure conventions" and another on "SQLAlchemy async session management, Alembic migration strategies, testing patterns with pytest")
-- Instructions: Use `#tool:web` and `#tool:context7` to discover information beyond user-provided sources. Look for: community conventions, recommended project structures, common anti-patterns, production readiness patterns, testing strategies
-- Return: structured findings with source citations — focus on actionable patterns and conventions that should inform artifact generation, recommended_tools per artifact based on discovered external documentation or API references
-- Mode: research, Variant: deep
-
-Wait for ALL researcher instances (per-URL + exploratory) to complete before proceeding. Merge all findings — per-URL findings provide depth on user sources, exploratory findings provide breadth beyond them. Pass combined findings to @architect in `<step_2>`.
-
-</step_1>
-
-<step_2 name="Plan">
-
-Send approved artifacts + interview data + merged research findings (per-URL + exploratory) to @architect for phased creation planning. @architect produces a plan that specifies per creation task:
-
-- Which skill to use (see `<skill_mapping>`)
-- Output path for the created artifact
-- Requirements data collected during interview
-- Sources to fetch via `#tool:context7` or `#tool:web`
-
-</step_2>
-
-<step_3 name="Build">
-
-Execute the plan via @build instances — parallel instances per phase as specified by @architect.
-
-@brain MUST batch independent @build spawns into a single parallel tool-call block — never spawn them sequentially when they have non-overlapping file sets within the same phase. Sequential spawning negates the parallelism that phased planning enables. If the platform restricts concurrent `runSubagent` calls, spawn as many as possible per batch and document the limitation.
-
-<skill_mapping>
-
-Each artifact type maps to a creator skill:
-
-- agent → agent-creator skill
-- skill → skill-creator skill
-- prompt → prompt-creator skill
-- instruction → instruction-creator skill
-- copilot-instructions → copilot-instructions-creator skill _(pipeline artifact — generated via template_tasks, not user-proposed)_
-
-</skill_mapping>
-
-<template_tasks>
-
-Include in the @architect plan as generation pipeline tasks. These tasks run as @build instances and produce the self-contained output project.
-
-- Copy core agents — copy `.github/templates/agents/` to `output/${input:projectName}/.github/agents/core/`. These are the 6 core hub-and-spoke agents. Brain template contains injection markers (`<!-- DOMAIN_AGENT_POOL -->`, `<!-- DOMAIN_SPAWN_TEMPLATES -->`) for the adaptation step
-- Copy creator skills — copy all 6 creator skill folders from `.github/skills/creators/` to `output/${input:projectName}/.github/skills/creators/`: agent-creator, artifact-author, instruction-creator, prompt-creator, skill-creator, copilot-instructions-creator. These enable the project to self-evolve by creating new artifacts
-- Copy workflow files — copy `.github/agent-workflows/generation.workflow.md` and `.github/agent-workflows/evolution.workflow.md` to `output/${input:projectName}/.github/agent-workflows/`. Generation workflow enables the output project to run its own generation pipeline for sub-projects. Evolution workflow enables incremental artifact additions and modifications post-generation using creator skills. Copy verbatim — no modifications needed. Do NOT copy `audit.workflow.md` — it is a framework-only self-audit workflow
-- Scaffold domain skill directories — for each domain skill in the artifact proposal, create `output/${input:projectName}/.github/skills/{skill-name}/` with `SKILL.md`. Create a `references/` subdirectory only if the skill requires reference materials — medium-tier inline skills typically do not need reference files. If no reference materials are identified during field collection, omit the subdirectory to avoid empty scaffolding
-- Scaffold prompts directory — ensure `output/${input:projectName}/.github/prompts/` exists for generated prompt files
-- Place domain agents — create domain agent files using flat convention: `output/${input:projectName}/.github/agents/{name}.agent.md` alongside `agents/core/`. Domain agents are NOT nested in a subdirectory
-- Generate copilot-instructions.md — use the copilot-instructions-creator skill to produce `output/${input:projectName}/.github/copilot-instructions.md`. Pass to the skill: artifact_proposal (all approved artifacts), project_name, project_area, tech_stack, domain_agents list (with name, profile, description, tools), safety_constraints and quality_rules from interview Round 3, approval_requirements from interview Round 3, project_commands (categorized development commands collected during interview), environment_context (runtime environment details collected during interview). Note: `.github/templates/instructions/` is intentionally empty — domain instructions are interview-driven, generated per-project by instruction-creator skill
-- Generate .curator-scope — create `output/${input:projectName}/.github/.curator-scope` as a plain text file with two sections: `include:` section with glob patterns for domain agent paths (`agents/*.agent.md`), instruction files (`instructions/*.instructions.md`), skill definitions (`skills/*/SKILL.md`), and `copilot-instructions.md`. `exclude:` section with glob patterns for project source directories, dependency directories (`node_modules/`, `.venv/`, `__pycache__/`), and build output (`dist/`, `build/`). Derive specific patterns from interview data
-- Brain adaptation — LAST task, runs after ALL domain artifacts are created. Locate injection markers in `output/${input:projectName}/.github/agents/core/brain.agent.md`: find `<!-- DOMAIN_AGENT_POOL -->` and insert domain agent entries before it (each entry follows the 3-field pattern: Strengths, Tools, Leverage); find `<!-- DOMAIN_SPAWN_TEMPLATES -->` and insert at least one spawn example per domain agent before it. Read created domain agent files to extract capabilities, tools, and leverage patterns for the entries
-- Copy VS Code settings — copy `.github/templates/vscode/settings.json` to `output/${input:projectName}/.vscode/settings.json`. This ensures VS Code discovers agents in `agents/core/`, skills in `skills/creators/`, and enables subagent delegation. No content modifications needed — copy as-is
-- Generate README.md — create `output/${input:projectName}/README.md` as a human-friendly project guide. This is the user's entry point to understanding what was generated. Content structure:
-  - **What's inside** — brief explanation of each `.github/` folder and what it contains (agents, skills, prompts, instructions). List domain-specific agents by name with one-line descriptions. List domain skills and prompts similarly. Keep it scannable — use a table or short bullet list, not paragraphs
-  - **How it works** — explain the hub-and-spoke model in plain language: @brain is the entry point, user talks to @brain, @brain delegates to core spokes (@researcher, @architect, @build, @inspect, @curator) and domain-specific agents. Include a simple text diagram or mermaid block showing the flow. Explain that domain agents are specialists that plug into the same orchestration — user never invokes them directly
-  - **Quick start** — 2-3 concrete examples of how to use the system: (1) ask @brain a question about the project, (2) request a feature implementation showing how @brain routes through architect→build→inspect, (3) use a generated prompt via `/prompt-name`. Tailor examples to the project's actual domain and tech stack from interview data
-  - Keep the entire README under ~80 lines. Write for a developer who has never seen the framework — no jargon about spokes, artifacts, or generation pipelines. Use friendly, direct language
-
-</template_tasks>
-
-</step_3>
-
-<step_4 name="Verify">
-
-@inspect verifies all created artifacts against their requirements and the skill validation checklists. Findings route back through @brain for rework if needed.
-
-</step_4>
-
-<step_5 name="Finalize">
-
-@curator performs final workspace sync — ensures output directory structure is consistent, no orphaned files, all cross-references resolve.
-
-</step_5>
-
-</workflow_routing>
-
-
-<!-- ═══════════════════════════════════════════════════════════════════ -->
-<!-- PROPAGATION PROTOCOL — cross-reference sync after post-generation edits -->
-<!-- ═══════════════════════════════════════════════════════════════════ -->
-
-<propagation_protocol>
-
-When any artifact is modified after the generation pipeline completes, @brain must identify and update all files that reference the changed artifact's data. Never require the user to point out dependent files — propagation is @brain's responsibility.
-
-<propagation_rules>
-
-- Agent frontmatter changes (tools, description, capabilities) → update: `brain.agent.md` agent pool entry, `copilot-instructions.md` workspace section and agents section, `README.md` agent description
-- Skill scope or capabilities change → update: `copilot-instructions.md` workspace section, `README.md` skill description, any agent that references the skill in its leverage guidance
-- Instruction `applyTo` pattern changes → update: `copilot-instructions.md` workspace section, `.curator-scope` include patterns
-- Prompt agent or description changes → update: `copilot-instructions.md` workspace section, `README.md` prompt description
-
-</propagation_rules>
-
-<propagation_workflow>
-
-1. After modifying any artifact, grep the output project for all references to that artifact's name
-2. For each referencing file, check whether the reference includes data that changed (tools, description, capabilities, patterns)
-3. Update every stale reference in a single @build spawn — batch all propagation edits together
-4. If the number of affected files exceeds 5, spawn @inspect to verify cross-reference integrity after propagation
-
-</propagation_workflow>
-
-</propagation_protocol>
+</verification_criteria>

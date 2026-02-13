@@ -8,12 +8,8 @@ Directory map — load this first to locate resources.
 - `.github/agents/core/` — Core agent definitions (brain, researcher, architect, build, inspect, curator)
 - `.github/agent-workflows/` — Multi-agent workflow orchestrations (evolution, generation)
 - `.github/instructions/` — Path-specific instruction files — `Reserved`
-- `.github/models/` — Design rationale documents (generation-workflow model)
 - `.github/prompts/` — One-shot prompt templates (evolve, init-project)
 - `.github/skills/artifact-creator/` — Unified skill for creating/refactoring all artifact types
-- `.github/templates/agents/` — Agent scaffolding templates — `Empty`
-- `.github/templates/instructions/` — Instruction scaffolding templates — `Placeholder`
-- `.github/templates/vscode/` — VS Code workspace settings and readme
 
 </workspace>
 
