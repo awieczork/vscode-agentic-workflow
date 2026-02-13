@@ -2,6 +2,7 @@
 description: 'Evolve project artifacts — add new or modify existing agents, skills, instructions, and prompts'
 agent: 'brain'
 workflow: 'evolution'
+argument-hint: 'Describe what to add or change — new agent, skill, instruction, or prompt'
 ---
 
 <!-- Describe what you need — a new agent, skill, instruction, or prompt, or changes to existing ones. -->

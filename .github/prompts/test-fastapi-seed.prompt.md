@@ -1,5 +1,5 @@
 ---
-description: 'Test seed for a Python FastAPI backend project — exercises all artifact types during generation workflow'
+description: 'Test seed for a Python FastAPI backend project — exercises all artifact types during generation workflow testing'
 agent: 'brain'
 workflow: 'generation'
 ---

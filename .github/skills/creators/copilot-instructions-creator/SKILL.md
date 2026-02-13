@@ -1,9 +1,9 @@
 ---
 name: 'copilot-instructions-creator'
-description: 'Generates project-level copilot-instructions.md files for output projects. Use when asked to "create copilot-instructions", "generate project instructions", or "scaffold workspace config". Produces workspace map, project constraints, decision framework, development commands, environment context, and agent listing.'
+description: 'Generates project-level copilot-instructions.md files for output projects. Use when asked to "create copilot-instructions", "generate project instructions", or "scaffold workspace config". Produces workspace map, project context, project constraints, decision framework, development commands, environment context, and agent listing.'
 ---
 
-This skill produces the `.github/copilot-instructions.md` file for generated output projects. The governing principle is fixed structure with project-specific content — the file is a repo-wide instruction that VS Code loads on every chat request, providing all agents with workspace awareness, project constraints, decision-making guidance, development commands, and environment context. Begin with `<step_1_analyze>` to validate inputs and load section definitions.
+This skill produces the `.github/copilot-instructions.md` file for generated output projects. The governing principle is fixed structure with project-specific content — the file is a repo-wide instruction that VS Code loads on every chat request, providing all agents with workspace awareness, project context, project constraints, decision-making guidance, development commands, and environment context. Begin with `<step_1_analyze>` to validate inputs and load section definitions.
 
 
 <use_cases>
@@ -48,23 +48,65 @@ Load [section-schema.md](./references/section-schema.md) for: section definition
 
 <step_2_generate_workspace>
 
-Generate the `<workspace>` section from `artifact_proposal` and `domain_agents`.
+Load [settings-readme.md](../../../templates/vscode/settings-readme.md) for: VS Code settings template purpose and key discovery configuration guidance.
 
-- Write prose intro: brief statement about the workspace structure (1-2 sentences)
-- Build path listing from `artifact_proposal`. Apply entry format from `<workspace_section>` in [section-schema.md](./references/section-schema.md):
-  - `.github/agents/core/` — "{project_name} core agents (hub-and-spoke lifecycle)" — `Active`
+Generate the `<workspace>` section with project structure placeholders and agent infrastructure entries. Apply format from `<workspace_section>` in [section-schema.md](./references/section-schema.md).
+
+- Write prose intro: brief statement about the workspace structure and folder purposes (1-2 sentences)
+
+**Project structure placeholders:**
+
+- Generate HTML comment separator: `<!-- Project structure — update these entries to match your project layout -->`
+- Add static placeholder entries for users to replace with their actual project paths:
+  - `src/` — `<!-- TODO: Describe your main source directory -->` — `Placeholder`
+  - `tests/` — `<!-- TODO: Describe your test directory -->` — `Placeholder`
+  - `docs/` — `<!-- TODO: Describe your documentation directory -->` — `Placeholder`
+  - `dist/` — `<!-- TODO: Describe your build output directory -->` — `Placeholder`
+
+**Agent infrastructure entries:**
+
+- Generate HTML comment separator: `<!-- Agent infrastructure — generated, no changes needed -->`
+- Build entries from `artifact_proposal` and `domain_agents`:
+  - `.github/agents/core/` — "{project_name} core agents (hub-and-spoke lifecycle)" — `Active` (single consolidated entry for all core agents)
   - For each domain agent: `.github/agents/{name}.agent.md` — "{description}" — `Active`
   - For each skill: `.github/skills/{name}/` — "{description}" — status per artifact
   - For each instruction: `.github/instructions/{name}.instructions.md` — "{description}" — status per artifact
   - For each prompt: `.github/prompts/{name}.prompt.md` — "{description}" — status per artifact
 - Apply status markers: `Active` for content-bearing artifacts, `Placeholder` for structure-only
-- Sort entries by type: agents → skills → instructions → prompts
+- Sort agent infrastructure entries: agents → skills → instructions → prompts
 - Close with `</workspace>` tag
 
 </step_2_generate_workspace>
 
 
-<step_3_generate_constraints>
+<step_3_generate_project_context>
+
+Generate the `<project_context>` section with all 5 sub-areas. This section is always present — not conditional. Apply format from `<project_context_section>` in [section-schema.md](./references/section-schema.md).
+
+- **Project overview** — fully placeholder:
+  - `<!-- TODO: Describe what the project does, its architecture, and how components relate -->`
+
+- **Tech stack** — partially filled from `tech_stack` input when provided:
+  - Populate languages, frameworks, and core tools from `tech_stack` input
+  - Leave library versions and secondary tools as placeholders with `<!-- TODO: Add version -->` or `<!-- TODO: Add secondary tools -->` hints
+  - If `tech_stack` is not provided, entire sub-area is placeholder: `<!-- TODO: List languages, frameworks, key libraries with versions -->`
+
+- **Naming conventions** — fully placeholder:
+  - `<!-- TODO: Describe file naming, class/function/variable patterns, module organization -->`
+
+- **Key abstractions** — fully placeholder:
+  - `<!-- TODO: Describe domain model, core interfaces/types, architectural patterns -->`
+
+- **Testing strategy** — fully placeholder:
+  - `<!-- TODO: Describe test types, locations, coverage expectations, test framework -->`
+
+- Each sub-area has a bold header followed by placeholder bullet(s) or populated content
+- Close with `</project_context>` tag
+
+</step_3_generate_project_context>
+
+
+<step_4_generate_constraints>
 
 Generate the `<constraints>` section with standard and project-specific rules. Apply format from `<constraints_section>` in [section-schema.md](./references/section-schema.md).
 
@@ -76,10 +118,10 @@ Generate the `<constraints>` section with standard and project-specific rules. A
 - Each constraint is a bullet point, imperative voice
 - Close with `</constraints>` tag
 
-</step_3_generate_constraints>
+</step_4_generate_constraints>
 
 
-<step_4_generate_decision_making>
+<step_5_generate_decision_making>
 
 Generate the `<decision_making>` section with standard content. Apply format from `<decision_making_section>` in [section-schema.md](./references/section-schema.md).
 
@@ -90,10 +132,10 @@ Generate the `<decision_making>` section with standard content. Apply format fro
   - "When resources are unavailable, state the gap, provide an explicit workaround, continue"
 - Close with `</decision_making>` tag
 
-</step_4_generate_decision_making>
+</step_5_generate_decision_making>
 
 
-<step_5_generate_commands>
+<step_6_generate_commands>
 
 Generate the `<commands>` section from `project_commands` input. Apply format from `<commands_section>` in [section-schema.md](./references/section-schema.md).
 
@@ -104,10 +146,10 @@ Generate the `<commands>` section from `project_commands` input. Apply format fr
 - Entry format per command: `- \`command\` — brief description`
 - Close with `</commands>` tag
 
-</step_5_generate_commands>
+</step_6_generate_commands>
 
 
-<step_6_generate_environment>
+<step_7_generate_environment>
 
 Generate the `<environment>` section from `environment_context` input. Apply format from `<environment_section>` in [section-schema.md](./references/section-schema.md).
 
@@ -118,10 +160,10 @@ Generate the `<environment>` section from `environment_context` input. Apply for
 - Entry format: prose bullets (NOT command format — this describes how the environment works, not commands to run)
 - Close with `</environment>` tag
 
-</step_6_generate_environment>
+</step_7_generate_environment>
 
 
-<step_7_write>
+<step_8_write>
 
 Assemble and write the output file.
 
@@ -130,16 +172,21 @@ Load [example-copilot-instructions.md](./assets/example-copilot-instructions.md)
 - Location: `output/{project_name}/.github/copilot-instructions.md`
 - Format: NO frontmatter (no `---` YAML block). Content begins immediately with prose
 - Write prose intro (1-3 sentences): describes the project and its governing framework principle
-- Append sections in order: `<workspace>`, `<constraints>`, `<decision_making>`, `<commands>` (if `project_commands` provided), `<environment>` (if `environment_context` provided)
-- Optionally append agent listing after last XML section — brief description of each core agent and domain agent for cross-agent awareness. Follow `<agent_listing>` in [section-schema.md](./references/section-schema.md)
+- Append sections in order: `<workspace>`, `<project_context>`, `<constraints>`, `<decision_making>`, `<commands>` (if `project_commands` provided), `<environment>` (if `environment_context` provided)
+- Agent listing: place after `</decision_making>` and before `<commands>` (or before `<environment>` if no commands, or at end if neither). Follow `<agent_listing>` in [section-schema.md](./references/section-schema.md):
+  - One-line cross-reference to `.github/agents/core/` naming all 6 core agents (brain, researcher, architect, build, inspect, curator)
+  - Individual bullet entries for domain agents only (name + one-line description)
 - Validate output:
   - File starts with prose (no `---` at line 1)
-  - All 5 XML sections present when both `project_commands` and `environment_context` provided (count decreases by 1 for each omitted optional section, minimum 3 sections: workspace, constraints, decision_making)
+  - Minimum 4 sections: `<workspace>`, `<project_context>`, `<constraints>`, `<decision_making>` (always present)
+  - Maximum 6 sections: + `<commands>` + `<environment>` (when inputs provided)
+  - `<project_context>` always present (not conditional)
+  - Workspace listing includes both project structure placeholder entries and agent infrastructure entries from `artifact_proposal`
   - All artifacts from `artifact_proposal` listed in `<workspace>`
   - Standard constraint rules present (3 required bullets)
   - Standard `<decision_making>` content present verbatim (4 required bullets)
 
-</step_7_write>
+</step_8_write>
 
 
 </workflow>
@@ -153,16 +200,19 @@ Load [example-copilot-instructions.md](./assets/example-copilot-instructions.md)
 - If safety constraints are not provided, then PROCEED — use standard rules only, note omission in build summary
 - If `project_commands` is empty or missing, then PROCEED — omit `<commands>` section entirely, note omission in build summary
 - If `environment_context` is empty or missing, then PROCEED — omit `<environment>` section entirely, note omission in build summary
+- If `tech_stack` is not provided, then PROCEED — Tech stack sub-area in `<project_context>` is fully placeholder with `<!-- TODO -->` hint
 
 </error_handling>
 
 
 <validation>
 
+Load [shared-validation-rules.md](../artifact-author/references/shared-validation-rules.md) for: shared P1/P2/P3 validation rules
+
 **P1 (blocking):**
 
 - Output file has NO frontmatter (no `---` at line 1)
-- Required sections: `<workspace>`, `<constraints>`, `<decision_making>` (always). Optional sections: `<commands>` (when `project_commands` provided), `<environment>` (when `environment_context` provided). Total: 3 to 5 sections depending on optional inputs
+- Required sections: `<workspace>`, `<project_context>`, `<constraints>`, `<decision_making>` (always). Optional sections: `<commands>` (when `project_commands` provided), `<environment>` (when `environment_context` provided). Total: 4 to 6 sections depending on optional inputs
 - Every artifact from `artifact_proposal` appears in `<workspace>` listing
 - Standard constraint rules present (3 required bullets with exact text)
 - Standard `<decision_making>` content present verbatim (4 required bullets)
@@ -171,12 +221,15 @@ Load [example-copilot-instructions.md](./assets/example-copilot-instructions.md)
 
 - Prose intro present before first XML tag
 - All workspace entries have status markers (`Active` or `Placeholder`)
+- `<project_context>` section contains all 5 sub-areas (Project overview, Tech stack, Naming conventions, Key abstractions, Testing strategy)
+- Workspace section contains project structure placeholder entries before agent infrastructure entries
+- Tech stack sub-area is partially filled from `tech_stack` input when provided
 - Project-specific constraints from interview included when provided
 - Environment context sub-areas use prose format (not command format)
 
 **P3 (polish):**
 
-- Workspace entries sorted by type: agents → skills → instructions → prompts
+- Sort order: project directories → agents → skills → instructions → prompts
 - Path format uses forward slashes, no drive letters
 
 </validation>
@@ -184,7 +237,7 @@ Load [example-copilot-instructions.md](./assets/example-copilot-instructions.md)
 
 <resources>
 
-- [section-schema.md](./references/section-schema.md) — Section field definitions and output format specification. Load for `<step_1_analyze>`, `<step_2_generate_workspace>`, `<step_3_generate_constraints>`, `<step_4_generate_decision_making>`, `<step_5_generate_commands>`, `<step_6_generate_environment>`, `<step_7_write>`
+- [section-schema.md](./references/section-schema.md) — Section field definitions and output format specification. Load for `<step_1_analyze>`, `<step_2_generate_workspace>`, `<step_3_generate_project_context>`, `<step_4_generate_constraints>`, `<step_5_generate_decision_making>`, `<step_6_generate_commands>`, `<step_7_generate_environment>`, `<step_8_write>`
 - [example-copilot-instructions.md](./assets/example-copilot-instructions.md) — Annotated reference output
 - [settings-readme.md](../../../templates/vscode/settings-readme.md) — Documents the VS Code settings template structure and key purposes for framework workspace discovery configuration
 

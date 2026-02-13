@@ -2,7 +2,7 @@
 description: 'Design rationale for the generation workflow — hub-and-spoke native orchestration from seed to multi-artifact creation'
 ---
 
-This artifact captures the design rationale for running generation through core hub-and-spoke agents. The governing principle is: generation is a standard @brain-orchestrated workflow — no dedicated generation agents exist. The workflow transforms a minimal seed prompt into a complete project workspace using the same agents that handle every other task: @brain drives interview, @researcher analyzes, @architect plans, @build creates, @inspect verifies, @curator syncs. The workflow's deliverable is a self-contained `.github/` folder ready to drop into any project. All generation knowledge lives in the prompt file (`init-project.prompt.md`), not in dedicated agents.
+This artifact captures the design rationale for running generation through core hub-and-spoke agents. The governing principle is: generation is a standard @brain-orchestrated workflow — no dedicated generation agents exist. The workflow transforms a minimal seed prompt into a complete project workspace using the same agents that handle every other task: @brain drives interview, @researcher analyzes, @architect plans, @build creates, @inspect verifies, @curator syncs. The workflow's deliverable is a project directory ready to drop into any repository, containing `.github/`, `.vscode/`, and `README.md`. All generation knowledge lives in the prompt file (`init-project.prompt.md`), not in dedicated agents.
 
 
 <workflow_overview>
@@ -86,7 +86,7 @@ Brief description of each generation phase and which spoke handles it.
 - **Phase 2 — Interview** — @brain drives a 3-round interview via askQuestions: understand project → explore artifact opportunities → boundaries + propose. @researcher supplements with seed analysis when spawned by @brain after interview concludes
 - **Phase 3 — Planning** — @architect receives interview data and artifact list as direction input, produces a phased creation plan. Each task specifies: artifact type, skill to load, output path, requirements, and success criteria
 - **Phase 4a — Creation** — @build instances execute in parallel per phase. Each instance loads the skill specified in its plan task, creates the artifact, copies templates as needed. Multiple @build instances run concurrently within a single phase
-- **Phase 4b — Adaptation** — Runs as a final @build task after all domain artifacts exist. Brain adaptation injects domain agent entries into `<agent_pool>` and `<spawn_templates>` of copied brain.agent.md. `copilot-instructions.md` generation produces project workspace map, constraints, development commands, and agent listing. `.curator-scope` generation produces include/exclude patterns for edit boundaries
+- **Phase 4b — Adaptation** — Runs as a final @build task after all domain artifacts exist. Brain adaptation injects domain agent entries into `<agent_pool>` and `<spawn_templates>` of copied brain.agent.md. `copilot-instructions.md` generation produces project workspace map, project context, constraints, decision framework, development commands, environment context, and agent listing. `.curator-scope` generation produces include/exclude patterns for edit boundaries
 - **Phase 5 — Verification** — @inspect checks all created artifacts against the plan's success criteria. Findings return to @brain for rework decisions
 - **Phase 6 — Summary** — @brain compiles creation results, verification outcomes, and any rework history into a summary presented to the user
 - **Phase 7 — Sync** — @curator syncs workspace docs, updates decision records. Final lifecycle step after @inspect PASS
@@ -233,7 +233,7 @@ flowchart LR
 
 <output_model>
 
-The generation workflow's deliverable is a self-contained `.github/` folder. When dropped into any repository, it provides a complete hub-and-spoke system with domain-specific agents, skills, instructions, and prompts — all wired to work together through platform discovery and explicit brain adaptation.
+The generation workflow's deliverable is a project directory containing `.github/`, `.vscode/`, and `README.md`. When dropped into any repository, it provides a complete hub-and-spoke system with domain-specific agents, skills, instructions, and prompts — all wired to work together through platform discovery and explicit brain adaptation.
 
 <output_structure>
 
@@ -263,6 +263,9 @@ The generation workflow's deliverable is a self-contained `.github/` folder. Whe
 │   └── {name}.instructions.md
 ├── prompts/                           # Generated — 0-N domain prompt files
 │   └── {name}.prompt.md
+├── agent-workflows/                   # Copied — workflow process definitions
+│   ├── generation.workflow.md         ← static copy
+│   └── evolution.workflow.md          ← static copy
 ├── copilot-instructions.md            # Generated — via copilot-instructions-creator skill
 └── .curator-scope                      # Generated — plain text, include/exclude globs
 ```
@@ -284,14 +287,19 @@ The generation workflow's deliverable is a self-contained `.github/` folder. Whe
 <companion_artifacts>
 
 - `copilot-instructions.md` — generated via the copilot-instructions-creator skill from interview data + artifact proposal. Contains:
-  - `<workspace>` — directory listing with all generated artifact paths and status markers
+  - `<workspace>` — project structure placeholders and agent infrastructure entries with status markers
+  - `<project_context>` — project overview, tech stack, naming conventions, key abstractions, and testing strategy (always present)
   - `<constraints>` — standard rules (trust documented structure, no fabrication) plus project-specific constraints derived from interview Round 3 (boundaries, safety, approval requirements)
   - `<decision_making>` — standard priority chain (Safety → Accuracy → Clarity → Style) and classification model (P1/P2/P3), copied verbatim
-  - `<commands>` — project-specific development commands grouped by category (environment setup, build, test, lint/format, run, deploy) — collected during interview, mandatory when provided
-  - Agent listing — all core + domain agents with descriptions, providing cross-agent awareness context
+  - `<commands>` — project-specific development commands grouped by category (environment setup, build, test, lint/format, run, deploy) — collected during interview, conditional on input
+  - `<environment>` — runtime environment details grouped by sub-area (interpreter conventions, package management, ad-hoc scripting, environment variables, prerequisites, common development patterns) — conditional on interview input
+  - Agent listing — one-line core agent cross-reference + individual domain agent entries
 - `.curator-scope` — plain text file generated from artifact paths + interview boundaries. Format uses `include:` and `exclude:` sections containing glob patterns, one per line:
   - `include:` — domain agent paths (`.github/agents/*.agent.md`), instruction files (`.github/instructions/*.instructions.md`), skill SKILL.md files (`.github/skills/*/SKILL.md`), copilot-instructions.md (`.github/copilot-instructions.md`)
   - `exclude:` — project source directories (from interview), dependency directories (`node_modules/`, `.venv/`, `vendor/`, etc.), build output (`dist/`, `build/`, `out/`, etc.)
+- `README.md` — generated project guide with quickstart, agent inventory, and workflow instructions
+- `.vscode/settings.json` — copied from template; configures VS Code agent, skill, prompt, and instruction discovery
+- `agent-workflows/` — copied workflow process definitions (`generation.workflow.md` and `evolution.workflow.md`)
 - Output path convention — all generated artifacts land under `output/{project-name}/.github/`
 
 </companion_artifacts>
@@ -329,7 +337,7 @@ Pipeline requirements the workflow must fulfill:
 - Skills directory scaffolding — create `.github/skills/{name}/` folder structure with `references/` and optional `assets/` for each domain skill
 - Prompts directory scaffolding — ensure `.github/prompts/` exists in output with generated prompt files
 - `.curator-scope` generation — generate plain text file with `include:` and `exclude:` sections containing glob patterns (one per line) from artifact paths + interview boundaries
-- `copilot-instructions.md` generation — generate via copilot-instructions-creator skill; include all core + domain agents with descriptions
+- `copilot-instructions.md` generation — generate via copilot-instructions-creator skill; produces workspace map, project context, constraints, decision framework, and agent listing (core cross-reference + domain agents)
 - Core agent templates — copy `.github/templates/agents/` for core agents; copy creator skill folders from `.github/skills/` (agent-creator, artifact-author, instruction-creator, prompt-creator, skill-creator, copilot-instructions-creator); generate domain artifacts from creator skills during the build phase
 - Constraints population — map interview Round 3 safety answers into `<constraints>` bullet rules
 - Creator skills — copy all 6 creator skill folders (agent-creator, artifact-author, instruction-creator, prompt-creator, skill-creator, copilot-instructions-creator) to output project for self-evolution capability

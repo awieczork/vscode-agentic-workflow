@@ -2,6 +2,7 @@
 description: 'Start a project generation workflow — fill the seed and run to begin expert interview'
 agent: 'brain'
 workflow: 'generation'
+argument-hint: 'Describe your project — name, tech stack, and what you want to build'
 ---
 
 <!-- Fill what you know, leave the rest empty. Gaps are covered during the interview. -->

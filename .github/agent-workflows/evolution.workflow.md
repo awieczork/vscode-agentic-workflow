@@ -45,7 +45,7 @@ When the user's request involves an unsupported operation, explain the boundary 
 
 <project_scan>
 
-1. Load `copilot-instructions.md` — extract workspace structure, existing agents, tech stack, development commands, environment context
+1. Load `copilot-instructions.md` — extract workspace structure, existing agents, project context, tech stack, development commands, environment context
 2. Load `.curator-scope` — identify edit boundaries and excluded paths
 3. Inventory current artifacts:
    - Agents in `agents/` — list names, profiles, and capabilities
@@ -296,7 +296,7 @@ Present the evolution outcome to the user in this structure:
 
 - **Artifacts** — One row per artifact, as a table:
   - Path — file path relative to workspace root
-  - Action — `Created` | `Modified` | `Deleted`
+  - Action — `Created` | `Modified`
   - Verification — `Passed` | `Failed` | `Skipped`
 
 - **Verification outcome** — @inspect verdict (`Passed` | `Failed`), any notes or caveats from the inspection

@@ -10,8 +10,7 @@
         ".github/instructions": true
     },
     "chat.agentSkillsLocations": {
-        ".github/skills": true,
-        ".github/skills/creators": true
+        ".github/skills": true
     },
     "chat.customAgentInSubagent.enabled": true,
     "chat.includeReferencedInstructions": true,
