@@ -1,331 +1,286 @@
 ---
-description: 'Evolution workflow — adaptive interview to add or modify project artifacts using creator skills'
-triggers: ['evolution']
-phases: ['assess', 'interview', 'research', 'plan', 'build', 'adapt', 'verify']
+name: 'evolution'
+description: 'Evolution workflow guidance — assessment, adaptive interview, delta-based modification via @brain lifecycle'
+version: '2.0.0'
+tags: ['evolution', 'interview', 'artifact-modification', 'artifact-creation']
 ---
 
-This workflow enables incremental evolution of a working project by adding new artifacts or modifying existing ones. The governing principle is: understand the current state before changing it — assess what exists, clarify what the user needs, then apply targeted changes that preserve existing behavior.
+This workflow provides evolution-specific guidance that @brain applies during its standard lifecycle phases. Evolution is not a separate process — it is @brain orchestrating targeted additions and modifications through the same hub-and-spoke pattern used for all tasks. Each section maps to a @brain phase: assessment maps to orientation, interview maps to discovery, change planning maps to analysis, build directives map to execution, verification maps to inspection. Governing principle: understand the current state before changing it.
 
 
-<!-- ═══════════════════════════════════════════════════════════════════ -->
-<!-- SCOPE DEFINITION — what evolution supports and what it does not -->
-<!-- ═══════════════════════════════════════════════════════════════════ -->
+<assessment_guidance>
 
-<scope_definition>
+Establish baseline knowledge of the project before engaging the user. Assessment shapes interview depth and prevents redundant questions.
 
-Evolution targets incremental changes to `.github/` artifacts in a working project. It handles additions and modifications — not removals or wholesale rewrites.
 
-**Supported operations:**
+<project_scan>
+
+@brain executes these steps before any user interaction:
+
+1. Load the project's `copilot-instructions.md` — extract workspace map, agents, tech stack, development commands
+2. Inventory current artifacts: agents (names, capabilities), skills (names, purposes), instructions (names, applyTo patterns), prompts (names, descriptions)
+3. Note cross-references between artifacts — which agents reference which skills, which instructions target which file patterns, which prompts invoke which tools
+
+</project_scan>
+
+
+<request_classification>
+
+Parse the user's `<change_request>` and classify into one of five types:
+
+- **add-single** — one new artifact (e.g., "create a deployment agent")
+- **add-multiple** — several related new artifacts (e.g., "create a testing skill and a test-standards instruction")
+- **modify-single** — change to one existing artifact (e.g., "add a safety rule to the deploy agent")
+- **modify-multiple** — changes across several existing artifacts (e.g., "update all agents to use the new logging convention")
+- **mixed** — combination of adds and modifies (e.g., "create a monitoring agent and update the deploy agent to hand off to it")
+
+Classification drives interview depth. When ambiguous, default to the deeper interview path — over-clarifying is safer than under-clarifying.
+
+</request_classification>
+
+</assessment_guidance>
+
+
+<interview_guidance>
+
+Drive an adaptive interview to clarify the change request. Use option-based questions — max 3 per batch, 2-5 options each. Pre-select one option as recommended where applicable.
+
+
+<request_adaptive_depth>
+
+Calibrate interview depth using two dimensions — request classification and seed richness:
+
+- **add-single** or **modify-single** → minimal (1-2 targeted questions, fast confirmation)
+- **add-multiple** or **modify-multiple** → standard (2-3 rounds, explore interactions between artifacts)
+- **mixed** → deep (multi-round, explore interactions, safety implications, ordering)
+
+Within each tier, adapt further based on the change request's richness:
+
+- **Rich seed** (detailed description, specific files, clear constraints) — reduce rounds, confirm rather than explore
+- **Thin seed** (vague scope, no specifics) — probe deeper, ask more rounds before moving to proposal
+- **Medium seed** — standard depth for the tier
+
+</request_adaptive_depth>
+
+
+<question_patterns>
+
+Frame every question with 2-5 curated options plus a custom input option.
+
+For adds:
+
+- Confirm artifact type using `<artifact_heuristic>` from [generation.workflow.md](generation.workflow.md) — present the classification with reasoning and ask the user to confirm or correct
+- Ask about capabilities and constraints the artifact should encode
+- Probe safety constraints for mutation-capable artifacts (file edits, command execution, deployments)
+
+For modifies:
+
+- Read the existing artifact file in full before asking questions
+- Present the current state alongside the proposed change: "Here is what the artifact currently does. You want to [change]. Is this correct?"
+- Confirm what to change versus what to preserve — explicit preservation prevents accidental overwrites
+- Surface dependencies: identify other artifacts that reference or depend on the one being modified
+
+For mixed:
+
+- Address each artifact individually using the appropriate add or modify pattern above
+- Then explore interactions between the planned changes — ordering, shared dependencies, potential conflicts
+
+</question_patterns>
+
+
+<proactive_suggestions>
+
+After gathering context, suggest related changes grounded in assessment findings. Present as option-based questions with justification.
+
+Examples:
+
+- "Modifying agent X would also benefit from updating instruction Y that targets the same files"
+- "Adding this skill would pair well with an instruction that enforces its conventions in the relevant file paths"
+- "This agent modification changes its interface — the instruction that references it may need a corresponding update"
+
+Each suggestion must map to a specific artifact with a one-line justification. The user selects which to include.
+
+</proactive_suggestions>
+
+
+<pacing_checkpoint>
+
+After completing questions (minimal tier) or Round 1 (standard/deep tier), present:
+
+- Before I draft the proposal — anything else I should understand about this change?
+  - A) Move on to proposal
+  - B) I have more to share
+
+When the user selects B: ask follow-up questions targeting uncovered aspects — side effects on existing artifacts, edge cases, integration concerns with current orchestration, backward compatibility with artifacts that reference the changed files. Adapt each follow-up to what the user just shared. Repeat the checkpoint until the user selects A.
+
+</pacing_checkpoint>
+
+
+After all rounds complete, compile findings into a proposal table:
+
+- **Name** — artifact name
+- **Type** — agent, skill, instruction, or prompt
+- **Operation** — `add` or `modify`
+- **Summary** — one-line description of what is created or changed
+
+Get explicit approval. Iterate until the user approves.
+
+</interview_guidance>
+
+
+<change_planning>
+
+Translate the approved proposal into an executable specification. This section covers what evolution can touch, how to collect change data, and how to order multi-artifact changes.
+
+
+<scope_boundaries>
+
+What evolution can and cannot touch:
+
+Supported operations:
 
 - Add new artifacts — agents, skills, instructions, prompts
 - Modify existing artifacts — update behavior, add capabilities, extend rules, adjust constraints, refine content
 
-**Not supported:**
+Not supported:
 
-- Artifact removal — deleting agents, skills, instructions, or prompts from the project
-- Core agent modifications — the 6 hub-and-spoke agents (brain, architect, build, inspect, curator, researcher) are immutable through this workflow
-- Full copilot-instructions.md rewrites — minor updates like workspace map entries are handled by @curator during verification, but complete restructuring requires a separate process
+- **Artifact removal** — deleting agents, skills, instructions, or prompts
+- **Core agent modifications** — brain, researcher, architect, build, inspect, curator are immutable through this workflow
+- **Full copilot-instructions.md rewrites** — minor updates like workspace map entries are handled by @curator during verification, but structural changes require the generation workflow
 
-When the user's request involves an unsupported operation, explain the boundary clearly and suggest alternatives:
+For unsupported operations, explain the boundary and suggest alternatives:
 
-- For removals: recommend manually deleting the file and asking @curator to sync cross-references
-- For core agent changes: explain that hub-and-spoke agents are framework-level and changes risk breaking orchestration — suggest creating a domain agent that wraps the desired behavior instead
-- For copilot-instructions.md rewrites: recommend running the generation workflow to produce a fresh project baseline
+- Removal → recommend manual delete followed by @curator sync of cross-references
+- Core agent changes → suggest creating a wrapping domain agent that extends the core agent's capabilities
+- copilot-instructions.md rewrite → recommend the generation workflow
 
-</scope_definition>
+Evolution operates on `.github/` artifacts only — source-code implications are surfaced as recommendations, not executed.
 
+</scope_boundaries>
 
-<!-- ═══════════════════════════════════════════════════════════════════ -->
-<!-- ASSESSMENT — understand current state before interviewing -->
-<!-- ═══════════════════════════════════════════════════════════════════ -->
 
-<assessment>
+<delta_specification>
 
-@brain reads the current project state before engaging the user. This establishes baseline knowledge that shapes interview depth and prevents redundant questions.
+How to collect change data for each operation type:
 
-<project_scan>
+For new artifacts:
 
-1. Load `copilot-instructions.md` — extract workspace structure, existing agents, project context, tech stack, development commands, environment context
-2. Load `.curator-scope` — identify edit boundaries and excluded paths
-3. Inventory current artifacts:
-   - Agents in `agents/` — list names, profiles, and capabilities
-   - Skills in `skills/` — list names and purposes
-   - Instructions in `instructions/` — list names and applies-to patterns
-   - Prompts in `prompts/` — list names and descriptions
-4. Note any cross-references between artifacts — which agents reference which skills, which instructions target which file patterns
+- Collect fields per artifact type: name, type, purpose, capabilities, constraints, relationships to existing artifacts
+- Classification drives which fields are required — use `<artifact_heuristic>` from [generation.workflow.md](generation.workflow.md) for type determination
 
-</project_scan>
-
-<request_classification>
-
-Parse the user's seed description from the `<change_request>` block and classify the request:
-
-- `add-single` — one new artifact (e.g., "create a deployment agent")
-- `add-multiple` — several related new artifacts (e.g., "create a testing skill and a test-standards instruction")
-- `modify-single` — change to one existing artifact (e.g., "add a safety rule to the deploy agent")
-- `modify-multiple` — changes across several existing artifacts (e.g., "update all agents to use the new logging convention")
-- `mixed` — combination of adds and modifies (e.g., "create a monitoring agent and update the deploy agent to hand off to it")
-
-The classification drives interview depth in `<adaptive_interview>`. When classification is ambiguous, default to the deeper interview path — over-clarifying is safer than under-clarifying.
-
-</request_classification>
-
-</assessment>
-
-
-<!-- ═══════════════════════════════════════════════════════════════════ -->
-<!-- ADAPTIVE INTERVIEW — depth scales with request complexity -->
-<!-- ═══════════════════════════════════════════════════════════════════ -->
-
-<adaptive_interview>
-
-Interview depth adapts to the classification from `<assessment>`. Use `#tool:askQuestions` for all questions. Frame every question with at least 2 curated options plus a custom input option.
-
-<minimal_interview applies_to="add-single, modify-single">
-
-1-2 targeted clarifying questions to confirm understanding. Goal: fast confirmation, not deep exploration.
-
-**For adds:**
-
-- Confirm artifact type using the heuristic from [generation.workflow.md](generation.workflow.md) `<artifact_type_heuristic>` — present the classification with reasoning and ask the user to confirm or correct
-- Ask about key capabilities or rules the artifact should encode
-- Ask about safety constraints if the artifact involves mutations (file edits, command execution, deployments)
-
-**For modifies:**
-
-- Read the existing artifact file in full
-- Present the current state and the proposed change: "Here is what the artifact currently does. You want to [change]. Is this correct?"
-- Confirm what to change and what to preserve — explicit preservation prevents accidental overwrites
-- If the modification could affect other artifacts that reference this one, surface those dependencies
-
-Present a concise proposal summarizing the change, then get approval via `#tool:askQuestions`:
-
-- Review the proposed change above.
-  - A) Approve — proceed to implementation
-  - B) Adjust — tell me what to change
-  - C) Cancel — I changed my mind
-
-</minimal_interview>
-
-<deeper_interview applies_to="add-multiple, modify-multiple, mixed">
-
-Multi-round interview for complex changes. Each round builds on the previous.
-
-<round_1 name="Clarify each artifact">
-
-For each artifact in the request:
-
-- What does it do? Confirm purpose and scope
-- How does it relate to existing artifacts in the project?
-- For adds: what problem does it solve that existing artifacts do not?
-- For modifies: what specifically is insufficient about the current state?
-
-Frame as option-based questions grounded in the project scan results from `<assessment>`.
-
-</round_1>
-
-<round_2 name="Explore interactions">
-
-How do the new or modified artifacts compose with what already exists?
-
-- For new agents: apply profile assignment from [generation.workflow.md](generation.workflow.md) `<profile_assignment>` — select the archetype that matches behavioral shape
-- Explore orchestration patterns if the changes affect agent relationships — does a new agent need to be wired into existing workflows? Does a modification change how agents hand off to each other?
-- For new skills: which agents will invoke them? Are there instruction bindings needed?
-- For new instructions: which agents and file patterns should they target?
-
-</round_2>
-
-<round_3 name="Safety and approval">
-
-Probe for constraints and compile findings into a proposal.
-
-- Are there new safety constraints this change introduces?
-- Does this change affect any existing safety rules or iron laws?
-
-Present the full proposal table (same format as [generation.workflow.md](generation.workflow.md) Round 3):
-
-- Name — artifact name
-- Type — agent, skill, prompt, or instruction
-- Operation — `add` or `modify`
-- Summary — one-line description of what is created or changed
-
-Get approval via `#tool:askQuestions`:
-
-- Review the proposed changes above.
-  - A) Approve all — proceed to implementation
-  - B) Remove some — tell me which to drop
-  - C) Add more — describe what is missing
-  - D) Modify — tell me what to change
-
-Iterate until user approves.
-
-</round_3>
-
-</deeper_interview>
-
-<pacing_checkpoint>
-
-After completing the clarifying questions (minimal interview) or Round 1 (deeper interview), present via `#tool:askQuestions`:
-
-- Before I draft the proposal — is there anything else about this change I should understand?
-  - A) I'm good — move on to the proposal
-  - B) I have more to share
-
-**When the user selects B:** Ask novel follow-up questions targeting uncovered aspects — side effects on existing artifacts, edge cases, integration concerns with current orchestration, backward compatibility with artifacts that reference the changed files. Adapt each follow-up to what the user just shared. Repeat the checkpoint until the user selects A.
-
-</pacing_checkpoint>
-
-</adaptive_interview>
-
-
-<!-- ═══════════════════════════════════════════════════════════════════ -->
-<!-- FIELD COLLECTION — what data to collect per change type -->
-<!-- ═══════════════════════════════════════════════════════════════════ -->
-
-<field_collection>
-
-Data collection adapts to whether the operation is an add or a modify.
-
-<new_artifacts>
-
-For new artifacts, collect fields per artifact type as defined in [generation.workflow.md](generation.workflow.md) `<field_collection>`. The same field sets apply — `<all_types>` for every artifact, plus type-specific fields (`<agent_fields>`, `<skill_fields>`, `<instruction_fields>`, `<prompt_fields>`).
-
-</new_artifacts>
-
-<modified_artifacts>
-
-For modifications to existing artifacts:
+For modified artifacts:
 
 1. Read the existing artifact file in full
-2. Identify what specifically changes — which sections, fields, rules, or content blocks are affected
-3. Collect only the delta:
-   - Fields being added — new capabilities, new rules, new sections
-   - Fields being changed — current value and new value
-   - Fields being removed — which content to strip (with confirmation)
+2. Identify affected sections, fields, or rules
+3. Collect only the delta: `field: current → new` for each modification point
 4. Preserve everything not explicitly targeted for change — structure, formatting, unchanged sections, cross-references
 
-Document the delta as a change specification: `field: current → new` for each modification point. This specification feeds into the build step to ensure precise edits.
+The delta specification feeds into the build step for precise, surgical edits.
 
-</modified_artifacts>
-
-</field_collection>
+</delta_specification>
 
 
-<!-- ═══════════════════════════════════════════════════════════════════ -->
-<!-- EVOLUTION ROUTING — post-approval execution pipeline -->
-<!-- ═══════════════════════════════════════════════════════════════════ -->
+<dependency_ordering>
 
-<evolution_routing>
+When multiple changes are approved, order execution correctly:
 
-After interview approval, execute the evolution pipeline using core spokes. Steps run sequentially unless noted otherwise.
+- Modifications to artifacts that reference each other must be sequenced — modify the dependency before the dependent
+- New artifacts that reference each other: create the dependency first
+- If a new agent needs wiring into @brain's agent pool: schedule brain adaptation after agent creation
+- Independent changes can execute in parallel
 
-<step_1 name="Research">
+</dependency_ordering>
 
-Spawn @researcher instance(s) scoped to the specific change — NOT full project-wide research. Each researcher targets a focused area:
+</change_planning>
 
-- **Current state analysis** — for modifications, read the existing artifact and its cross-references. Identify what depends on the artifact being changed and what the change might break
-- **Tech-specific patterns** — for new capabilities being added, research best practices, conventions, and common pitfalls specific to the technology or domain
-- **Breaking change detection** — for modifications, assess whether the change alters the artifact's contract with other artifacts. Surface any side effects the modification might introduce
 
-Spawn researchers in parallel when multiple independent focus areas exist. Wait for all to complete before proceeding.
+<build_directives>
 
-</step_1>
+Instructions for @brain when orchestrating artifact creation and modification. @build is stateless — it receives WHAT to create or change, never HOW.
 
-<step_2 name="Plan">
 
-Send approved changes, research findings, and the change specification from `<field_collection>` to @architect. The plan specifies:
+<handoff_pattern>
 
-- Which creator skill per artifact — same mapping as generation (reference [generation.workflow.md](generation.workflow.md) `<skill_mapping>`)
-- For new artifacts: standard creator skill execution with collected fields
-- For modifications: read existing file → identify change points → apply changes preserving unchanged content. The plan includes the explicit delta from field collection
-- Task dependencies — modifications to artifacts that reference each other must be ordered correctly
-- If new domain agents are added: include a brain adaptation task (see `<step_4>`)
+@build uses the artifact-creator skill (`.github/skills/artifact-creator/SKILL.md`) for ALL artifact creation and modification. The skill handles classify-then-specialize — @build does not need type-specific creation instructions.
 
-</step_2>
+Each artifact is a separate @build handoff containing: artifact type, purpose, domain context, interview findings, and (for modifications) the delta specification from `<delta_specification>`.
 
-<step_3 name="Build">
+For modifications: @build reads the existing file, applies the planned delta, and preserves all unchanged structure. Modifications are surgical — only the targeted content changes.
 
-Execute via @build instances, parallel where possible. Each @build instance receives only its assigned tasks from the plan.
+</handoff_pattern>
 
-- **New artifacts** — creator skill produces the file. Same skill mapping as generation: agent → agent-creator, skill → skill-creator, prompt → prompt-creator, instruction → instruction-creator
-- **Modified artifacts** — @build reads the existing file, applies the planned changes from the delta specification, preserves structure and all unchanged sections. Modifications are surgical — only the targeted content changes
 
-</step_3>
+<parallel_execution>
 
-<step_4 name="Adapt">
+Batch independent @build spawns into parallel execution:
 
-Brain adaptation — runs ONLY when new domain agents are added. Skip this step entirely for modifications to existing artifacts or for non-agent additions.
+1. **Phase 1** — Create or modify artifacts with no inter-dependencies (parallel)
+2. **Phase 2** — Create or modify artifacts that depend on Phase 1 outputs (sequential within phase, parallel where possible)
+3. **Phase 3** — Brain adaptation (only if new agents added), then @curator copilot-instructions.md update if new paths were introduced
+
+@inspect runs after each phase. Findings route back through @brain for rework — @build fixes only the flagged issues, then @inspect re-verifies.
+
+</parallel_execution>
+
+
+<brain_adaptation>
+
+Runs ONLY when new domain agents are added. Skip entirely for modifications to existing artifacts or for non-agent additions.
 
 When triggered:
 
 1. Read the project's `brain.agent.md`
-2. Locate the `<!-- DOMAIN_AGENT_POOL -->` marker — insert a new domain agent entry before it, following the 3-field pattern: Strengths, Tools, Leverage
-3. Locate the `<!-- DOMAIN_SPAWN_TEMPLATES -->` marker — insert a spawn example for the new agent before it
-4. Read the created domain agent file to extract capabilities, tools, and leverage patterns for the entries
+2. Add a new entry to the `<agent_pool>` section following the existing entry format — bold name, dash, capability description
+3. Read the created domain agent file to extract capabilities for the entry
+4. If multiple new agents are added in a single evolution, batch all entries into one edit operation
 
-If multiple new agents are added in a single evolution, batch all brain adaptation entries into one edit operation to maintain consistency.
+No injection markers are used — the entry is added to the `<agent_pool>` list directly, following the pattern of existing entries. For supplementary agent positioning guidance, reference `<supplementary_agent_positioning>` in [generation.workflow.md](generation.workflow.md).
 
-</step_4>
+</brain_adaptation>
 
-<step_5 name="Verify">
-
-@inspect verifies all created and modified artifacts against requirements from the approved proposal. Additionally check:
-
-- **Cross-reference integrity** — no broken references introduced by additions or modifications. Every tag reference, file link, and agent mention resolves to an existing target
-- **Backward compatibility** — modified artifacts maintain compatibility with existing orchestration patterns. Agents that previously referenced the modified artifact still function correctly
-- **Brain wiring** — if new agents were added, verify they appear in `brain.agent.md` domain pool and spawn templates (from `<step_4>`)
-- **Dependent artifact consistency** — existing artifacts that reference modified files still work correctly. If a modification changed a skill's interface, agents invoking that skill must be checked
-- **Workspace sync** — @curator updates `copilot-instructions.md` workspace map entries and `.curator-scope` if new artifact paths were introduced
-
-Findings route back through @brain for rework if needed.
-
-</step_5>
-
-</evolution_routing>
+</build_directives>
 
 
-<!-- ═══════════════════════════════════════════════════════════════════ -->
-<!-- OUTPUT FORMAT — what @brain presents after evolution completes     -->
-<!-- ═══════════════════════════════════════════════════════════════════ -->
+<verification_criteria>
 
-<output_format>
-
-Present the evolution outcome to the user in this structure:
-
-- **Session summary** — Session ID, number of rework cycles completed
-
-- **Artifacts** — One row per artifact, as a table:
-  - Path — file path relative to workspace root
-  - Action — `Created` | `Modified`
-  - Verification — `Passed` | `Failed` | `Skipped`
-
-- **Verification outcome** — @inspect verdict (`Passed` | `Failed`), any notes or caveats from the inspection
-
-- **Open items** — Items deferred or flagged during evolution that require future attention (or "None")
-
-</output_format>
+What @inspect checks after each phase. Each criterion is binary — PASS or FAIL with specific details.
 
 
-<!-- ═══════════════════════════════════════════════════════════════════ -->
-<!-- SCOPE BOUNDARY — hard limits on what evolution touches -->
-<!-- ═══════════════════════════════════════════════════════════════════ -->
+<artifact_quality>
 
-<scope_boundary>
+- All artifacts follow framework conventions: XML tags (snake_case, domain-specific), canonical terms (constraint, skill, handoff, escalate, fabricate), no markdown headings inside artifact bodies
+- YAML front-matter parses correctly with single-quoted string values
+- No hardcoded secrets, credentials, or absolute paths
+- Each artifact has a clear, non-overlapping purpose
 
-Evolution operates exclusively on `.github/` artifacts — agents, skills, instructions, prompts, and their supporting files (references, assets, templates).
+</artifact_quality>
 
-**Evolution does NOT:**
 
-- Modify project source code, tests, or infrastructure files
-- Touch core agent definitions — brain, architect, build, inspect, curator, researcher are immutable through this workflow
-- Rewrite copilot-instructions.md entirely — minor updates like adding a workspace map entry for a new artifact are handled by @curator during `<step_5>`, but structural changes to sections like `<constraints>` or `<decision_making>` are out of scope
+<cross_reference_integrity>
 
-**Source-code implications:** When the user's request implies changes to project source code (e.g., "create an agent that uses a new API endpoint"), surface implied source-code changes as actionable recommendations:
+- No broken references introduced by additions or modifications
+- Every tag reference, file link, and agent mention resolves to an existing target
+- Existing artifacts that reference modified files still function correctly
+- If a modification changed an artifact's interface, all dependents are checked and updated
 
-- File path where the change would be made
-- Description of what needs to change
-- Why the change is needed to support the new or modified artifact
+</cross_reference_integrity>
 
-Present these as a "Recommended source-code changes" section in the build summary. Do not execute them — the user or a separate workflow handles source-code modifications.
 
-</scope_boundary>
+<backward_compatibility>
+
+- Modified artifacts maintain compatibility with existing orchestration patterns
+- Agents that previously referenced modified artifacts still function correctly
+- New agents appear in brain's agent pool (from `<brain_adaptation>`)
+- @curator updates copilot-instructions.md workspace map if new paths were introduced
+
+</backward_compatibility>
+
+
+After verification passes, @brain presents the session outcome:
+
+- **Session summary** — session ID, number of rework cycles completed
+- **Artifacts table** — one row per artifact: path, action (`Created` | `Modified`), verification status (`Passed` | `Failed` | `Skipped`)
+- **Inspection verdict** — @inspect overall verdict with any notes or caveats
+- **Open items** — items deferred or flagged during evolution that require future attention, or "None"
+
+</verification_criteria>

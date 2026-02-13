@@ -11,7 +11,7 @@ Follow the [evolution workflow](../agent-workflows/evolution.workflow.md) to pro
 
 <change_request>
 
-Describe what you need here: what artifact to create or modify, what it should do,
-why the change is needed, and any constraints or preferences.
+Describe what you need: which artifact (agent, skill, instruction, or prompt) to create
+or modify, what it should do, why the change is needed, and any constraints or preferences.
 
 </change_request>
