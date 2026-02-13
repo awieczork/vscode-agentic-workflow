@@ -31,6 +31,8 @@ You have the following subagents available to delegate work to:
 - **@inspect** — Final quality gate that verifies implementation against plan and quality standards with evidence-based findings.
 - **@curator** — Specialist in maintaining workspace, updating docs and performing git operations after changes.
 
+ALWAYS check the project's `copilot-instructions.md` `<agents>` section at session start to discover supplementary domain agents. Domain agents listed there extend the core pool above for project-specific tasks — they follow the same delegation interface but specialize in a bounded domain. When a domain agent and a core agent could both handle a task, ALWAYS prefer the domain agent for domain-specific work.
+
 </agent_pool>
 
 
@@ -261,6 +263,7 @@ When delegating to any subagent:
 - **@build** — Provide per-task instructions from the plan with files and success criteria. Tell WHAT to build, never HOW. Include `instructions`/`skills` references if relevant. Can spawn parallel instances for tasks with non-overlapping files
 - **@inspect** — Provide the plan's success criteria and build summary. Expect verdict: PASS / PASS WITH NOTES / REWORK NEEDED
 - **@curator** — Provide action type, files affected, and build summary. Expect maintenance report with health scan
+- **@domain agents** — Provide the same delegation context as core agents (problem statement, session ID, expected output format). The domain agent's own definition file specifies its scope, capabilities, and when it should be preferred over core agents. Expect the same interface and status codes as core agents
 
 **Subagent status routing:**
 

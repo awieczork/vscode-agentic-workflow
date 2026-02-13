@@ -12,7 +12,7 @@ Directory map — load this first to locate resources.
   - `build.agent.md` — Implementation execution, produces working code
   - `inspect.agent.md` — Final quality gate, verifies against plan and standards
   - `curator.agent.md` — Workspace maintenance: docs sync, git commits, cleanup
-  - `theme-builder.agent.md` — Derives OKLCH palettes and generates cross-editor dark themes
+- `.github/agents/theme-builder.agent.md` — Derives OKLCH palettes and generates cross-editor dark themes
 - `.github/agent-workflows/` — Multi-agent workflow orchestrations
   - `evolution.workflow.md` — Iterative evolution workflow for multi-phase tasks
 - `.github/skills/` — Reusable multi-step processes any agent can invoke
