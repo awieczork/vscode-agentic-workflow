@@ -14,7 +14,7 @@ name: ""              # Project name
 area: ""              # e.g. "fintech", "data science", "devops"
 goal: ""              # One sentence: what does this project achieve?
 tech: []              # Languages, frameworks, DBs, libraries, tools
-sources:              # Optional — URLs with short titles
+sources:              # Optional — URLs for deep research (docs, APIs, articles — followed to depth)
   - url: ""
     title: ""
 commands:             # Optional — known development commands

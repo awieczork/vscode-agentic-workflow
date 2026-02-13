@@ -5,7 +5,7 @@ version: '2.0.0'
 tags: ['generation', 'interview', 'artifact-creation', 'project-scaffolding']
 ---
 
-This workflow provides generation-specific guidance that @brain applies during its standard lifecycle phases. Generation is not a separate process — it is @brain orchestrating project-specific artifact creation through the same hub-and-spoke pattern used for all tasks. Each section below maps to a phase @brain already executes: interview maps to discovery, heuristic maps to analysis, output and adaptation map to planning, build directives map to execution, and verification maps to inspection.
+This workflow provides generation-specific guidance that @brain applies during its standard lifecycle phases. Generation is not a separate process — it is @brain orchestrating project-specific artifact creation through the same hub-and-spoke pattern used for all tasks. Each section below maps to a phase @brain already executes: interview maps to discovery, research guidance maps to research, heuristic maps to analysis, output and adaptation map to planning, build directives map to execution, and verification maps to inspection.
 
 
 <interview_guidance>
@@ -68,6 +68,64 @@ Present the total: N artifacts (X agents, Y skills, Z instructions, W prompts). 
 </finalization>
 
 </interview_guidance>
+
+
+<research_guidance>
+
+Translate the seed's `sources` URLs into structured @researcher delegation prompts so @brain's Phase 2 research spawns perform deep, parallel external analysis rather than surface-level fetches. When the seed includes external references, apply the routing, crawl, exploration, and synthesis patterns below to formulate each @researcher spawn prompt.
+
+
+<source_routing>
+
+Group seed `sources` URLs before dispatching @researcher spawns:
+
+- **Domain grouping** — cluster URLs that share a domain (e.g., all `docs.example.com` links together), then subdivide by content type (API reference, guide, blog) when a single domain contributes many URLs
+- **Spawn sizing** — cap each @researcher spawn at 3-5 URLs to keep context windows focused and findings coherent. Split larger clusters into multiple spawns
+- **Spawn prompt contents** — every @researcher spawn prompt must include: the session ID, a research focus statement derived from the project goal, the assigned URL list, depth bounds (from `<deep_crawl_strategy>`), and specific questions to answer (e.g., "What patterns does this library recommend?", "What are the API conventions?", "What constraints does this framework impose?")
+- **Parallel dispatch** — spawn all URL-group researchers simultaneously; do not serialize them
+- **No sources provided** — when the seed omits `sources` entirely, skip URL-based spawns and rely on free exploration alone
+
+</source_routing>
+
+
+<deep_crawl_strategy>
+
+Instruct each URL-group @researcher to analyze assigned URLs in two passes rather than treating each URL as a single-page fetch:
+
+- **Pass 1 (shallow scan)** — fetch the provided URL, understand its structure and purpose, extract all outgoing links on the page. Catalog what each link likely covers based on anchor text and URL path
+- **Pass 2 (deep dive)** — follow the most relevant child and internal links discovered in Pass 1. Require @researcher to justify relevance before following each link (e.g., "Following /auth/oauth2 BECAUSE it documents the authentication patterns relevant to the project's auth goal"). Skip links that lead to unrelated content, changelogs, or marketing pages
+- **Depth bounds** — 2 levels for documentation and API reference sites, 1 level for articles and blog posts, 3 levels for complex reference architectures. State the applicable bound in each spawn prompt
+- **Extraction mode awareness** — match extraction strategy to content type: structured extraction for API docs (endpoints, parameters, schemas, error codes), narrative extraction for guides and tutorials (step-by-step procedures, code examples, caveats), pattern extraction for architecture references (component relationships, data flow, integration points)
+
+</deep_crawl_strategy>
+
+
+<free_exploration>
+
+Always spawn at least one @researcher with no pre-assigned URLs, regardless of whether the seed includes `sources`:
+
+- **Inputs** — provide only the project's domain keywords (derived from seed `area`, `tech`, and interview findings) and a research focus statement derived from the project goal. Do not constrain this spawn to specific URLs
+- **Target areas** — best practices for the project's domain and stack, design patterns and architectural patterns applicable to the stated requirements, common pitfalls and anti-patterns, alternative approaches the user may not have considered
+- **Independent discovery** — the free explorer searches the web autonomously, discovers relevant resources, and returns findings using the same structured template as URL-based spawns
+- **Complementary scope** — frame the free explorer's focus to cover ground the URL-based spawns are unlikely to reach (community conventions, cross-cutting concerns, ecosystem tooling)
+
+</free_exploration>
+
+
+<research_synthesis>
+
+After all parallel @researcher spawns complete, run a merge checklist before feeding results downstream:
+
+- **Coverage** — verify every seed `sources` URL is accounted for in at least one researcher's findings. Flag any URL that was unreachable or returned no actionable content
+- **Integration** — incorporate free explorer findings alongside URL-based findings into a unified research summary. Do not treat free exploration as secondary
+- **Conflicts** — explicitly flag contradictions between sources (e.g., two libraries recommending incompatible auth patterns). Do not silently resolve conflicts; present both positions with context so @architect can make an informed decision
+- **Gap-fill** — if the checklist fails on any dimension, re-spawn targeted @researcher(s) with refined focus statements addressing the specific gap
+- **Source coverage table** — include a summary table in the synthesis: URL | Researcher Spawn | Key Findings (1-liner) — so nothing falls through the cracks
+- **Downstream output** — the merged synthesis feeds the problem_statement_template's `Research Findings` field, enriching what @architect and @build receive for planning and implementation
+
+</research_synthesis>
+
+</research_guidance>
 
 
 <artifact_heuristic>
