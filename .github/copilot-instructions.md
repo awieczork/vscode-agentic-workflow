@@ -1,16 +1,46 @@
-This workspace is a framework for building agentic workflows in VS Code. It provides a set of AI agent definitions, reusable skills, prompt templates, and design models that together enable a hub-and-spoke orchestration pattern. The orchestrator (@brain) receives user requests and delegates work to specialized subagents — @researcher for context gathering, @architect for planning, @build for implementation, @inspect for verification, and @curator for workspace maintenance.
+This workspace is a framework for building agentic workflows in VS Code. It uses a hub-and-spoke orchestration pattern — @brain delegates to specialized subagents. Every artifact is written FOR AI agents TO execute.
 
-Every artifact in this repository is written FOR AI agents TO execute. Agent definitions live in `.github/agents/core/`, each following a consistent structure: identity prose, bullet rules, a numbered workflow, behavioral guidelines, and a self-contained output template. Skills in `.github/skills/` provide step-by-step processes for specific domains like creating new agents, writing prompts, or authoring documentation.
 
 <workspace>
 
-Resources that agents should discover and leverage when relevant:
+Directory map — load this first to locate resources.
 
-- `.github/skills/artifact-creator/` — Unified skill for creating and refactoring all VS Code Copilot customization artifacts (agents, skills, prompts, instructions, copilot-instructions)
-- `.github/skills/creators/` — Archived individual creator skills (superseded by artifact-creator)
-- `.github/instructions/` — Path-specific instruction files (reserved for future use)
+- `.github/agents/core/` — Core agent definitions (brain, researcher, architect, build, inspect, curator)
+- `.github/agent-workflows/` — Multi-agent workflow orchestrations (evolution, generation)
+- `.github/instructions/` — Path-specific instruction files — `Reserved`
+- `.github/models/` — Design rationale documents (generation-workflow model)
+- `.github/prompts/` — One-shot prompt templates (evolve, init-project)
+- `.github/skills/artifact-creator/` — Unified skill for creating/refactoring all artifact types
+- `.github/templates/agents/` — Agent scaffolding templates — `Empty`
+- `.github/templates/instructions/` — Instruction scaffolding templates — `Placeholder`
+- `.github/templates/vscode/` — VS Code workspace settings and readme
 
 </workspace>
+
+
+<agents>
+
+Hub-and-spoke: @brain receives requests and delegates to subagents. Each agent has its own definition in `.github/agents/core/`.
+
+- `@brain` — Central orchestrator, routes tasks, tracks session state
+- `@researcher` — Deep research and source synthesis on focused topics
+- `@architect` — Decomposes problems into phased, dependency-verified plans
+- `@build` — Executes implementation tasks, produces working code
+- `@inspect` — Final quality gate, verifies against plan and standards
+- `@curator` — Workspace maintenance: docs sync, git commits, cleanup
+
+</agents>
+
+
+<conventions>
+
+- **Artifact types** — agents, skills, prompts, instructions, copilot-instructions — one type per file
+- **Agent structure** — identity prose → bullet constraints → `<workflow>` → domain tags → output template
+- **XML tags replace headings** — free-form, domain-specific, snake_case names; no markdown headings in artifact bodies
+- **Authoring** — use the `artifact-creator` skill when creating or modifying any artifact
+- **Canonical terms** — constraint (not restriction), skill (not procedure), handoff (not delegation), escalate (not interrupt), fabricate (not hallucinate)
+
+</conventions>
 
 
 <rules>
