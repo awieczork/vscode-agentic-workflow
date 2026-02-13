@@ -12,6 +12,8 @@ phases: ['interview', 'research', 'plan', 'build', 'verify', 'finalize']
 
 Drive a multi-round expert interview to understand the project and identify artifact opportunities. The seed is a springboard — conversation is the primary knowledge source. Use `#tool:askQuestions` for all interview questions. Frame every question with at least 2 curated options + a custom input option. Allow multi-select where appropriate — phrase as "Select all that apply" with lettered options + custom.
 
+Limit each `#tool:askQuestions` call to a maximum of 3 questions. Present follow-up questions in subsequent batches — progressive disclosure prevents overwhelming the user with too many multi-select decisions at once. If more than 3 questions are needed for a round, split into 2 batches and process responses before continuing.
+
 Assess seed richness — thin seed (1-2 sentences) triggers more probing. Rich seed (detailed description) triggers fewer rounds and more confirmation.
 
 
@@ -251,6 +253,21 @@ Additional fields for agent artifacts:
 
 </agent_fields>
 
+<tool_inference>
+
+Infer the minimum required tool set for each agent artifact from collected fields. Apply these rules after field collection and before passing data to @architect:
+
+- If `sources` contains URLs → include `web` in tools (agent needs to fetch external references)
+- If the agent advises on libraries, APIs, or frameworks with external documentation → include `context7` in tools
+- If `mutation_level` is `low` or `high` → include `edit` in tools
+- If `mutation_level` is `high` → include `execute` in tools
+- If `mutation_level` is `none` → limit to `search`, `read`, plus `web`/`context7` per rules above
+- Default base tool set: `search`, `read`
+
+Never assign tools beyond what the agent's capabilities require. Surface the inferred tool set to the user during Round 3 proposal for confirmation.
+
+</tool_inference>
+
 <skill_fields>
 
 Additional fields for skill artifacts:
@@ -398,14 +415,14 @@ Spawn parallel @researcher instances to analyze the project domain and enrich co
 
 - Focus: scoped to that specific URL and its subpages
 - Instructions: Use `#tool:web` to fetch the URL. Identify relevant subpages, navigation links, and documentation sections. Follow each subpage that could inform artifact generation — API references, configuration guides, best practices, migration guides, tutorials, and examples. Do NOT stop at the landing page
-- Return: structured findings tagged with the source URL — conventions, patterns, API details, configuration requirements, warnings, and gotchas discovered
+- Return: structured findings tagged with the source URL — conventions, patterns, API details, configuration requirements, warnings, and gotchas discovered, recommended_tools per artifact (inferred from discovered APIs, documentation sources, or integration patterns that suggest web/context7 access)
 - Mode: research, Variant: deep
 
 **Exploratory researchers** — Spawn at least 2 additional @researcher instances with focus areas derived from the project's tech stack, area, and goal:
 
 - @brain synthesizes focus areas from interview data. Each exploratory researcher gets a distinct, non-overlapping focus area (e.g., for a FastAPI project: one on "FastAPI production best practices, async patterns, common pitfalls, project structure conventions" and another on "SQLAlchemy async session management, Alembic migration strategies, testing patterns with pytest")
 - Instructions: Use `#tool:web` and `#tool:context7` to discover information beyond user-provided sources. Look for: community conventions, recommended project structures, common anti-patterns, production readiness patterns, testing strategies
-- Return: structured findings with source citations — focus on actionable patterns and conventions that should inform artifact generation
+- Return: structured findings with source citations — focus on actionable patterns and conventions that should inform artifact generation, recommended_tools per artifact based on discovered external documentation or API references
 - Mode: research, Variant: deep
 
 Wait for ALL researcher instances (per-URL + exploratory) to complete before proceeding. Merge all findings — per-URL findings provide depth on user sources, exploratory findings provide breadth beyond them. Pass combined findings to @architect in `<step_2>`.
@@ -427,6 +444,8 @@ Send approved artifacts + interview data + merged research findings (per-URL + e
 
 Execute the plan via @build instances — parallel instances per phase as specified by @architect.
 
+@brain MUST batch independent @build spawns into a single parallel tool-call block — never spawn them sequentially when they have non-overlapping file sets within the same phase. Sequential spawning negates the parallelism that phased planning enables. If the platform restricts concurrent `runSubagent` calls, spawn as many as possible per batch and document the limitation.
+
 <skill_mapping>
 
 Each artifact type maps to a creator skill:
@@ -445,10 +464,11 @@ Include in the @architect plan as generation pipeline tasks. These tasks run as 
 
 - Copy core agents — copy `.github/templates/agents/` to `output/${input:projectName}/.github/agents/core/`. These are the 6 core hub-and-spoke agents. Brain template contains injection markers (`<!-- DOMAIN_AGENT_POOL -->`, `<!-- DOMAIN_SPAWN_TEMPLATES -->`) for the adaptation step
 - Copy creator skills — copy all 6 creator skill folders from `.github/skills/creators/` to `output/${input:projectName}/.github/skills/creators/`: agent-creator, artifact-author, instruction-creator, prompt-creator, skill-creator, copilot-instructions-creator. These enable the project to self-evolve by creating new artifacts
-- Scaffold domain skill directories — for each domain skill in the artifact proposal, create `output/${input:projectName}/.github/skills/{skill-name}/` with `SKILL.md` and `references/` subdirectory
+- Copy workflow files — copy `.github/agent-workflows/generation.workflow.md` and `.github/agent-workflows/evolution.workflow.md` to `output/${input:projectName}/.github/agent-workflows/`. Generation workflow enables the output project to run its own generation pipeline for sub-projects. Evolution workflow enables incremental artifact additions and modifications post-generation using creator skills. Copy verbatim — no modifications needed. Do NOT copy `audit.workflow.md` — it is a framework-only self-audit workflow
+- Scaffold domain skill directories — for each domain skill in the artifact proposal, create `output/${input:projectName}/.github/skills/{skill-name}/` with `SKILL.md`. Create a `references/` subdirectory only if the skill requires reference materials — medium-tier inline skills typically do not need reference files. If no reference materials are identified during field collection, omit the subdirectory to avoid empty scaffolding
 - Scaffold prompts directory — ensure `output/${input:projectName}/.github/prompts/` exists for generated prompt files
 - Place domain agents — create domain agent files using flat convention: `output/${input:projectName}/.github/agents/{name}.agent.md` alongside `agents/core/`. Domain agents are NOT nested in a subdirectory
-- Generate copilot-instructions.md — use the copilot-instructions-creator skill to produce `output/${input:projectName}/.github/copilot-instructions.md`. Pass to the skill: artifact_proposal (all approved artifacts), project_name, project_area, tech_stack, domain_agents list (with name, profile, description, tools), safety_constraints and quality_rules from interview Round 3, project_commands (categorized development commands collected during interview). Note: `.github/templates/instructions/` is intentionally empty — domain instructions are interview-driven, generated per-project by instruction-creator skill
+- Generate copilot-instructions.md — use the copilot-instructions-creator skill to produce `output/${input:projectName}/.github/copilot-instructions.md`. Pass to the skill: artifact_proposal (all approved artifacts), project_name, project_area, tech_stack, domain_agents list (with name, profile, description, tools), safety_constraints and quality_rules from interview Round 3, approval_requirements from interview Round 3, project_commands (categorized development commands collected during interview), environment_context (runtime environment details collected during interview). Note: `.github/templates/instructions/` is intentionally empty — domain instructions are interview-driven, generated per-project by instruction-creator skill
 - Generate .curator-scope — create `output/${input:projectName}/.github/.curator-scope` as a plain text file with two sections: `include:` section with glob patterns for domain agent paths (`agents/*.agent.md`), instruction files (`instructions/*.instructions.md`), skill definitions (`skills/*/SKILL.md`), and `copilot-instructions.md`. `exclude:` section with glob patterns for project source directories, dependency directories (`node_modules/`, `.venv/`, `__pycache__/`), and build output (`dist/`, `build/`). Derive specific patterns from interview data
 - Brain adaptation — LAST task, runs after ALL domain artifacts are created. Locate injection markers in `output/${input:projectName}/.github/agents/core/brain.agent.md`: find `<!-- DOMAIN_AGENT_POOL -->` and insert domain agent entries before it (each entry follows the 3-field pattern: Strengths, Tools, Leverage); find `<!-- DOMAIN_SPAWN_TEMPLATES -->` and insert at least one spawn example per domain agent before it. Read created domain agent files to extract capabilities, tools, and leverage patterns for the entries
 - Copy VS Code settings — copy `.github/templates/vscode/settings.json` to `output/${input:projectName}/.vscode/settings.json`. This ensures VS Code discovers agents in `agents/core/`, skills in `skills/creators/`, and enables subagent delegation. No content modifications needed — copy as-is
@@ -475,3 +495,32 @@ Include in the @architect plan as generation pipeline tasks. These tasks run as 
 </step_5>
 
 </workflow_routing>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!-- PROPAGATION PROTOCOL — cross-reference sync after post-generation edits -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+
+<propagation_protocol>
+
+When any artifact is modified after the generation pipeline completes, @brain must identify and update all files that reference the changed artifact's data. Never require the user to point out dependent files — propagation is @brain's responsibility.
+
+<propagation_rules>
+
+- Agent frontmatter changes (tools, description, capabilities) → update: `brain.agent.md` agent pool entry, `copilot-instructions.md` workspace section and agents section, `README.md` agent description
+- Skill scope or capabilities change → update: `copilot-instructions.md` workspace section, `README.md` skill description, any agent that references the skill in its leverage guidance
+- Instruction `applyTo` pattern changes → update: `copilot-instructions.md` workspace section, `.curator-scope` include patterns
+- Prompt agent or description changes → update: `copilot-instructions.md` workspace section, `README.md` prompt description
+
+</propagation_rules>
+
+<propagation_workflow>
+
+1. After modifying any artifact, grep the output project for all references to that artifact's name
+2. For each referencing file, check whether the reference includes data that changed (tools, description, capabilities, patterns)
+3. Update every stale reference in a single @build spawn — batch all propagation edits together
+4. If the number of affected files exceeds 5, spawn @inspect to verify cross-reference integrity after propagation
+
+</propagation_workflow>
+
+</propagation_protocol>

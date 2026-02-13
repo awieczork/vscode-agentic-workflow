@@ -6,12 +6,57 @@ This is the copilot-instructions.md for the Acme API project — a REST API serv
 
 Workspace structure and folder purposes. Load this first to locate resources.
 
-- `.github/agents/core/` — Acme API core agents (hub-and-spoke lifecycle) — `Active`
+<!-- Project structure — update these entries to match your project layout -->
+- `src/` — Application source code (controllers, services, repositories, middleware) — `Active`
+- `src/config/` — Configuration modules and environment validation — `Active`
+- `test/` — End-to-end test suites — `Active`
+- `scripts/` — Utility scripts for seeding, migrations, one-time fixes — `Active`
+- `dist/` — Compiled JavaScript output — do not edit directly — `Active`
+
+<!-- Agent infrastructure — generated, no changes needed -->
+- `.github/agents/core/` — Core agents (hub-and-spoke lifecycle) — `Active`
 - `.github/agents/api-tester.agent.md` — Validates endpoint contracts and response schemas — `Active`
 - `.github/skills/api-design/` — REST endpoint design patterns and OpenAPI generation — `Active`
 - `.github/instructions/express-routes.instructions.md` — Route handler conventions for Express middleware — `Placeholder`
 
 </workspace>
+
+
+<project_context>
+
+Project-specific context for all agents. Update these sections to reflect your project.
+
+**Project overview**
+- REST API service for the Acme platform — handles user authentication, resource CRUD, and webhook delivery
+- Three-layer architecture: controllers (HTTP handling) → services (business logic) → repositories (data access)
+- Express middleware chain handles auth, validation, error formatting, and request logging
+
+**Tech stack**
+- Node.js 20 LTS, Express 4.x, TypeScript 5.x
+- PostgreSQL 16 (primary data store via TypeORM), Redis 7 (caching and session store)
+- Jest (unit + e2e testing), ESLint + Prettier (code quality)
+
+**Naming conventions**
+- Files: kebab-case (`user-service.ts`, `auth-middleware.ts`)
+- Classes: PascalCase (`UserService`, `AuthMiddleware`)
+- Functions/variables: camelCase (`getUserById`, `isAuthenticated`)
+- Database tables: snake_case (`user_sessions`, `api_keys`)
+- Test files: `*.test.ts` co-located in `__tests__/` folders alongside source
+
+**Key abstractions**
+- `Controller` — receives HTTP request, delegates to service, returns formatted response
+- `Service` — contains business logic, calls repositories, throws domain errors
+- `Repository` — TypeORM-based data access, one per entity, returns typed entities
+- `Middleware` — Express middleware functions for cross-cutting concerns (auth, validation, logging)
+- `DomainError` — typed error hierarchy (`NotFoundError`, `ValidationError`, `AuthError`) caught by error middleware
+
+**Testing strategy**
+- Unit tests in `__tests__/` alongside source files — test services and utilities in isolation with mocked dependencies
+- E2E tests in `test/` at project root — test full HTTP request/response cycles against test database
+- Coverage target: 80% line coverage for services, no target for controllers (tested via e2e)
+- Run all tests: `npm test`, run e2e only: `npm run test:e2e`
+
+</project_context>
 
 
 <constraints>
@@ -31,6 +76,11 @@ Workspace structure and folder purposes. Load this first to locate resources.
 - When resources are unavailable, state the gap, provide an explicit workaround, continue
 
 </decision_making>
+
+
+Core agents (brain, researcher, architect, build, inspect, curator) are defined in `.github/agents/core/`.
+
+- `@api-tester` — Validates endpoint contracts and response schemas against OpenAPI spec
 
 
 <commands>

@@ -12,7 +12,7 @@ phases: ['parse-sources', 'parallel-research', 'deduplicate', 'classify', 'synth
 
 Load these files as the authoritative references for repository structure, orchestration contracts, and generation workflow:
 
-- [copilot-instructions.md](../copilot-instructions.md) — workspace map, constraints, decision framework
+- [copilot-instructions.md](../copilot-instructions.md) — workspace map, project context, constraints, decision framework
 - [orchestration.model.md](../models/orchestration.model.md) — hub-and-spoke agent contracts
 - [generation-workflow.model.md](../models/generation-workflow.model.md) — generation pipeline stages
 

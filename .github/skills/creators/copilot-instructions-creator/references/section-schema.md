@@ -3,18 +3,55 @@ This file defines the output sections for project-level copilot-instructions.md 
 
 <workspace_section>
 
-Directory listing of project artifacts. Provides all agents with workspace awareness.
+Directory listing of project structure and agent infrastructure. Provides all agents with workspace awareness. Two groups appear in order: project structure first, then agent infrastructure.
 
-- Entry format: `- \`.github/{path}\` — {description} — \`{status}\``
+- Entry format: `- \`{path}\` — {description} — \`{status}\``
 - Status values: `Active` (authoritative, use as source of truth), `Placeholder` (structure exists, content not yet generated)
-- Required entry: `.github/agents/core/` — always present in every project
-- Domain agents listed individually as flat entries: `.github/agents/{name}.agent.md`
+
+<project_structure>
+
+User-completed entries describing the project's source directories, config files, and build output paths. These entries appear first in the workspace listing. Each entry includes a `<!-- TODO: ... -->` HTML comment hint guiding the user to fill in the correct path and description.
+
+- Placeholder entries at generation time — users replace with their actual project paths
+- Example placeholder entries: `src/`, `tests/`, `docs/`, `dist/`
+- Any relative path is valid — not restricted to `.github/`
+
+</project_structure>
+
+<agent_infrastructure>
+
+Generated entries describing the agent framework artifacts. These entries appear after project structure entries.
+
+- `.github/agents/core/` as a single consolidated entry — not individual core agent files
+- Domain agents listed individually: `.github/agents/{name}.agent.md`
 - Skills listed by folder: `.github/skills/{name}/`
 - Instructions listed by file: `.github/instructions/{name}.instructions.md`
 - Prompts listed by file: `.github/prompts/{name}.prompt.md`
-- Sort order: agents → skills → instructions → prompts
+
+</agent_infrastructure>
+
+- Sort order: project directories → agents → skills → instructions → prompts
 
 </workspace_section>
+
+
+<project_context_section>
+
+Project-specific context that agents need to operate effectively. Section is always present — not conditional. Contains 5 sub-areas, each with a bold header and prose bullets.
+
+- `tech_stack` input partially fills the Tech stack sub-area at generation time
+- All other sub-areas are placeholder at generation time with `<!-- TODO: ... -->` HTML comment guidance
+- Each placeholder includes a brief HTML comment hint explaining what to fill in
+
+5 sub-areas:
+
+- **Project overview** — what the project does, high-level architecture, how components relate
+- **Tech stack** — languages, frameworks, key libraries with versions. Partially filled from `tech_stack` input; remaining items are placeholder
+- **Naming conventions** — file naming, class/function/variable naming patterns, module organization
+- **Key abstractions** — domain model, core interfaces/types, architectural patterns in use
+- **Testing strategy** — test types (unit/integration/e2e), file locations, coverage expectations, test framework
+
+</project_context_section>
 
 
 <constraints_section>
@@ -88,9 +125,9 @@ Runtime environment context for all agents. Describes how the project's developm
 
 Optional prose section after `</decision_making>`. Not wrapped in an XML tag in the output file.
 
-- Brief description of each core agent (brain, researcher, architect, build, inspect, curator) and each domain agent
+- One-line cross-reference to `.github/agents/core/` naming all 6 core agents (brain, researcher, architect, build, inspect, curator) — no individual core agent descriptions
+- Followed by individual bullet entries for domain agents only (name + one-line description)
 - Purpose: cross-agent awareness — agents understand who else exists and what they do
-- Format: prose paragraph or bullet list
-- Content derived from `domain_agents` input and standard core agent descriptions
+- Content derived from `domain_agents` input; core agents referenced as a group
 
 </agent_listing>
