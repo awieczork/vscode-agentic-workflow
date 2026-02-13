@@ -175,6 +175,8 @@ Generated projects are self-contained — a user copies the `.github/` folder in
 ```
 output/{projectName}/
 ├── .github/
+│   ├── agent-workflows/
+│   │   └── evolution.workflow.md  # COPIED — artifact evolution workflow
 │   ├── agents/
 │   │   ├── core/               # COPIED — all 6 core agents
 │   │   │   ├── brain.agent.md
@@ -192,7 +194,10 @@ output/{projectName}/
 │   │   └── {domain-skill}/     # GENERATED — per interview findings
 │   │       └── SKILL.md
 │   ├── instructions/           # GENERATED — domain instructions
-│   ├── prompts/                # GENERATED — domain prompts
+│   ├── prompts/
+│   │   ├── calibrate.prompt.md # COPIED — single-run workspace calibration
+│   │   ├── evolve.prompt.md    # COPIED — evolution entry point
+│   │   └── {domain}.prompt.md  # GENERATED — domain prompts
 │   └── copilot-instructions.md # GENERATED — project-specific workspace context
 └── README.md                   # GENERATED — human-friendly project guide
 ```
@@ -206,6 +211,9 @@ These are copied verbatim — no modifications:
 
 - **Core agents** — copy all 6 from `.github/agents/core/` to `output/{projectName}/.github/agents/core/`. Core agents are generic by design and work across any project
 - **Artifact-creator skill** — copy the entire `.github/skills/artifact-creator/` directory (SKILL.md, all references, all example assets). This enables the output project to create new artifacts post-generation
+- **Evolution workflow** — copy `.github/agent-workflows/evolution.workflow.md` to `output/{projectName}/.github/agent-workflows/`. Enables artifact evolution in the output project
+- **Evolve prompt** — copy `.github/prompts/evolve.prompt.md` to `output/{projectName}/.github/prompts/`. Entry point for the evolution workflow
+- **Calibrate prompt** — copy `.github/prompts/calibrate.prompt.md` to `output/{projectName}/.github/prompts/`. Single-run prompt to align copilot-instructions.md with the target workspace
 
 </copy_rules>
 
@@ -279,7 +287,7 @@ Instructions for @brain when orchestrating artifact creation during generation. 
 
 Batch independent @build spawns into parallel tool-call blocks. Never spawn them sequentially when they have non-overlapping file sets:
 
-1. **Phase 1** — Copy operations (core agents, artifact-creator skill) — these have no dependencies
+1. **Phase 1** — Copy operations (core agents, artifact-creator skill, evolution workflow, evolve prompt, calibrate prompt) — these have no dependencies
 2. **Phase 2** — Generate supplementary artifacts (agents, skills, instructions, prompts) — independent of each other, parallel within this phase
 3. **Phase 3** — Generate copilot-instructions.md — depends on all artifacts from Phase 2 being complete (references them in workspace map and agent listing)
 4. **Phase 4** — Generate README.md — depends on copilot-instructions.md and full artifact inventory
@@ -315,6 +323,9 @@ What @inspect checks for generated projects. Each criterion is binary — PASS o
 - Output directory structure matches the `<directory_layout>` specification
 - All 6 core agents are present in `agents/core/`
 - Artifact-creator skill is present with all references and example assets
+- Evolution workflow is present in `agent-workflows/`
+- Evolve prompt is present in `prompts/`
+- Calibrate prompt is present in `prompts/`
 - No circular dependencies between generated artifacts
 - copilot-instructions.md accurately references all generated artifacts in its workspace map and agent listing
 - All cross-references between artifacts resolve to existing files
