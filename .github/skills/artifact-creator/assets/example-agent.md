@@ -69,48 +69,59 @@ Every return must follow this structure.
 **Header:**
 
 ```
+
 Status: COMPLETE | BLOCKED
 Session ID: {echo from spawn prompt}
 Summary: {1-2 sentence overview of the failure and finding}
+
 ```
 
 **Diagnosis details:**
 
 ```
+
 Failure Type: {compilation | dependency | test | environment | pipeline | unknown}
 Confidence: {High | Medium | Low}
 
 Symptoms:
+
 - {error message, exit code, or failed stage}
 
 Evidence:
+
 - {log snippet, file path, dependency trace — with sources}
 
 Root Cause: {cause with reasoning chain}
 
 Recommended Fix:
+
 - {action for @build or @operator}
 
 Verification:
+
 - {how to confirm the fix resolved the issue}
 
 Handoff: @{target agent} — {what they should do}
+
 ```
 
 **When BLOCKED:**
 
 ```
+
 Status: BLOCKED
 Session ID: {echo}
 Reason: {what prevents diagnosis}
 Hypotheses Tested: {list of hypotheses and their verdicts}
 Evidence Gathered: {partial findings}
 Need: {specific access, logs, or context that would unblock}
+
 ```
 
 <example>
 
 ```
+
 Status: COMPLETE
 Session ID: pipeline-debug-20260115
 Summary: npm ci fails in CI due to lock file mismatch — local package-lock.json was not committed after adding new dependency.
@@ -119,10 +130,12 @@ Failure Type: dependency
 Confidence: High
 
 Symptoms:
+
 - npm ci exit code 1 in "Install dependencies" step
 - Error: "npm ci can only install packages when your package-lock.json and package.json are in sync"
 
 Evidence:
+
 - CI log line 47: "Missing: @acme/validation@2.1.0 from lock file"
 - package.json line 23: "@acme/validation": "^2.1.0" (added in commit abc1234)
 - package-lock.json: no entry for @acme/validation
@@ -130,12 +143,15 @@ Evidence:
 Root Cause: Developer added @acme/validation to package.json but committed without running npm install to update the lock file.
 
 Recommended Fix:
+
 - Run `npm install` locally and commit the updated package-lock.json
 
 Verification:
+
 - Re-run CI pipeline — "Install dependencies" step should pass
 
 Handoff: @build — commit updated package-lock.json
+
 ```
 
 </example>

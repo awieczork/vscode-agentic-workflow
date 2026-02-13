@@ -161,9 +161,9 @@ Apply cross-cutting quality rules to ensure consistency across all artifact type
 - No emojis or motivational phrases
 - No markdown headings inside artifact body — XML tags replace headings entirely
 
-**Cross-contamination check:**
+**Platform-reserved tag check:**
 
-Verify no forbidden tags from other artifact types appear in the output. The forbidden tags table in [writing-rules.md](./references/writing-rules.md) defines type boundaries — agent tags in skills, skill tags in agents, and platform-reserved tags in any authored artifact are all P1 violations.
+Verify no platform-reserved tags appear in the output. VS Code injects specific tags into system prompts — using them in authored artifacts causes collisions. See `<xml_tags>` in [writing-rules.md](./references/writing-rules.md) for the reserved tag list. All other XML tags are free — choose names that describe content.
 
 **Vocabulary:**
 
@@ -181,7 +181,7 @@ Run validation checks before delivery. P1 issues block delivery — fix them. P2
 - File extension matches artifact type: `.agent.md`, `SKILL.md`, `.prompt.md`, `.instructions.md`, `copilot-instructions.md`
 - YAML frontmatter parses correctly with single-quoted string values (except copilot-instructions — no frontmatter)
 - Zero markdown headings inside artifact body — XML tags only
-- No cross-contamination — no forbidden tags from other artifact types (see `<forbidden_tags>` in [writing-rules.md](./references/writing-rules.md))
+- No platform-reserved tags — none of the VS Code system prompt tags (see `<xml_tags>` in [writing-rules.md](./references/writing-rules.md))
 - No hardcoded secrets, credentials, or absolute paths
 - Required frontmatter fields present: `description` for agents, `name` + `description` for skills
 
@@ -208,7 +208,7 @@ Common failure modes and recovery actions. Apply the matching recovery when an i
 - If the **wrong artifact type is detected** in step 1, then re-classify using the signal words table — ask the user to confirm if still ambiguous
 - If **frontmatter validation fails** (missing fields, wrong types, bad format), then reload [frontmatter-contracts.md](./references/frontmatter-contracts.md) for the artifact type and fix against the contract
 - If **body structure does not match the type** (e.g., identity prose in a skill, workflow steps in an instruction), then reload [body-patterns.md](./references/body-patterns.md) and restructure — check the `<anti_patterns>` section for the type
-- If **cross-contamination is detected** (forbidden tags from another type), then consult the forbidden tags table in [writing-rules.md](./references/writing-rules.md), remove offending tags, and replace with type-appropriate alternatives
+- If **a platform-reserved tag is detected** (VS Code system prompt tag in an authored artifact), then consult the reserved tags list in [writing-rules.md](./references/writing-rules.md), rename the offending tag to a domain-specific alternative
 - If **the artifact exceeds reasonable length** (agents >400 lines, skills >500 lines, prompts >80 lines, instructions >150 lines), then extract to reference files (skills) or split into separate artifacts (instructions, prompts)
 - If **the request blends multiple artifact types**, then separate into individual files — one artifact per file, one type per artifact — confirm the split with the user
 - If **a referenced file does not exist** (JIT load target, file reference, asset), then note the gap, create a stub if within scope, or flag as a blocker if outside scope
@@ -224,7 +224,7 @@ Reference files provide detailed specifications loaded on demand during workflow
 
 - [frontmatter-contracts.md](./references/frontmatter-contracts.md) — YAML frontmatter specifications for all five artifact types: field definitions, type constraints, required vs optional, tool catalog (agents), variable system (prompts), glob patterns (instructions)
 - [body-patterns.md](./references/body-patterns.md) — Body structure conventions per artifact type: identity prose (agents), workflow steps (skills), task body (prompts), rule groups (instructions), section layout (copilot-instructions). Includes anti-patterns for each type
-- [writing-rules.md](./references/writing-rules.md) — Cross-cutting quality rules for all types: XML conventions, formatting standards, forbidden tags table, canonical vocabulary glossary, P1/P2/P3 validation checks
+- [writing-rules.md](./references/writing-rules.md) — Cross-cutting quality rules for all types: XML conventions, formatting standards, tag usage guidelines, canonical vocabulary glossary, P1/P2/P3 validation checks
 
 **Example assets:**
 

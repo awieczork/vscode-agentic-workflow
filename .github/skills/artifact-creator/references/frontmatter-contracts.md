@@ -178,10 +178,12 @@ Instruction files (`.instructions.md`) use frontmatter for conditional auto-atta
 **Description patterns**
 
 **File-triggered:** `'[DOMAIN] [CONSTRAINT_TYPE] for [SCOPE]'`
+
 - `'TypeScript coding standards for type safety and naming conventions'`
 - `'Python testing conventions for pytest-based test files'`
 
 **On-demand:** `'Use when [TASK]. [SUMMARY].'`
+
 - `'Use when writing database migrations. Covers safety checks, rollback procedures, and naming conventions.'`
 
 **Glob patterns**
