@@ -15,7 +15,7 @@ This repository contains reusable agents, workflows, skills, and prompt template
 ├── instructions/            — Path-specific instruction files (reserved)
 ├── prompts/                 — One-shot prompt templates (init-project, evolve, calibrate)
 ├── skills/artifact-creator/ — Unified skill for creating all artifact types
-├── skills/mermaid-diagramming/ — Mermaid diagram generation with correct syntax and layout
+├── skills/mermaid-diagramming/ — B4 plan visualization diagrams for @brain with fork-join parallelism and teal monochrome styling
 └── copilot-instructions.md  — Workspace-level AI context
 ```
 

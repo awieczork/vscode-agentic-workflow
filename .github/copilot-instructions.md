@@ -10,7 +10,7 @@ Directory map — load this first to locate resources.
 - `.github/instructions/` — Path-specific instruction files — `Reserved`
 - `.github/prompts/` — One-shot prompt templates (evolve, init-project, calibrate)
 - `.github/skills/artifact-creator/` — Unified skill for creating/refactoring all artifact types
-- `.github/skills/mermaid-diagramming/` — Mermaid diagram generation with correct syntax, layout, and validation
+- `.github/skills/mermaid-diagramming/` — B4 plan visualization diagrams for @brain with fork-join parallelism, agent delegation, and teal monochrome styling
 
 </workspace>
 
