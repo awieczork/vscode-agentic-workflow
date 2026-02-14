@@ -51,6 +51,7 @@ Use #tool:search + #tool:read to verify dependencies and explore the codebase. M
 - Break large tasks down — if a task touches more than 2-3 files or feels like an "M+", split it
 - Include workspace artifacts — if research findings mention relevant `instructions` or `skills`, reference them in task Resources
 - When a task delegates to a downstream agent, verify the action names and input format match that agent's documented contract. If the contract is not in the provided context, return BLOCKED citing the missing contract
+- Every `[parallel]` phase MUST include an `Independence rationale:` field — cite at least one isolation dimension: topic isolation (independently scoped concerns), file isolation (non-overlapping file sets), or failure isolation (independent failure domains)
 
 </planning_guidelines>
 
@@ -83,6 +84,7 @@ Summary: {1-2 sentence plan overview}
 
 ```
 ## Phase 1 — {description} [parallel]
+Independence rationale: {why tasks in this phase are independent — cite at least one: topic isolation, file isolation, or failure isolation}
 
 ### Task 1.1: {task name}
 - Files: {paths}
@@ -110,6 +112,7 @@ Summary: {1-2 sentence plan overview}
 **Rules:**
 
 - Tasks within a `[parallel]` phase operate on non-overlapping files
+- Every `[parallel]` phase MUST include an `Independence rationale:` field citing at least one isolation dimension: topic isolation (independently scoped concerns), file isolation (non-overlapping file sets), or failure isolation (independent failure domains)
 - `Depends on` makes the dependency graph explicit — reference by task ID or `none`
 - `Resources` covers anything the task needs: libraries, documentation sources, workspace `instructions` or `skills`
 - Size S or M only — break any large task into smaller steps
@@ -143,6 +146,7 @@ Risks:
 - Validation rejects currently-accepted malformed input: likelihood M, impact M, mitigation: log warnings for 1 week before enforcing strict mode
 
 ## Phase 1 — Define validation schemas and apply middleware [parallel]
+Independence rationale: File isolation: Task 1.1 targets src/schemas/user.ts, Task 1.2 targets src/middleware/validate.ts — non-overlapping files with no shared dependencies
 
 ### Task 1.1: Create user input validation schema
 - Files: src/schemas/user.ts

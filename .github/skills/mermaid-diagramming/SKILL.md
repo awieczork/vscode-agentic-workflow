@@ -154,6 +154,7 @@ Complete reference for the B4 plan diagram pattern — node shapes, edge types, 
 | Completion | `(["Done"]):::done` | Stadium, green-teal |
 | Rework | `["re-spawn<br/>@builder"]:::rework` | Dashed rectangle, muted red |
 | Fork/join bar | `@{ shape: fork, label: " " }` | Default |
+| Spawned agent | `["@researcher"]:::spawned` | Dashed rectangle, dark teal (isolation) |
 
 **Edge types:**
 
@@ -175,7 +176,25 @@ classDef gate fill:#804000,stroke:#cc8040,color:#fff
 classDef done fill:#008060,stroke:#00a67a,color:#fff
 classDef curator fill:#336666,stroke:#4d9999,color:#e0f0f0
 classDef rework fill:#663333,stroke:#996666,color:#e0b2b2,stroke-dasharray:5 5
+classDef spawned fill:#005f5f,stroke:#66b2b2,color:#e0f0f0,stroke-dasharray:4 4
 ```
+
+Use `:::spawned` for agent nodes in isolated parallel branches (4+ branches). For 2-3 branches, prefer dashed subgraphs instead.
+
+**Isolation subgraph pattern (dashed-border spawn branches):**
+
+When a plan's `Independence rationale:` field indicates isolated spawns, wrap each spawn branch in a subgraph with dashed borders to convey isolation visually.
+
+- **Subgraph IDs** — use descriptive IDs: `iso1`, `iso2`, or domain names like `isoWorkspace`, `isoExternal`
+- **Style syntax** — `classDef` CANNOT apply to subgraphs. Always use per-ID `style` declarations:
+
+  ```
+  style iso1 fill:#0a2626,stroke:#4d9999,stroke-width:2px,stroke-dasharray:5 5,color:#b2d8d8
+  ```
+
+- **Edge convention** — connect fork bar to the subgraph's first internal node; connect the subgraph's last internal node to the join bar
+- **Edge labels** — optionally annotate fork-to-first-node edges with isolation dimension: `-->|"topic isolation"|` or `-->|"file isolation"|`
+- **When to use** — 2-3 isolated branches: dashed subgraphs. 4+ isolated branches: `:::spawned` on agent nodes (subgraph clutter outweighs benefit at scale)
 
 **Theme config (include in every diagram):**
 
@@ -195,6 +214,61 @@ config:
     curve: basis
 ```
 
+**Isolation example — researcher parallelism with dashed spawn subgraphs:**
+
+````
+```mermaid
+---
+config:
+  theme: base
+  themeVariables:
+    darkMode: true
+    background: "#1e1e1e"
+    primaryColor: "#008080"
+    primaryTextColor: "#e0f0f0"
+    primaryBorderColor: "#66b2b2"
+    lineColor: "#66b2b2"
+    secondaryColor: "#0d3333"
+    tertiaryColor: "#0a2626"
+  flowchart:
+    curve: basis
+---
+flowchart TD
+    accTitle: Isolated researcher parallelism
+    accDescr: Two researchers spawned in topic-isolated branches with dashed subgraph borders
+
+    brain(["@brain"]):::brain
+    brain ==>|"Phase 1"| fork1@{ shape: fork, label: " " }
+
+    subgraph iso1 ["workspace research"]
+        R1["@researcher"]:::researcher
+        T1["scan codebase patterns<br/>.github/agents/"]:::task
+        R1 --> T1
+    end
+
+    subgraph iso2 ["external research"]
+        R2["@researcher"]:::researcher
+        T2["survey library docs<br/>context7 API"]:::task
+        R2 --> T2
+    end
+
+    fork1 -->|"topic isolation"| R1
+    fork1 -->|"topic isolation"| R2
+    T1 --> join1@{ shape: fork, label: " " }
+    T2 --> join1
+
+    join1 ==>|"Phase 2"| B1["@builder"]:::builder
+    B1 --> T3["implement feature<br/>src/feature.ts"]:::task
+
+    classDef brain fill:#008080,stroke:#66b2b2,color:#e0f0f0,stroke-width:2px
+    classDef researcher fill:#006080,stroke:#4d9999,color:#e0f0f0
+    classDef builder fill:#005f5f,stroke:#66b2b2,color:#e0f0f0
+    classDef task fill:#0d3333,stroke:#4d9999,color:#b2d8d8
+    style iso1 fill:#0a2626,stroke:#4d9999,stroke-width:2px,stroke-dasharray:5 5,color:#b2d8d8
+    style iso2 fill:#0a2626,stroke:#4d9999,stroke-width:2px,stroke-dasharray:5 5,color:#b2d8d8
+```
+````
+
 </visual_vocabulary>
 
 
@@ -210,6 +284,7 @@ Critical rendering pitfalls discovered through testing — each causes silent fa
 - **Color names** — the Mermaid engine rejects named colors. ALWAYS use hex: `#008080`, not `teal`
 - **Missing semicolons in entity codes** — `#quot` without trailing `;` breaks parsing. Write `#quot;`
 - **Non-basis curves** — other curve types produce crossing edges in complex fork-join layouts. ALWAYS set `curve: basis`
+- **`classDef` on subgraphs** — `classDef` cannot apply to subgraphs. Use `style subgraphId fill:...,stroke:...,stroke-dasharray:...` for dashed isolation borders. Applying `classDef` to a subgraph ID silently fails
 
 </pitfalls>
 
@@ -233,6 +308,7 @@ Every plan diagram must pass these checks before delivery.
 - Fork bars use space label `" "`, not empty string
 - Only spawned agents appear as nodes — no phantom agent nodes
 - Phase labels on thick sequential edges: `==>|"Phase N"|`
+- Isolated spawn branches use dashed subgraph borders (`stroke-dasharray`) or `:::spawned` class — plain fork-join without visual isolation markers fails P2 when the plan's `Independence rationale:` field is present
 
 **P3 (polish):**
 

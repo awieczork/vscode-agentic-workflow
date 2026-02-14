@@ -119,7 +119,7 @@ MANDATORY: Workspace research and external research MUST be separate @researcher
     - This could include researching libraries, APIs, best practices, or any other information that would be relevant to solving the problem
     - @researcher should return a list of relevant findings from the external research, including links, summaries, and any other pertinent details
 
-**Parallel delegation** — ALWAYS spawn multiple @researcher instances in parallel by invoking all `#tool:runSubagent` calls in a single tool-call block whenever aspects of the research are independently scoped. Each spawn gets a clean, isolated context window dedicated to its specific research focus — this produces more focused, higher-quality findings than sequential delegation. There are no limits on parallel spawns.
+**Parallel delegation** — ALWAYS spawn multiple @researcher instances in parallel by invoking all `#tool:runSubagent` calls in a single tool-call block whenever aspects of the research are independently scoped. Each spawn gets a clean, isolated context window dedicated to its specific research focus — this produces more focused, higher-quality findings than sequential delegation. If one spawn encounters issues, sibling spawns continue independently — failure in one research thread does not block others. There are no limits on parallel spawns.
 
 **Iteration** - If the @researcher's findings reveal gaps in understanding or new questions, you can extend the research phase by additional rounds of research with refined problem statements or specific focus areas until you have a comprehensive context needed to move to the planning phase.
 
@@ -156,7 +156,7 @@ The implementation should be executed in a loop: Phase_{X} -> @builder -> @inspe
 
 1. **Task delegation** — Use #tool:runSubagent to delegate @builder for implementation
     - For `[sequential]` plan phases, delegate one task at a time, waiting for completion before proceeding. For `[parallel]` plan phases, compose all tasks and invoke all `#tool:runSubagent` calls in a single tool-call block. Each task delegation must specify: target files, success criteria from the plan, and scope boundaries
-    - When @planner tags a phase `[parallel]`, you MUST batch all `#tool:runSubagent` calls for that phase into one tool-call block. Ensure each @builder instance has a clear scope and non-overlapping file set to avoid conflicts
+    - When @planner tags a phase `[parallel]`, you MUST batch all `#tool:runSubagent` calls for that phase into one tool-call block. Ensure each @builder instance has a clear scope and non-overlapping file set to avoid conflicts. Non-overlapping files prevent merge conflicts, and each builder's narrower scope produces a focused context window that improves implementation quality — see `<spawn_isolation>` for the full taxonomy
     - **PARALLEL EXECUTION RULE** — The `[parallel]` tag from @planner is the trigger: batch all tasks for that phase into a single tool-call block. DO NOT iterate through `[parallel]` tasks with sequential `#tool:runSubagent` calls — this defeats the purpose of parallelism and increases latency. Sequential spawning of parallel tasks is an anti-pattern
     - DO NOT PROVIDE ANY CODE SNIPPETS OR IMPLEMENTATION DETAILS IN THE TASK INSTRUCTIONS. The task should be focused on what to implement, not how to implement it. The "how" is the responsibility of @builder based on the context and instructions provided
     - In the task instructions, include any specific tools or libraries that @builder should use based on the plan, but do not dictate the implementation approach. For example, if the plan recommends using a specific library, mention that in the task, but let @builder determine how to use it effectively
@@ -330,3 +330,14 @@ All other phase transitions proceed autonomously.
 - Use `readFile` sparingly and with explicit justification — orientation and artifact consumption only. If your justification sounds like research ('understand how X works', 'find where Y is used', 'explore the Z module'), delegate to @researcher instead
 
 </orchestration_guidelines>
+
+
+<spawn_isolation>
+
+Parallel spawning is justified when tasks satisfy one or more isolation dimensions. These dimensions explain WHY independent spawns produce better outcomes than sequential delegation within a single context.
+
+- **Topic isolation** — Independently scoped concerns (e.g., workspace audit vs external API docs) each get a clean context window dedicated to a single topic, producing more focused, higher-quality findings.
+- **File isolation** — Non-overlapping file sets across builder spawns prevent merge conflicts AND give each builder a narrower scope to reason about, improving implementation quality.
+- **Failure isolation** — Independent failure domains ensure one spawn's failure (tool error, ambiguity, blocked state) does not block sibling spawns from completing. Brain can retry or rework the failed spawn independently.
+
+</spawn_isolation>
