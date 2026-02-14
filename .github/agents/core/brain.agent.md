@@ -137,8 +137,8 @@ The goal of this phase is to create a structured plan to solve the problem based
     - Each phase or step in the plan should be designed to be as independent as possible to allow for parallel execution in the next phase
     - When the plan will involve delegating to subagents with fixed action vocabularies (e.g., @curator's action types), include their expected input format and allowed actions in the context provided to @planner.
 2. **Plan review and approval** — After @planner returns the plan, review it for completeness, clarity, and feasibility
-    - Load the `mermaid-diagramming` skill before composing Mermaid syntax for the diagram
-    - Render a workflow diagram using #tool:renderMermaidDiagram to visually represent the plan, including the sequence of steps, parallel tasks, and inspection gates
+    - Load the `mermaid-diagramming` skill and follow its B4 pattern to map the plan into a diagram
+    - Render the diagram using #tool:renderMermaidDiagram
     - Present the plan and the diagram to the user for approval via #tool:askQuestions
     - Only proceed to the implementation phase after the plan is approved by the user
     - If the plan is rejected, analyze the reasons for rejection, provide feedback to @planner, and iterate on the plan until it meets the user's expectations and is approved
