@@ -118,10 +118,10 @@ After all parallel @researcher spawns complete, run a merge checklist before fee
 
 - **Coverage** — verify every seed `sources` URL is accounted for in at least one researcher's findings. Flag any URL that was unreachable or returned no actionable content
 - **Integration** — incorporate free explorer findings alongside URL-based findings into a unified research summary. Do not treat free exploration as secondary
-- **Conflicts** — explicitly flag contradictions between sources (e.g., two libraries recommending incompatible auth patterns). Do not silently resolve conflicts; present both positions with context so @architect can make an informed decision
+- **Conflicts** — explicitly flag contradictions between sources (e.g., two libraries recommending incompatible auth patterns). Do not silently resolve conflicts; present both positions with context so @planner can make an informed decision
 - **Gap-fill** — if the checklist fails on any dimension, re-spawn targeted @researcher(s) with refined focus statements addressing the specific gap
 - **Source coverage table** — include a summary table in the synthesis: URL | Researcher Spawn | Key Findings (1-liner) — so nothing falls through the cracks
-- **Downstream output** — the merged synthesis feeds the problem_statement_template's `Research Findings` field, enriching what @architect and @build receive for planning and implementation
+- **Downstream output** — the merged synthesis feeds the problem_statement_template's `Research Findings` field, enriching what @planner and @builder receive for planning and implementation
 
 </research_synthesis>
 
@@ -132,7 +132,7 @@ After all parallel @researcher spawns complete, run a merge checklist before fee
 
 Apply this 4-type heuristic to classify every artifact opportunity. Classification drives creation — each type has a distinct purpose, and mis-classification produces artifacts that do not fit their context.
 
-- **Agent** — For recurring multi-step workflows that benefit from a dedicated persona. The agent receives tasks, applies domain expertise across multiple turns, and produces structured output. Examples: @api-designer for API architecture guidance, @test-strategist for test planning and coverage analysis, @security-auditor for vulnerability assessment
+- **Agent** — For recurring multi-step workflows that benefit from a dedicated persona. The agent receives tasks, applies domain expertise across multiple turns, and produces structured output. Examples: @api-planner for API architecture guidance, @test-strategist for test planning and coverage analysis, @security-inspector for vulnerability assessment
 - **Skill** — For domain-specific knowledge that multiple agents might invoke. A repeatable process with clear inputs, steps, and verifiable output. Examples: database-optimization skill, accessibility-audit skill, migration-testing skill
 - **Instruction** — For path-scoped coding standards and conventions that auto-attach based on file patterns. Ambient constraints that shape behavior without explicit invocation. Examples: "all files in src/api/ must include error handling middleware", "TypeScript files follow strict null checks"
 - **Prompt** — For one-shot task templates users trigger directly. No multi-turn conversation needed — parameterized input, focused output. Examples: "generate a migration script", "scaffold a new endpoint", "run a quick security check"
@@ -181,9 +181,9 @@ output/{projectName}/
 │   │   ├── core/               # COPIED — all 6 core agents
 │   │   │   ├── brain.agent.md
 │   │   │   ├── researcher.agent.md
-│   │   │   ├── architect.agent.md
-│   │   │   ├── build.agent.md
-│   │   │   ├── inspect.agent.md
+│   │   │   ├── planner.agent.md
+│   │   │   ├── builder.agent.md
+│   │   │   ├── inspector.agent.md
 │   │   │   └── curator.agent.md
 │   │   └── {name}.agent.md     # GENERATED — supplementary agents (flat)
 │   ├── skills/
@@ -236,7 +236,7 @@ These are created fresh based on interview findings:
 
 <core_agent_adaptation>
 
-Core agents are copied as-is — they are generic and project-agnostic by design. Project specificity comes from three sources that shape core agent behavior without modifying core agent files.
+Core agents are copied as-is — they are generic and project-agnostic by design. The one exception is `brain.agent.md`, which is adapted post-copy via `<brain_adaptation>` to include explicit entries for supplementary agents. All other core agents remain unmodified. Project specificity comes from three sources that shape core agent behavior:
 
 
 <project_context_layer>
@@ -258,41 +258,60 @@ This file loads on every request — core agents read it and adapt their behavio
 
 Supplementary agents extend the core set. Each supplementary agent must be positioned relative to a core agent following the guidance in `body-patterns.md` → `<positioning>`:
 
-- Define the role relative to an existing core agent — a `@python-dev` replaces `@build` for Python projects, a `@security-auditor` extends `@inspect` with security focus
+- Domain agents MUST follow `{domain}-{core-role}` naming — `{domain}` is the project domain (theme, python, security, api), `{core-role}` is the core agent being extended (planner, builder, inspector, researcher, curator). Examples: theme-builder, security-inspector, api-planner
+- Define the role relative to an existing core agent — a `@python-builder` replaces `@builder` for Python projects, a `@security-inspector` extends `@inspector` with security focus
 - Specify when @brain should prefer this agent over the core alternative — include selection criteria in identity prose
 - Follow the same interface patterns as the core agent being extended — status codes (`COMPLETE` | `BLOCKED`), session ID echo, output template structure — so @brain routes seamlessly
 - Supplementary agents never modify core agents — they provide alternative handoff targets that @brain selects based on task context
 
 </supplementary_agent_positioning>
 
+
+<brain_adaptation>
+
+Runs after Phase 2 whenever supplementary agents are created. If no supplementary agents were generated, skip this section entirely.
+
+When triggered:
+
+1. Read the output project's `brain.agent.md`
+2. For each supplementary agent created in Phase 2, read its definition file to extract the description from its frontmatter and delegation details from its identity prose
+3. Add a new entry to the `<agent_pool>` section following the existing entry format — `- **@{agent-name}** — {capability description from agent frontmatter}`
+4. Add a new entry to the `<delegation_rules>` section following the existing entry format — `- **@{agent-name}** — {delegation guidance: what context to provide, what to expect back, when to prefer over core agents}`
+5. If multiple supplementary agents exist, batch all entries into one edit operation per section
+
+No injection markers are used — entries are added to the `<agent_pool>` and `<delegation_rules>` lists directly, following the pattern of existing entries. For supplementary agent positioning guidance, reference `<supplementary_agent_positioning>`.
+
+</brain_adaptation>
+
 </core_agent_adaptation>
 
 
 <build_directives>
 
-Instructions for @brain when orchestrating artifact creation during generation. @build is stateless — it receives WHAT to create, never HOW.
+Instructions for @brain when orchestrating artifact creation during generation. @builder is stateless — it receives WHAT to create, never HOW.
 
 
 <handoff_pattern>
 
-- @build uses the artifact-creator skill (`.github/skills/artifact-creator/SKILL.md`) for all artifact creation. The skill handles classify-then-specialize — @build does not need type-specific creation instructions
-- Each artifact is a separate @build handoff with clear scope: artifact type, purpose, domain context, and relevant interview findings
-- @build receives the artifact-creator skill reference and the specific artifact requirements — the skill provides structure, conventions, and validation
-- After each @build batch completes, @inspect verifies all created artifacts before @brain proceeds to the next batch
+- @builder uses the artifact-creator skill (`.github/skills/artifact-creator/SKILL.md`) for all artifact creation. The skill handles classify-then-specialize — @builder does not need type-specific creation instructions
+- Each artifact is a separate @builder handoff with clear scope: artifact type, purpose, domain context, and relevant interview findings
+- @builder receives the artifact-creator skill reference and the specific artifact requirements — the skill provides structure, conventions, and validation
+- After each @builder batch completes, @inspector verifies all created artifacts before @brain proceeds to the next batch
 
 </handoff_pattern>
 
 
 <parallel_execution>
 
-Batch independent @build spawns into parallel tool-call blocks. Never spawn them sequentially when they have non-overlapping file sets:
+Batch independent @builder spawns into parallel tool-call blocks. Never spawn them sequentially when they have non-overlapping file sets:
 
 1. **Phase 1** — Copy operations (core agents, artifact-creator skill, evolution workflow, evolve prompt, calibrate prompt) — these have no dependencies
 2. **Phase 2** — Generate supplementary artifacts (agents, skills, instructions, prompts) — independent of each other, parallel within this phase
-3. **Phase 3** — Generate copilot-instructions.md — depends on all artifacts from Phase 2 being complete (references them in workspace map and agent listing)
-4. **Phase 4** — Generate README.md — depends on copilot-instructions.md and full artifact inventory
+3. **Phase 3** — Brain adaptation — inject supplementary agent entries into output brain's `<agent_pool>` and `<delegation_rules>`. Depends on Phase 2 supplementary agents being complete. Reference `<brain_adaptation>` for the procedure
+4. **Phase 4** — Generate copilot-instructions.md — depends on all artifacts from Phase 2 being complete (references them in workspace map and agent listing)
+5. **Phase 5** — Generate README.md — depends on copilot-instructions.md and full artifact inventory
 
-@inspect runs after each phase. Findings route back through @brain for rework — @build fixes only the flagged issues, then @inspect re-verifies.
+@inspector runs after each phase. Findings route back through @brain for rework — @builder fixes only the flagged issues, then @inspector re-verifies.
 
 </parallel_execution>
 
@@ -301,7 +320,7 @@ Batch independent @build spawns into parallel tool-call blocks. Never spawn them
 
 <verification_criteria>
 
-What @inspect checks for generated projects. Each criterion is binary — PASS or FAIL with specific details.
+What @inspector checks for generated projects. Each criterion is binary — PASS or FAIL with specific details.
 
 
 <artifact_quality>
@@ -330,6 +349,7 @@ What @inspect checks for generated projects. Each criterion is binary — PASS o
 - copilot-instructions.md accurately references all generated artifacts in its workspace map and agent listing
 - All cross-references between artifacts resolve to existing files
 - Supplementary agents follow positioning guidance — defined relative to core agents with matching interface patterns
+- Brain agent's `<agent_pool>` includes entries for all supplementary agents created in Phase 2
 
 </structural_integrity>
 

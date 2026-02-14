@@ -43,7 +43,7 @@ Every addition must cite scan evidence. Every removal must state the reason.
 <preserve_rules>
 
 - NEVER remove the 4 core XML sections: `<workspace>`, `<agents>`, `<conventions>`, `<rules>`
-- NEVER remove core agent references (@brain, @researcher, @architect, @build, @inspect, @curator) from the agent listing
+- NEVER remove core agent references (@brain, @researcher, @planner, @builder, @inspector, @curator) from the agent listing
 - NEVER modify framework conventions or rules unless they conflict with verified workspace evidence
 - Preserve the intro prose paragraph at the top of copilot-instructions.md
 - Additions and corrections only — do not strip existing valid content

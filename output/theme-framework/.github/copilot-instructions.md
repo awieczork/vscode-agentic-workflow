@@ -8,9 +8,9 @@ Directory map — load this first to locate resources.
 - `.github/agents/core/` — Core agent definitions (hub-and-spoke lifecycle)
   - `brain.agent.md` — Central orchestrator, routes tasks, tracks session state
   - `researcher.agent.md` — Deep research and source synthesis
-  - `architect.agent.md` — Problem decomposition into phased plans
-  - `build.agent.md` — Implementation execution, produces working code
-  - `inspect.agent.md` — Final quality gate, verifies against plan and standards
+  - `planner.agent.md` — Problem decomposition into phased plans
+  - `builder.agent.md` — Implementation execution, produces working code
+  - `inspector.agent.md` — Final quality gate, verifies against plan and standards
   - `curator.agent.md` — Workspace maintenance: docs sync, git commits, cleanup
 - `.github/agents/theme-builder.agent.md` — Derives OKLCH palettes and generates cross-editor dark themes
 - `.github/agent-workflows/` — Multi-agent workflow orchestrations
@@ -48,9 +48,9 @@ Hub-and-spoke: @brain receives requests and delegates to subagents. Each agent i
 
 - `@brain` — Central orchestrator, routes tasks, tracks session state
 - `@researcher` — Deep research and source synthesis on focused topics
-- `@architect` — Decomposes problems into phased, dependency-verified plans
-- `@build` — Executes implementation tasks, produces working code
-- `@inspect` — Final quality gate, verifies against plan and standards
+- `@planner` — Decomposes problems into phased, dependency-verified plans
+- `@builder` — Executes implementation tasks, produces working code
+- `@inspector` — Final quality gate, verifies against plan and standards
 - `@curator` — Workspace maintenance: docs sync, git commits, cleanup
 - `@theme-builder` — Derives OKLCH palettes and generates cross-editor dark themes (VS Code, RStudio, DBeaver)
 

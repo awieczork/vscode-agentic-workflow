@@ -25,7 +25,8 @@ Agent bodies follow a consistent convention observed across all core agents in `
 
 New agents extend the orchestrator's capabilities. When designing a new agent, follow these positioning guidelines:
 
-- Define the agent's role relative to an existing core agent — a `@python-dev` replaces `@build` for Python projects, a `@security-auditor` extends `@inspect` with security focus
+- Name agents using the `{domain}-{core-role}` convention — the domain prefix identifies the specialization, the suffix maps to the core agent being extended (e.g., `@python-builder`, `@api-planner`, `@security-inspector`)
+- Define the agent's role relative to an existing core agent — a `@python-builder` replaces `@builder` for Python projects, a `@security-inspector` extends `@inspector` with security focus
 - Specify when the orchestrator should prefer this agent over the core alternative — include selection criteria in the identity prose or guidelines
 - Follow the same interface patterns as the core agent being extended — status codes (`COMPLETE` | `BLOCKED`), session ID echo, output template structure — so the orchestrator can route to it seamlessly
 - Think of agent creation as growing the orchestrator's agent pool — every new agent enables a new delegation path

@@ -79,7 +79,7 @@ Project-specific context for all agents. Update these sections to reflect your p
 </decision_making>
 
 
-Core agents (brain, researcher, architect, build, inspect, curator) are defined in `.github/agents/core/`.
+Core agents (brain, researcher, planner, builder, inspector, curator) are defined in `.github/agents/core/`.
 
 - `@api-tester` — Validates endpoint contracts and response schemas against OpenAPI spec
 

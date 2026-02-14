@@ -145,7 +145,7 @@ Supported operations:
 Not supported:
 
 - **Artifact removal** — deleting agents, skills, instructions, or prompts
-- **Core agent modifications** — brain, researcher, architect, build, inspect, curator are immutable through this workflow
+- **Core agent modifications** — brain, researcher, planner, builder, inspector, curator are immutable through this workflow
 - **Full copilot-instructions.md rewrites** — minor updates like workspace map entries are handled by @curator during verification, but structural changes require the generation workflow
 
 For unsupported operations, explain the boundary and suggest alternatives:
@@ -196,29 +196,29 @@ When multiple changes are approved, order execution correctly:
 
 <build_directives>
 
-Instructions for @brain when orchestrating artifact creation and modification. @build is stateless — it receives WHAT to create or change, never HOW.
+Instructions for @brain when orchestrating artifact creation and modification. @builder is stateless — it receives WHAT to create or change, never HOW.
 
 
 <handoff_pattern>
 
-@build uses the artifact-creator skill (`.github/skills/artifact-creator/SKILL.md`) for ALL artifact creation and modification. The skill handles classify-then-specialize — @build does not need type-specific creation instructions.
+@builder uses the artifact-creator skill (`.github/skills/artifact-creator/SKILL.md`) for ALL artifact creation and modification. The skill handles classify-then-specialize — @builder does not need type-specific creation instructions.
 
-Each artifact is a separate @build handoff containing: artifact type, purpose, domain context, interview findings, and (for modifications) the delta specification from `<delta_specification>`.
+Each artifact is a separate @builder handoff containing: artifact type, purpose, domain context, interview findings, and (for modifications) the delta specification from `<delta_specification>`.
 
-For modifications: @build reads the existing file, applies the planned delta, and preserves all unchanged structure. Modifications are surgical — only the targeted content changes.
+For modifications: @builder reads the existing file, applies the planned delta, and preserves all unchanged structure. Modifications are surgical — only the targeted content changes.
 
 </handoff_pattern>
 
 
 <parallel_execution>
 
-Batch independent @build spawns into parallel execution:
+Batch independent @builder spawns into parallel execution:
 
 1. **Phase 1** — Create or modify artifacts with no inter-dependencies (parallel)
 2. **Phase 2** — Create or modify artifacts that depend on Phase 1 outputs (sequential within phase, parallel where possible)
 3. **Phase 3** — Brain adaptation (only if new agents added), then @curator copilot-instructions.md update if new paths were introduced
 
-@inspect runs after each phase. Findings route back through @brain for rework — @build fixes only the flagged issues, then @inspect re-verifies.
+@inspector runs after each phase. Findings route back through @brain for rework — @builder fixes only the flagged issues, then @inspector re-verifies.
 
 </parallel_execution>
 
@@ -243,7 +243,7 @@ No injection markers are used — the entry is added to the `<agent_pool>` list 
 
 <verification_criteria>
 
-What @inspect checks after each phase. Each criterion is binary — PASS or FAIL with specific details.
+What @inspector checks after each phase. Each criterion is binary — PASS or FAIL with specific details.
 
 
 <artifact_quality>
@@ -280,7 +280,7 @@ After verification passes, @brain presents the session outcome:
 
 - **Session summary** — session ID, number of rework cycles completed
 - **Artifacts table** — one row per artifact: path, action (`Created` | `Modified`), verification status (`Passed` | `Failed` | `Skipped`)
-- **Inspection verdict** — @inspect overall verdict with any notes or caveats
+- **Inspection verdict** — @inspector overall verdict with any notes or caveats
 - **Open items** — items deferred or flagged during evolution that require future attention, or "None"
 
 </verification_criteria>

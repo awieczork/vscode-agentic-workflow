@@ -5,7 +5,7 @@ This workspace is a framework for building agentic workflows in VS Code. It uses
 
 Directory map — load this first to locate resources.
 
-- `.github/agents/core/` — Core agent definitions (brain, researcher, architect, build, inspect, curator)
+- `.github/agents/core/` — Core agent definitions (brain, researcher, planner, builder, inspector, curator)
 - `.github/agent-workflows/` — Multi-agent workflow orchestrations (evolution, generation)
 - `.github/instructions/` — Path-specific instruction files — `Reserved`
 - `.github/prompts/` — One-shot prompt templates (evolve, init-project, calibrate)
@@ -20,9 +20,9 @@ Hub-and-spoke: @brain receives requests and delegates to subagents. Each agent h
 
 - `@brain` — Central orchestrator, routes tasks, tracks session state
 - `@researcher` — Deep research and source synthesis on focused topics
-- `@architect` — Decomposes problems into phased, dependency-verified plans
-- `@build` — Executes implementation tasks, produces working code
-- `@inspect` — Final quality gate, verifies against plan and standards
+- `@planner` — Decomposes problems into phased, dependency-verified plans
+- `@builder` — Executes implementation tasks, produces working code
+- `@inspector` — Final quality gate, verifies against plan and standards
 - `@curator` — Workspace maintenance: docs sync, git commits, cleanup
 
 </agents>

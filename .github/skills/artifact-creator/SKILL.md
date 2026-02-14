@@ -86,7 +86,7 @@ Write the body following type-specific conventions. Each type has a distinct sha
 4. **Domain-specific XML tags** — 1-4 tags named for the agent's domain. NOT from a fixed vocabulary — use self-explanatory names (e.g., `<build_guidelines>`, `<research_guidelines>`, `<verdicts>`)
 5. **Output template** — Dedicated XML tag with fenced code block showing the required output format. Include a `<example>` sub-tag with a realistic completed output
 
-New agents should be positioned relative to existing core agents (`@brain`, `@researcher`, `@architect`, `@build`, `@inspect`, `@curator`). Define the role relative to a core agent, specify when the orchestrator should prefer it, and follow the same interface patterns (status codes, session ID echo, output template) so the orchestrator routes to it seamlessly.
+New agents should be positioned relative to existing core agents (`@brain`, `@researcher`, `@planner`, `@builder`, `@inspector`, `@curator`). Define the role relative to a core agent, specify when the orchestrator should prefer it, and follow the same interface patterns (status codes, session ID echo, output template) so the orchestrator routes to it seamlessly.
 
 **Skill body:**
 

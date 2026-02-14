@@ -50,7 +50,7 @@ Standalone tools (not in any set): `todo`, `renderMermaidDiagram`, `context7/*` 
 
 ```yaml
 ---
-name: 'build'
+name: 'builder'
 description: 'Executes implementation tasks — produces working code and reports completion'
 tools: ['search', 'read', 'edit', 'execute', 'context7', 'web']
 user-invokable: false
@@ -148,7 +148,7 @@ Variables use `${name}` syntax — the dollar prefix is required.
 ---
 description: 'Scaffold a new REST endpoint with validation and error handling'
 name: 'new-endpoint'
-agent: 'build'
+agent: 'builder'
 tools: ['edit', 'read', 'codebase']
 ---
 ```

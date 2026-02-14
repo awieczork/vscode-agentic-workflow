@@ -6,7 +6,7 @@ Copilot agent ecosystem for deriving dark editor themes from a single hex color 
 
 | Category | Path | Purpose |
 |---|---|---|
-| Agents | `agents/core/`, `agents/` | 6 core agents (@brain, @researcher, @architect, @build, @inspect, @curator) + @theme-builder at `agents/` for palette derivation |
+| Agents | `agents/core/`, `agents/` | 6 core agents (@brain, @researcher, @planner, @builder, @inspector, @curator) + @theme-builder at `agents/` for palette derivation |
 | Skills | `skills/` | `artifact-creator` (framework authoring) + `contrast-audit` (WCAG/APCA checks) |
 | Instructions | `instructions/` | Color derivation rules + theme format conventions |
 | Prompts | `prompts/` | Palette generation, theme porting, calibration, VS Code packaging |

@@ -14,7 +14,7 @@ Agent files (`.agent.md`) use YAML frontmatter for identity, tool access, and in
 | `target` | string | no | Restrict to VS Code interface: `'cli'` or `'editor'` |
 | `user-invokable` | boolean | no | Default `true`. Set `false` to hide from user selection (sub-agent only) |
 | `disable-model-invocation` | boolean | no | When `true`, agent is only user-invokable, never auto-selected by model |
-| `agents` | string[] | no | Restricts which sub-agents this agent can invoke. Example: `['researcher', 'build']` |
+| `agents` | string[] | no | Restricts which sub-agents this agent can invoke. Example: `['researcher', 'builder']` |
 | `mcp-servers` | string[] | no | MCP server names to enable. Example: `['github', 'filesystem']` |
 | `handoffs` | object[] | no | Suggested next-action buttons to transition between agents (VS Code 1.106+) |
 | `argument-hint` | string | no | Hint text in chat input guiding user interaction |
@@ -50,7 +50,7 @@ Standalone tools (not in any set): `todo`, `renderMermaidDiagram`, `context7/*` 
 
 ```yaml
 ---
-name: 'build'
+name: 'builder'
 description: 'Executes implementation tasks — produces working code and reports completion'
 tools: ['search', 'read', 'edit', 'execute', 'context7', 'web']
 user-invokable: false
@@ -148,7 +148,7 @@ Variables use `${name}` syntax — the dollar prefix is required.
 ---
 description: 'Scaffold a new REST endpoint with validation and error handling'
 name: 'new-endpoint'
-agent: 'build'
+agent: 'builder'
 tools: ['edit', 'read', 'codebase']
 ---
 ```

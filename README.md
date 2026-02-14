@@ -10,7 +10,7 @@ This repository contains reusable agents, workflows, skills, and prompt template
 
 ```
 .github/
-├── agents/core/             — 6 core agents (brain, researcher, architect, build, inspect, curator)
+├── agents/core/             — 6 core agents (brain, researcher, planner, builder, inspector, curator)
 ├── agent-workflows/         — Workflow orchestrations (generation, evolution)
 ├── instructions/            — Path-specific instruction files (reserved)
 ├── prompts/                 — One-shot prompt templates (init-project, evolve, calibrate)
@@ -36,9 +36,9 @@ Hub-and-spoke model — `@brain` receives all requests and delegates to speciali
 |---|---|
 | `@brain` | Central orchestrator — routes tasks, tracks session state |
 | `@researcher` | Deep research and source synthesis on focused topics |
-| `@architect` | Decomposes problems into phased, dependency-verified plans |
-| `@build` | Executes implementation tasks, produces working code |
-| `@inspect` | Final quality gate — verifies against plan and standards |
+| `@planner` | Decomposes problems into phased, dependency-verified plans |
+| `@builder` | Executes implementation tasks, produces working code |
+| `@inspector` | Final quality gate — verifies against plan and standards |
 | `@curator` | Workspace maintenance — docs sync, git commits, cleanup |
 
 ## Output
