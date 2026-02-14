@@ -243,11 +243,11 @@ Core agents are copied as-is — they are generic and project-agnostic by design
 
 The generated `copilot-instructions.md` provides the project context that makes core agents effective. It includes:
 
-- Workspace map with all generated directories and artifacts
+- Workspace map with project source directories (from interview findings) as primary entries, followed by a compact summary of generated `.github/` infrastructure — NOT an exhaustive artifact-by-artifact listing
 - Tech stack, conventions, and domain concepts from interview findings
 - Development commands grouped by category (build, test, lint, deploy)
 - Environment context (runtime, prerequisites, services)
-- Agent listing cross-referencing all available agents (core + supplementary)
+- Agent references inline after the workspace section — one line for core agents as a group (e.g., "Core agents … are defined in `.github/agents/core/`"), individual entries only for supplementary agents
 
 This file loads on every request — core agents read it and adapt their behavior to the project without needing project-specific modifications.
 
@@ -346,7 +346,7 @@ What @inspector checks for generated projects. Each criterion is binary — PASS
 - Evolve prompt is present in `prompts/`
 - Calibrate prompt is present in `prompts/`
 - No circular dependencies between generated artifacts
-- copilot-instructions.md accurately references all generated artifacts in its workspace map and agent listing
+- copilot-instructions.md workspace map covers project source directories and provides a compact summary of generated `.github/` infrastructure — not an exhaustive artifact listing
 - All cross-references between artifacts resolve to existing files
 - Supplementary agents follow positioning guidance — defined relative to core agents with matching interface patterns
 - Brain agent's `<agent_pool>` includes entries for all supplementary agents created in Phase 2

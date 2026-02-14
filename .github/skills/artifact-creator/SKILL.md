@@ -117,13 +117,13 @@ No identity prose, no stance words, no variables, no agent/skill tags. Instructi
 
 **Copilot-instructions body:**
 
-1. **Workspace map** — Directory listing with status markers
+1. **Workspace map** — Project source directories first (src/, test/, scripts/, etc.), then `.github/` infrastructure as a compact secondary group. Each entry has a status marker
 2. **Project context** — Overview, tech stack, naming conventions, key abstractions, testing strategy
 3. **Project constraints** — Standard rules plus project-specific additions
 4. **Decision framework** — Priority hierarchy (e.g., Safety → Accuracy → Clarity → Style)
 5. **Development commands** — Grouped by category (build, test, lint, deploy)
 6. **Environment context** — Runtime, package management, prerequisites
-7. **Agent listing** (optional) — Cross-reference available agents for orchestration awareness
+7. **Agent listing** (optional) — Compact inline reference placed after the workspace section, not a standalone `<agents>` XML section. Core agents listed as a single one-line group; only supplementary agents listed individually
 
 Keep every line concise — this file loads on every request, so every section must earn its token cost.
 

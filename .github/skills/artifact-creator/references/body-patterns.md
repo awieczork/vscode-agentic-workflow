@@ -148,13 +148,13 @@ Instruction bodies provide ambient constraints — rules that shape agent behavi
 
 The project-level copilot-instructions.md file provides workspace-wide context applied to every agent request. It is concise, factual, and focused — every line costs tokens on every interaction.
 
-**Typical sections** — Workspace map (directory listing with status markers), project context (overview, tech stack, naming conventions, key abstractions, testing strategy), project constraints (standard rules plus project-specific), decision making (priority framework), development commands (grouped by category), and environment context (runtime, package management, prerequisites).
+**Typical sections** — Workspace map (directory listing with status markers — project source directories first, `.github/` agent infrastructure second), project context (overview, tech stack, naming conventions, key abstractions, testing strategy), project constraints (standard rules plus project-specific), decision making (priority framework), development commands (grouped by category), and environment context (runtime, package management, prerequisites). The workspace map must lead with actual project directories (`src/`, `test/`, `scripts/`, `dist/`, etc.) — these are what agents need to navigate code. Agent infrastructure entries (`.github/agents/`, `.github/skills/`, `.github/instructions/`) appear as a secondary group below a comment separator.
 
 **Structure** — Plain markdown with optional XML tags for organizing subsections. The workspace section uses a consistent entry format: `- \`{path}\` — {description} — \`{status}\``. Constraints include fixed standard rules that always appear plus project-specific additions. The decision-making section is typically fixed content — a priority hierarchy applied uniformly.
 
 **Conciseness** — This file loads on every request. Every section should earn its token cost. Placeholder entries use HTML comments (`<!-- TODO: ... -->`) to guide users without consuming agent tokens once filled. Prefer prose bullets over verbose explanations.
 
-**Agent listing** — Optional section cross-referencing available agents. Core agents are referenced as a group; domain agents get individual descriptions. Purpose is cross-agent awareness — agents understand who else exists.
+**Agent listing** — Inline prose placed between content sections, not a standalone `<agents>` XML tag. Core agents get a single group-reference line: "Core agents (brain, researcher, planner, builder, inspector, curator) are defined in `.github/agents/core/`." Only supplementary or domain-specific agents get individual bullet entries with `@name` and a short description. Purpose is cross-agent awareness — agents understand who else exists without a dedicated section consuming tokens.
 
 
 <anti_patterns>
@@ -164,6 +164,8 @@ The project-level copilot-instructions.md file provides workspace-wide context a
 - Missing standard rules — the three standard constraint rules must always appear verbatim
 - Duplicating agent definitions — reference agents by name, do not restate their full identity or capabilities
 - Environment-specific values — hardcoded paths, secrets, or machine-specific configuration
+- Standalone `<agents>` section — agent info belongs inline as bare prose and bullets, not in a dedicated XML tag that duplicates what the workspace map and agent files already provide
+- Infrastructure-heavy workspace maps — `.github/` internals dominating the workspace map or appearing without project source directories. Project directories (`src/`, `test/`, `scripts/`) must come first; `.github/` entries are secondary context
 
 </anti_patterns>
 
