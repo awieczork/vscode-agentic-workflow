@@ -212,7 +212,7 @@ For modifications: @builder reads the existing file, applies the planned delta, 
 
 <parallel_execution>
 
-Batch independent @builder spawns into parallel execution:
+Batch independent @builder spawns into parallel tool-call blocks. Never spawn them sequentially when they have non-overlapping file sets:
 
 1. **Phase 1** — Create or modify artifacts with no inter-dependencies (parallel)
 2. **Phase 2** — Create or modify artifacts that depend on Phase 1 outputs (sequential within phase, parallel where possible)
