@@ -1,184 +1,244 @@
 ---
 name: 'mermaid-diagramming'
-description: 'Produces high-quality Mermaid diagrams with correct syntax and readable layouts. Use when asked to "create a diagram", "visualize a plan", "draw a flowchart", or "generate a sequence diagram". Covers diagram type selection, label formatting, line breaks, styling, accessibility, and validation for flowchart, sequence, state, and class diagrams.'
+description: 'Creates plan visualization diagrams for @brain using the B4 flowchart pattern. Use when asked to "render plan diagram", "visualize workflow phases", "diagram the plan", or "show task dependencies". Produces teal monochrome flowcharts with fork-join parallelism, agent delegation nodes, combined action+file task nodes, and thick/thin/dotted edge encoding.'
 ---
 
-This skill produces Mermaid diagrams that render correctly and communicate clearly. The governing principle is clarity over density — keep nodes concise, use line breaks properly, and let layout breathe. Begin with `<step_1_select_type>` to choose the right diagram type.
+This skill creates plan visualization flowcharts for @brain. The governing principle is structure mirrors plan — every plan phase maps to a diagram region with fork-join bars for parallel work and thick sequential edges for chained phases. Begin with `<step_1_map>` to translate the planner's output into diagram structure.
 
 
 <use_cases>
 
-These patterns trigger skill activation during task routing.
-
-- Visualize multi-phase plans as flowcharts with dependencies and decision gates
-- Create sequence diagrams for agent-to-agent communication flows
-- Draw state or class diagrams for lifecycle transitions or type hierarchies
-- Add Mermaid diagrams to documentation or plan artifacts
+- Render a plan diagram after @planner delivers a `plan_template`
+- Visualize workflow phases with parallel and sequential task groups
+- Diagram task dependencies and agent delegation paths
+- Show inspection gates and rework loops in multi-phase plans
 
 </use_cases>
 
 
 <workflow>
 
-Execute steps sequentially. Each step builds on the previous — type selection determines syntax, structure drives layout, composition applies syntax rules, and styling adds polish before validation.
+Execute steps sequentially. Each step produces structure that feeds the next — mapping determines topology, composition applies the B4 visual vocabulary, validation catches rendering pitfalls, and rendering produces the final output.
 
 
-<step_1_select_type>
+<step_1_map>
 
-Match the content to the correct diagram type:
+Translate the planner's `plan_template` phases into diagram topology:
 
-| Content pattern | Diagram type | Declaration |
-|---|---|---|
-| Phases, tasks, dependencies, decision gates | Flowchart | `flowchart TD` |
-| Agent messages, request/response, activation | Sequence | `sequenceDiagram` |
-| Lifecycle states, transitions, composites | State | `stateDiagram-v2` |
-| Type hierarchies, relationships, interfaces | Class | `classDiagram` |
+- **`[parallel]` phase** — fork bar → N agent nodes (one per task) → N task nodes → join bar
+- **`[sequential]` phase** — thick `==>|"Phase N"|` edge → agent node → task node(s) chained with `-->`
+- **`Files:` field** — second line of task node label: `["action description<br/>target/file.path"]:::task`
+- **`Depends on:` field** — edge from dependency's join bar or preceding task node
+- **`@inspector` gate** — always appears after the last build phase as a diamond node
+- **`@curator` phase** — appears after inspector passes, before Done
 
-Use `TD` (top-down) for plan flowcharts, `LR` for process pipelines. Default to flowchart when uncertain.
+Only include agent nodes that are actually spawned — omit `@researcher` if no research phase exists, omit `@curator` if no curation phase.
 
-</step_1_select_type>
-
-
-<step_2_structure>
-
-Design the diagram structure before writing syntax:
-
-- **Group related nodes** into subgraphs: `subgraph id["Display Title"] ... end`
-- **Keep labels ≤ 40 chars per line** — use `<br/>` for multi-line labels
-- **Prefer descriptive edge labels** over overloaded node text
-- **Invisible links** (`A ~~~ B`) for positioning; **extra dashes** (`A ---> B`) for longer spans
-- **Elk renderer** (`defaultRenderer: "elk"`) for complex diagrams with 15+ nodes
-- For plan flowcharts: one node per task group, edges show dependencies, subgraphs represent phases
-
-</step_2_structure>
+</step_1_map>
 
 
-<step_3_compose>
+<step_2_compose>
 
-Write the diagram using correct Mermaid syntax.
+Build the diagram using the B4 visual vocabulary. Every diagram follows this skeleton:
 
-**Line breaks — critical rules:**
+1. Open with YAML config block (theme, dark mode, basis curve)
+2. Declare `flowchart TD`
+3. Place `(["@brain"]):::brain` at top
+4. Map each phase from `<step_1_map>` into nodes and edges
+5. Converge all phases at `{"@inspector<br/>verify"}:::gate`
+6. Add pass edge to Done (or @curator), dotted rework edge back to builder
+7. Close with `classDef` declarations and accessibility metadata
 
-- ALWAYS use `<br/>` for line breaks in labels — most portable across all diagram types
-- NEVER use `\n` — renders as literal text in flowcharts
-- Markdown strings (`` "`...`" ``) support actual newlines but only in flowcharts
+Consult `<visual_vocabulary>` for node shapes, edge types, and the color palette.
 
-**Node shapes (flowchart):**
+**Complete example — 3-phase plan (1 parallel, 2 sequential):**
 
-| Shape | Syntax | Use for |
-|---|---|---|
-| Rectangle | `[text]` | Standard tasks |
-| Rounded | `(text)` | Start/end points |
-| Diamond | `{text}` | Decision gates |
+````
+```mermaid
+---
+config:
+  theme: base
+  themeVariables:
+    darkMode: true
+    background: "#1e1e1e"
+    primaryColor: "#008080"
+    primaryTextColor: "#e0f0f0"
+    primaryBorderColor: "#66b2b2"
+    lineColor: "#66b2b2"
+    secondaryColor: "#0d3333"
+    tertiaryColor: "#0a2626"
+  flowchart:
+    curve: basis
+---
+flowchart TD
+    accTitle: Implementation plan diagram
+    accDescr: Three-phase plan with parallel builders, sequential tasks, and inspection gate
 
-**Edges:** `A -->|label| B` (arrow+label), `A -.-> B` (dotted), `A ==> B` (thick). Use `["text"]` for labels with special characters or reserved words.
+    brain(["@brain"]):::brain
 
-**Sequence diagrams:** `<br/>` works in messages, notes, and aliases. Wrap long messages via `config: { sequence: { wrap: true, width: 300 } }`. Activation: `A ->>+ B` / `B -->>- A`.
+    brain ==>|"Phase 1"| fork1@{ shape: fork, label: " " }
+    fork1 --> B1["@builder"]:::builder
+    fork1 --> B2["@builder"]:::builder
+    B1 --> T1["create auth module<br/>src/auth/handler.ts"]:::task
+    B2 --> T2["create session store<br/>src/auth/session.ts"]:::task
+    T1 --> join1@{ shape: fork, label: " " }
+    T2 --> join1
 
-**State diagrams:** Transitions via `StateA --> StateB: event`. Composite: `state "Name" as s1 { ... }`. Fork/join: `state fork <<fork>>`.
+    join1 ==>|"Phase 2"| B3["@builder"]:::builder
+    B3 --> T3["wire middleware<br/>src/middleware/auth.ts"]:::task
 
-</step_3_compose>
+    T3 ==>|"Phase 3"| B4["@builder"]:::builder
+    B4 --> T4["add integration tests<br/>tests/auth.test.ts"]:::task
 
+    T4 ==> gate{"@inspector<br/>verify"}:::gate
+    gate -->|"pass"| done(["Done"]):::done
+    gate -.->|"rework"| rework["re-spawn<br/>@builder"]:::rework
+    rework -.-> B3
 
-<step_4_style>
-
-**Accessibility — always include:**
-
+    classDef brain fill:#008080,stroke:#66b2b2,color:#e0f0f0,stroke-width:2px
+    classDef builder fill:#005f5f,stroke:#66b2b2,color:#e0f0f0
+    classDef task fill:#0d3333,stroke:#4d9999,color:#b2d8d8
+    classDef gate fill:#804000,stroke:#cc8040,color:#fff
+    classDef done fill:#008060,stroke:#00a67a,color:#fff
+    classDef rework fill:#663333,stroke:#996666,color:#e0b2b2,stroke-dasharray:5 5
 ```
-accTitle: Brief title for screen readers
-accDescr: One-sentence description of what the diagram shows
-```
+````
 
-**Styling:** Define classes with `classDef name fill:#hex,stroke:#hex;`, apply inline with `nodeId:::name`, style edges with `linkStyle N stroke:#hex,stroke-width:2px;` (0-based index).
-
-**Config via frontmatter:** Set `theme` (`default`, `neutral`, `dark`, `forest`, `base`), `htmlLabels: true`, `useMaxWidth: true`. Only `base` supports `themeVariables`. ALWAYS use hex colors (`#ff0000`) — the engine rejects color names.
-
-</step_4_style>
+</step_2_compose>
 
 
-<step_5_validate>
+<step_3_validate>
 
-Review the completed diagram against these checks before delivery:
+Before delivery, verify every check against `<validation>` tiers. Fix all P1 issues — they block delivery. Fix P2 issues — they degrade quality. Flag P3 issues as suggestions.
 
-- Every line break uses `<br/>` — zero `\n` inside any label or message
-- All labels ≤ 40 chars per line
-- No bare lowercase `end` — capitalize or wrap: `[End]`, `(End)`, `"End"`
-- No `o` or `x` immediately after `---` — add a space: `A --- oB`
-- Subgraphs linked from outside use the subgraph ID, not internal node IDs
-- Entity codes have trailing semicolons: `#quot;`; commas in `stroke-dasharray` escaped with `\,`
-- `accTitle` and `accDescr` present; colors in hex format
-- Diagram renders without syntax errors when read linearly
+Quick checklist:
 
-</step_5_validate>
+- `accTitle` and `accDescr` present
+- Zero `\n` anywhere — all line breaks use `<br/>`
+- Labels ≤ 40 chars per line
+- No bare lowercase `end` — capitalize or wrap: `["End"]`
+- All colors in hex format — no color names
+- Fork bars use `@{ shape: fork, label: " " }` with space label
+- External links target subgraph IDs, not internal nodes
+- Only spawned agents appear as nodes
+- Theme config block present with `basis` curve and dark mode
+- `classDef` declarations cover every `:::class` reference
+
+</step_3_validate>
+
+
+<step_4_render>
+
+Render the completed diagram with `#tool:renderMermaidDiagram`. If rendering fails, check `<pitfalls>` for common causes, fix the syntax, and re-render.
+
+</step_4_render>
 
 </workflow>
 
 
-<common_pitfalls>
+<visual_vocabulary>
 
-Known issues that cause rendering failures or visual defects:
+Complete reference for the B4 plan diagram pattern — node shapes, edge types, and teal monochrome palette.
 
-- **`\n` in labels** — renders as literal text. ALWAYS use `<br/>`
-- **Lowercase `end`** — breaks flowcharts, sequence, and state diagrams. Capitalize or wrap in quotes/brackets
-- **`o`/`x` after `---`** — creates unintended edge markers. Add a space before the letter
-- **Subgraph direction ignored** — linking to internal nodes overrides direction. Link to the subgraph ID
-- **Color names in themes** — rejected by engine. Use hex values: `#ff0000`
-- **Missing `;` in entity codes** — `#quot` without `;` breaks parsing
-- **Overloaded nodes** — split into concise label + descriptive edge labels
+**Node types:**
 
-<contrast_examples>
+| Node | Syntax | Style class |
+|---|---|---|
+| Orchestrator | `(["@brain"]):::brain` | Stadium, teal primary |
+| Builder spawn | `["@builder"]:::builder` | Rectangle, dark teal |
+| Researcher spawn | `["@researcher"]:::researcher` | Rectangle, blue-teal |
+| Planner spawn | `["@planner"]:::planner` | Rectangle, teal-green |
+| Curator spawn | `["@curator"]:::curator` | Rectangle, muted teal |
+| Task | `["action<br/>target/file.md"]:::task` | Rectangle, deepest teal |
+| Inspection gate | `{"@inspector<br/>verify"}:::gate` | Diamond, burnt orange |
+| Completion | `(["Done"]):::done` | Stadium, green-teal |
+| Rework | `["re-spawn<br/>@builder"]:::rework` | Dashed rectangle, muted red |
+| Fork/join bar | `@{ shape: fork, label: " " }` | Default |
 
-**Wrong** — `\n` line breaks and overloaded node:
+**Edge types:**
 
-```mermaid
-flowchart TD
-    T21["2.1-2.4 Add brain_adaptation section\n+ update core_agent_adaptation prose\n+ update parallel_execution phases\n+ update verification_criteria\n(single coordinated edit)"]
+| Edge | Syntax | Use for |
+|---|---|---|
+| Phase transition | `==>` or `==>\|"Phase N"\|` | Critical path, sequential flow between phases |
+| Agent-to-task | `-->` or `-->\|"label"\|` | Normal connections within a phase |
+| Rework loop | `-.->` or `-.->\|"rework"\|` | Feedback from inspector back to builder |
+
+**Color palette (teal monochrome from `#008080`):**
+
+```
+classDef brain fill:#008080,stroke:#66b2b2,color:#e0f0f0,stroke-width:2px
+classDef builder fill:#005f5f,stroke:#66b2b2,color:#e0f0f0
+classDef researcher fill:#006080,stroke:#4d9999,color:#e0f0f0
+classDef planner fill:#005f6a,stroke:#4d9999,color:#e0f0f0
+classDef task fill:#0d3333,stroke:#4d9999,color:#b2d8d8
+classDef gate fill:#804000,stroke:#cc8040,color:#fff
+classDef done fill:#008060,stroke:#00a67a,color:#fff
+classDef curator fill:#336666,stroke:#4d9999,color:#e0f0f0
+classDef rework fill:#663333,stroke:#996666,color:#e0b2b2,stroke-dasharray:5 5
 ```
 
-**Right** — `<br/>` line breaks and concise label:
+**Theme config (include in every diagram):**
 
-```mermaid
-flowchart TD
-    T21["2.1-2.4 Update brain_adaptation<br/>+ core_agent prose<br/>+ parallel phases<br/>+ verification criteria"]
+```yaml
+config:
+  theme: base
+  themeVariables:
+    darkMode: true
+    background: "#1e1e1e"
+    primaryColor: "#008080"
+    primaryTextColor: "#e0f0f0"
+    primaryBorderColor: "#66b2b2"
+    lineColor: "#66b2b2"
+    secondaryColor: "#0d3333"
+    tertiaryColor: "#0a2626"
+  flowchart:
+    curve: basis
 ```
 
-</contrast_examples>
-
-</common_pitfalls>
+</visual_vocabulary>
 
 
-<error_handling>
+<pitfalls>
 
-Recovery rules for common diagram authoring failures.
+Critical rendering pitfalls discovered through testing — each causes silent failures or broken layouts.
 
-- If diagram type is unclear, default to flowchart — covers most plan visualization needs
-- If a label exceeds 40 characters, split at the nearest logical boundary using `<br/>`
-- If a node contains the word `end`, wrap in quotes or brackets: `["End"]`, `(End)`
-- If colors do not render, verify hex format — replace color names with hex values
-- If subgraph layout breaks, check for external links to internal nodes — redirect to subgraph ID
+- **`\n` in labels** — renders as literal text in flowcharts. ALWAYS use `<br/>`
+- **Lowercase `end`** — breaks flowchart, sequence, and state parsers. Wrap in brackets or capitalize: `["End"]`
+- **Subgraph direction override** — linking to internal subgraph nodes from outside overrides the subgraph's declared direction. Link to the subgraph ID instead
+- **Cross-arrows from internal nodes** — edges originating from nodes inside a subgraph to nodes outside can corrupt layout. Route through the subgraph boundary
+- **Empty fork label** — `label: ""` causes rendering issues. Use `label: " "` (single space)
+- **Color names** — the Mermaid engine rejects named colors. ALWAYS use hex: `#008080`, not `teal`
+- **Missing semicolons in entity codes** — `#quot` without trailing `;` breaks parsing. Write `#quot;`
+- **Non-basis curves** — other curve types produce crossing edges in complex fork-join layouts. ALWAYS set `curve: basis`
 
-</error_handling>
+</pitfalls>
 
 
 <validation>
 
-Every diagram must pass these checks before delivery.
+Every plan diagram must pass these checks before delivery.
 
 **P1 (blocking):**
 
-- Zero `\n` inside any label or message text
+- Zero `\n` inside any label — all line breaks use `<br/>`
+- `accTitle` and `accDescr` present
+- Theme config block with `basis` curve included
+- `classDef` declarations cover every `:::class` reference
 - No bare lowercase `end` as node text
-- `accTitle` and `accDescr` present in every diagram
-- Declaration matches content type (flowchart for plans, sequence for communication)
+- All colors in hex format — no color names
 
 **P2 (quality):**
 
-- Labels ≤ 40 chars per line; edge labels carry context over overloaded nodes
-- Hex colors, not color names; frontmatter config, not deprecated directives
+- Labels ≤ 40 chars per line
+- Fork bars use space label `" "`, not empty string
+- Only spawned agents appear as nodes — no phantom agent nodes
+- Phase labels on thick sequential edges: `==>|"Phase N"|`
 
 **P3 (polish):**
 
-- Consistent shape usage (diamonds for decisions, rectangles for tasks)
-- Subgraphs with descriptive titles; invisible links for layout adjustment
+- Consistent node ID naming (short, descriptive)
+- Rework loop uses dotted edges (`-.->`) with `"rework"` label
+- Inspector gate converges all build phases before Done
+- Task nodes combine action + file: two lines separated by `<br/>`
 
 </validation>
