@@ -212,7 +212,7 @@ For modifications: @builder reads the existing file, applies the planned delta, 
 
 <parallel_execution>
 
-Batch independent @builder spawns into parallel execution:
+Batch independent @builder spawns into parallel tool-call blocks. Never spawn them sequentially when they have non-overlapping file sets:
 
 1. **Phase 1** — Create or modify artifacts with no inter-dependencies (parallel)
 2. **Phase 2** — Create or modify artifacts that depend on Phase 1 outputs (sequential within phase, parallel where possible)
@@ -230,11 +230,12 @@ Runs ONLY when new domain agents are added. Skip entirely for modifications to e
 When triggered:
 
 1. Read the project's `brain.agent.md`
-2. Add a new entry to the `<agent_pool>` section following the existing entry format — bold name, dash, capability description
-3. Read the created domain agent file to extract capabilities for the entry
-4. If multiple new agents are added in a single evolution, batch all entries into one edit operation
+2. Read the created domain agent file to extract capabilities for the entry
+3. Add a new entry to the `<agent_pool>` section following the existing entry format — bold name, dash, capability description
+4. Add a new entry to the `<delegation_rules>` section following the existing entry format — `- **@{agent-name}** — {delegation guidance: what context to provide, what to expect back, when to prefer over core agents}`
+5. If multiple new agents are added in a single evolution, batch all entries into one edit operation
 
-No injection markers are used — the entry is added to the `<agent_pool>` list directly, following the pattern of existing entries. For supplementary agent positioning guidance, reference `<supplementary_agent_positioning>` in [generation.workflow.md](generation.workflow.md).
+No injection markers are used — entries are added to the `<agent_pool>` and `<delegation_rules>` lists directly, following the pattern of existing entries. For supplementary agent positioning guidance, reference `<supplementary_agent_positioning>` in [generation.workflow.md](generation.workflow.md).
 
 </brain_adaptation>
 
@@ -271,6 +272,7 @@ What @inspector checks after each phase. Each criterion is binary — PASS or FA
 - Modified artifacts maintain compatibility with existing orchestration patterns
 - Agents that previously referenced modified artifacts still function correctly
 - New agents appear in brain's agent pool (from `<brain_adaptation>`)
+- New agents appear in brain's delegation rules with routing guidance
 - @curator updates copilot-instructions.md workspace map if new paths were introduced
 
 </backward_compatibility>
