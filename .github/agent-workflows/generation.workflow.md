@@ -191,6 +191,7 @@ output/{projectName}/
 │   │   │   ├── SKILL.md
 │   │   │   ├── references/
 │   │   │   └── assets/
+│   │   ├── mermaid-diagramming/   # COPIED — plan visualization skill
 │   │   └── {domain-skill}/     # GENERATED — per interview findings
 │   │       └── SKILL.md
 │   ├── instructions/           # GENERATED — domain instructions
@@ -214,6 +215,7 @@ These are copied verbatim — no modifications:
 - **Evolution workflow** — copy `.github/agent-workflows/evolution.workflow.md` to `output/{projectName}/.github/agent-workflows/`. Enables artifact evolution in the output project
 - **Evolve prompt** — copy `.github/prompts/evolve.prompt.md` to `output/{projectName}/.github/prompts/`. Entry point for the evolution workflow
 - **Calibrate prompt** — copy `.github/prompts/calibrate.prompt.md` to `output/{projectName}/.github/prompts/`. Single-run prompt to align copilot-instructions.md with the target workspace
+- **Mermaid-diagramming skill** — copy `.github/skills/mermaid-diagramming/` directory (SKILL.md). Required by brain's `<phase_3_planning>` for B4 plan visualization
 
 </copy_rules>
 
@@ -305,7 +307,7 @@ Instructions for @brain when orchestrating artifact creation during generation. 
 
 Batch independent @builder spawns into parallel tool-call blocks. Never spawn them sequentially when they have non-overlapping file sets:
 
-1. **Phase 1** — Copy operations (core agents, artifact-creator skill, evolution workflow, evolve prompt, calibrate prompt) — these have no dependencies
+1. **Phase 1** — Copy operations (core agents, artifact-creator skill, mermaid-diagramming skill, evolution workflow, evolve prompt, calibrate prompt) — these have no dependencies
 2. **Phase 2** — Generate supplementary artifacts (agents, skills, instructions, prompts) — independent of each other, parallel within this phase
 3. **Phase 3** — Brain adaptation — inject supplementary agent entries into output brain's `<agent_pool>` and `<delegation_rules>`. Depends on Phase 2 supplementary agents being complete. Reference `<brain_adaptation>` for the procedure
 4. **Phase 4** — Generate copilot-instructions.md — depends on all artifacts from Phase 2 being complete (references them in workspace map and agent listing)
@@ -342,6 +344,7 @@ What @inspector checks for generated projects. Each criterion is binary — PASS
 - Output directory structure matches the `<directory_layout>` specification
 - All 6 core agents are present in `agents/core/`
 - Artifact-creator skill is present with all references and example assets
+- Mermaid-diagramming skill is present in `skills/`
 - Evolution workflow is present in `agent-workflows/`
 - Evolve prompt is present in `prompts/`
 - Calibrate prompt is present in `prompts/`
