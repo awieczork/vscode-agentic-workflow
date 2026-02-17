@@ -121,7 +121,7 @@ After all parallel @researcher spawns complete, run a merge checklist before fee
 - **Conflicts** — explicitly flag contradictions between sources (e.g., two libraries recommending incompatible auth patterns). Do not silently resolve conflicts; present both positions with context so @planner can make an informed decision
 - **Gap-fill** — if the checklist fails on any dimension, re-spawn targeted @researcher(s) with refined focus statements addressing the specific gap
 - **Source coverage table** — include a summary table in the synthesis: URL | Researcher Spawn | Key Findings (1-liner) — so nothing falls through the cracks
-- **Downstream output** — the merged synthesis feeds the problem_statement_template's `Research Findings` field, enriching what @planner and @builder receive for planning and implementation
+- **Downstream output** — the merged synthesis feeds the problem_statement_template's `Research Findings` field, enriching what @planner and @developer receive for planning and implementation
 
 </research_synthesis>
 
@@ -175,14 +175,12 @@ Generated projects are self-contained — a user copies the `.github/` folder in
 ```
 output/{projectName}/
 ├── .github/
-│   ├── agent-workflows/
-│   │   └── evolution.workflow.md  # COPIED — artifact evolution workflow
 │   ├── agents/
 │   │   ├── core/               # COPIED — all 6 core agents
 │   │   │   ├── brain.agent.md
 │   │   │   ├── researcher.agent.md
 │   │   │   ├── planner.agent.md
-│   │   │   ├── builder.agent.md
+│   │   │   ├── developer.agent.md
 │   │   │   ├── inspector.agent.md
 │   │   │   └── curator.agent.md
 │   │   └── {name}.agent.md     # GENERATED — supplementary agents (flat)
@@ -196,8 +194,6 @@ output/{projectName}/
 │   │       └── SKILL.md
 │   ├── instructions/           # GENERATED — domain instructions
 │   ├── prompts/
-│   │   ├── calibrate.prompt.md # COPIED — single-run workspace calibration
-│   │   ├── evolve.prompt.md    # COPIED — evolution entry point
 │   │   └── {domain}.prompt.md  # GENERATED — domain prompts
 │   └── copilot-instructions.md # GENERATED — project-specific workspace context
 └── README.md                   # GENERATED — human-friendly project guide
@@ -212,9 +208,6 @@ These are copied verbatim — no modifications:
 
 - **Core agents** — copy all 6 from `.github/agents/core/` to `output/{projectName}/.github/agents/core/`. Core agents are generic by design and work across any project
 - **Artifact-creator skill** — copy the entire `.github/skills/artifact-creator/` directory (SKILL.md, all references, all example assets). This enables the output project to create new artifacts post-generation
-- **Evolution workflow** — copy `.github/agent-workflows/evolution.workflow.md` to `output/{projectName}/.github/agent-workflows/`. Enables artifact evolution in the output project
-- **Evolve prompt** — copy `.github/prompts/evolve.prompt.md` to `output/{projectName}/.github/prompts/`. Entry point for the evolution workflow
-- **Calibrate prompt** — copy `.github/prompts/calibrate.prompt.md` to `output/{projectName}/.github/prompts/`. Single-run prompt to align copilot-instructions.md with the target workspace
 - **Mermaid-diagramming skill** — copy `.github/skills/mermaid-diagramming/` directory (SKILL.md). Required by brain's `<phase_3_planning>` for B4 plan visualization
 
 </copy_rules>
@@ -260,8 +253,8 @@ This file loads on every request — core agents read it and adapt their behavio
 
 Supplementary agents extend the core set. Each supplementary agent must be positioned relative to a core agent following the guidance in `body-patterns.md` → `<positioning>`:
 
-- Domain agents MUST follow `{domain}-{core-role}` naming — `{domain}` is the project domain (theme, python, security, api), `{core-role}` is the core agent being extended (planner, builder, inspector, researcher, curator). Examples: theme-builder, security-inspector, api-planner
-- Define the role relative to an existing core agent — a `@python-builder` replaces `@builder` for Python projects, a `@security-inspector` extends `@inspector` with security focus
+- Domain agents MUST follow `{domain}-{core-role}` naming — `{domain}` is the project domain (theme, python, security, api), `{core-role}` is the core agent being extended (planner, developer, inspector, researcher, curator). Examples: theme-developer, security-inspector, api-planner
+- Define the role relative to an existing core agent — a `@python-developer` replaces `@developer` for Python projects, a `@security-inspector` extends `@inspector` with security focus
 - Specify when @brain should prefer this agent over the core alternative — include selection criteria in identity prose
 - Follow the same interface patterns as the core agent being extended — status codes (`COMPLETE` | `BLOCKED`), session ID echo, output template structure — so @brain routes seamlessly
 - Supplementary agents never modify core agents — they provide alternative handoff targets that @brain selects based on task context
@@ -290,30 +283,30 @@ No injection markers are used — entries are added to the `<agent_pool>` and `<
 
 <build_directives>
 
-Instructions for @brain when orchestrating artifact creation during generation. @builder is stateless — it receives WHAT to create, never HOW.
+Instructions for @brain when orchestrating artifact creation during generation. @developer is stateless — it receives WHAT to create, never HOW.
 
 
 <handoff_pattern>
 
-- @builder uses the artifact-creator skill (`.github/skills/artifact-creator/SKILL.md`) for all artifact creation. The skill handles classify-then-specialize — @builder does not need type-specific creation instructions
-- Each artifact is a separate @builder handoff with clear scope: artifact type, purpose, domain context, and relevant interview findings
-- @builder receives the artifact-creator skill reference and the specific artifact requirements — the skill provides structure, conventions, and validation
-- After each @builder batch completes, @inspector verifies all created artifacts before @brain proceeds to the next batch
+- @developer uses the artifact-creator skill (`.github/skills/artifact-creator/SKILL.md`) for all artifact creation. The skill handles classify-then-specialize — @developer does not need type-specific creation instructions
+- Each artifact is a separate @developer handoff with clear scope: artifact type, purpose, domain context, and relevant interview findings
+- @developer receives the artifact-creator skill reference and the specific artifact requirements — the skill provides structure, conventions, and validation
+- After each @developer batch completes, @inspector verifies all created artifacts before @brain proceeds to the next batch
 
 </handoff_pattern>
 
 
 <parallel_execution>
 
-Batch independent @builder spawns into parallel tool-call blocks. Never spawn them sequentially when they have non-overlapping file sets:
+Batch independent @developer spawns into parallel tool-call blocks. Never spawn them sequentially when they have non-overlapping file sets:
 
-1. **Phase 1** — Copy operations (core agents, artifact-creator skill, mermaid-diagramming skill, evolution workflow, evolve prompt, calibrate prompt) — these have no dependencies
+1. **Phase 1** — Copy operations (core agents, artifact-creator skill, mermaid-diagramming skill) — these have no dependencies
 2. **Phase 2** — Generate supplementary artifacts (agents, skills, instructions, prompts) — independent of each other, parallel within this phase
 3. **Phase 3** — Brain adaptation — inject supplementary agent entries into output brain's `<agent_pool>` and `<delegation_rules>`. Depends on Phase 2 supplementary agents being complete. Reference `<brain_adaptation>` for the procedure
 4. **Phase 4** — Generate copilot-instructions.md — depends on all artifacts from Phase 2 being complete (references them in workspace map and agent listing)
 5. **Phase 5** — Generate README.md — depends on copilot-instructions.md and full artifact inventory
 
-@inspector runs after each phase. Findings route back through @brain for rework — @builder fixes only the flagged issues, then @inspector re-verifies.
+@inspector runs after each phase. Findings route back through @brain for rework — @developer fixes only the flagged issues, then @inspector re-verifies.
 
 </parallel_execution>
 
@@ -345,9 +338,6 @@ What @inspector checks for generated projects. Each criterion is binary — PASS
 - All 6 core agents are present in `agents/core/`
 - Artifact-creator skill is present with all references and example assets
 - Mermaid-diagramming skill is present in `skills/`
-- Evolution workflow is present in `agent-workflows/`
-- Evolve prompt is present in `prompts/`
-- Calibrate prompt is present in `prompts/`
 - No circular dependencies between generated artifacts
 - copilot-instructions.md workspace map covers project source directories and provides a compact summary of generated `.github/` infrastructure — not an exhaustive artifact listing
 - All cross-references between artifacts resolve to existing files
