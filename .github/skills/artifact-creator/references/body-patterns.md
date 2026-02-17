@@ -3,7 +3,7 @@ This file consolidates body structure patterns for all five VS Code Copilot cust
 
 <agent>
 
-Agent bodies follow a consistent convention observed across all core agents in `.github/agents/core/`. The body is a sequence of unmarked prose, bare bullet rules, a required `<workflow>` tag, domain-specific XML tags, and an output template. No fixed tag vocabulary exists — tags are named for the agent's domain.
+Agent bodies follow a consistent convention observed across all core agents. The body is a sequence of unmarked prose, bare bullet rules, a required `<workflow>` tag, domain-specific XML tags, and an output template. No fixed tag vocabulary exists — tags are named for the agent's domain.
 
 **Identity prose** — The body opens with 2-4 sentences of unmarked prose (no XML wrapper). First sentence declares the role in second person with an em-dash separator: "You are the X SUBAGENT — a [role description]." Second sentence states a governing principle: "Your governing principle: [single principle]." Optional third sentence expands scope or relationship to the orchestrator. Identity prose establishes personality and focus — keep it tight and declarative.
 
@@ -32,6 +32,16 @@ New agents extend the orchestrator's capabilities. When designing a new agent, f
 - Follow the same interface patterns as the core agent being extended — status codes (`COMPLETE` | `BLOCKED`), session ID echo, output template structure — so the orchestrator can route to it seamlessly
 - Think of agent creation as growing the orchestrator's agent pool — every new agent enables a new delegation path
 
+**Inheritance model** — Domain agents inherit the interface contract of the core agent they extend. The following elements are inherited by default and should only be overridden when the domain requires it:
+
+| Inherited element | Override when |
+|---|---|
+| Status codes (`COMPLETE` / `BLOCKED` / `PARTIAL`) | Never — orchestrator depends on these |
+| Session ID echo | Never — required for tracking |
+| Output template structure | Only to add domain-specific sections |
+| Workflow step format | Only when domain steps differ significantly |
+| Bullet constraint style | Only to add domain-specific constraints |
+
 </positioning>
 
 
@@ -53,7 +63,7 @@ New agents extend the orchestrator's capabilities. When designing a new agent, f
 
 Skill bodies follow a progressive-loading model: the SKILL.md file contains the core workflow, while supporting content lives in subfolders loaded on demand. The body shape is a prose intro, optional `<use_cases>`, a required `<workflow>` with numbered steps, optional `<error_handling>` and `<validation>`, and a `<resources>` listing.
 
-**Folder structure** — Every skill lives in `.github/skills/<skill-name>/` with a required SKILL.md at the root. Optional subfolders exist for progressive loading, not organization:
+**Folder structure** — Every skill lives in its own folder with a required SKILL.md at the root. Optional subfolders exist for progressive loading, not organization:
 
 - `references/` — JIT-loaded documentation exceeding 100 lines, decision rules, domain patterns that are not needed on every run
 - `assets/` — Templates, configuration files, example outputs, non-markdown resources
@@ -92,7 +102,7 @@ Prompt bodies are task-focused instructions — no identity, no personality, jus
 - Prose format for single-instruction prompts under ~20 lines — paragraphs with bullet lists
 - XML-structured for multi-section prompts over ~20 lines — ad-hoc tags (author's choice) separating context, task, and format sections. Common tag choices: `<context>`, `<task>`, `<format>`, `<constraints>`, `<examples>`
 
-**Heading** — The body typically starts with a heading that serves as the Quick Pick search label when users browse prompts. Make it verb-first and specific.
+**Opening line** — The body starts with a plain prose line (no `#` markdown heading) that VS Code uses as the Quick Pick label when users browse prompts. Make it verb-first and imperative — this is a label, not a heading.
 
 **Content flow** — Task description → scope and preconditions → workflow steps (if multi-step) → output expectations. Sentences are imperative and direct. No preambles like "You are an expert..." — state the task immediately.
 
@@ -146,27 +156,41 @@ Instruction bodies provide ambient constraints — rules that shape agent behavi
 
 <copilot_instructions>
 
-The project-level copilot-instructions.md file provides workspace-wide context applied to every agent request. It is concise, factual, and focused — every line costs tokens on every interaction.
+Project context, goals, and universal rules. Attached to every chat turn — every line must earn its token cost.
 
-**Typical sections** — Workspace map (directory listing with status markers — project source directories first, `.github/` agent infrastructure second), project context (overview, tech stack, naming conventions, key abstractions, testing strategy), project constraints (standard rules plus project-specific), decision making (priority framework), development commands (grouped by category), and environment context (runtime, package management, prerequisites). The workspace map must lead with actual project directories (`src/`, `test/`, `scripts/`, `dist/`, etc.) — these are what agents need to navigate code. Agent infrastructure entries (`.github/agents/`, `.github/skills/`, `.github/instructions/`) appear as a secondary group below a comment separator.
+**Core content** — Project overview prose (what it is, its goal, tech stack, key conventions) plus a rules section (behavioral constraints in imperative NEVER/ALWAYS form). These two concerns are the minimum viable file.
 
-**Structure** — Plain markdown with optional XML tags for organizing subsections. The workspace section uses a consistent entry format: `- \`{path}\` — {description} — \`{status}\``. Constraints include fixed standard rules that always appear plus project-specific additions. The decision-making section is typically fixed content — a priority hierarchy applied uniformly.
+**Optional content** — Development commands, environment info — include only when directly relevant to day-to-day agent work.
 
-**Conciseness** — This file loads on every request. Every section should earn its token cost. Placeholder entries use HTML comments (`<!-- TODO: ... -->`) to guide users without consuming agent tokens once filled. Prefer prose bullets over verbose explanations.
-
-**Agent listing** — Inline prose placed between content sections, not a standalone `<agents>` XML tag. Core agents get a single group-reference line: "Core agents (brain, researcher, planner, builder, inspector, curator) are defined in `.github/agents/core/`." Only supplementary or domain-specific agents get individual bullet entries with `@name` and a short description. Purpose is cross-agent awareness — agents understand who else exists without a dedicated section consuming tokens.
+**What does NOT belong** — Framework infrastructure paths, agent pool listings, or artifact authoring conventions. These are documented in their own files and should not consume tokens on every turn.
 
 
 <anti_patterns>
 
-- Verbose descriptions — every line costs tokens on every request. Prefer terse, factual entries
-- Stale workspace maps — directory listings that do not reflect current project structure
-- Missing standard rules — the three standard constraint rules must always appear verbatim
-- Duplicating agent definitions — reference agents by name, do not restate their full identity or capabilities
-- Environment-specific values — hardcoded paths, secrets, or machine-specific configuration
-- Standalone `<agents>` section — agent info belongs inline as bare prose and bullets, not in a dedicated XML tag that duplicates what the workspace map and agent files already provide
-- Infrastructure-heavy workspace maps — `.github/` internals dominating the workspace map or appearing without project source directories. Project directories (`src/`, `test/`, `scripts/`) must come first; `.github/` entries are secondary context
+- Verbose descriptions — every token loads on every request; prefer terse, factual entries
+- Stale or inaccurate content — outdated maps or rules that no longer reflect the project
+- Duplicating information documented elsewhere — agent definitions, skill details, or conventions already in dedicated files
+- Framework metadata — framework internals, artifact-type guidance, or orchestration details that don't help the project
+- Project-specific paths — absolute paths, drive letters, or workspace-specific prefixes that break portability across environments
 
 </anti_patterns>
 
 </copilot_instructions>
+
+
+<cross_agent_references>
+
+Not all artifact types should reference other agents by name. Cross-agent references (`@builder`, `@researcher`) create coupling between artifacts. Follow these rules per type:
+
+| Type | `@agent` references | Rationale |
+|------|---------------------|----------|
+| Agent (brain) | Allowed | The orchestrator references subagents for delegation routing |
+| Agent (other) | Never | Subagents focus on their own task — they do not need to know about other agents |
+| Skill | Never | Skills are reusable across agents — agent names reduce portability |
+| Prompt | Never | Prompts are user-facing commands — agent routing is the orchestrator's concern |
+| Instruction | Never | Instructions are ambient constraints — they should not assume an agent topology |
+| Copilot-instructions | Never | Project-level context should not embed framework-internal agent names |
+
+When any artifact (including non-brain agents) needs to describe delegation behavior, use role descriptions ("the orchestrator", "the implementing agent") instead of `@`-prefixed names. Only brain.agent.md may reference subagents by name.
+
+</cross_agent_references>

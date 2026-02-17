@@ -20,7 +20,7 @@ XML tags are the structural skeleton of every artifact. They replace markdown he
 
 **Platform-reserved tags** — the ONLY hard constraint. VS Code injects these into system prompts; never use them in authored artifacts — they cause collisions with the runtime environment:
 
-`<instructions>`, `<skills>`, `<modeInstructions>`, `<toolUseInstructions>`, `<communicationStyle>`, `<outputFormatting>`, `<repoMemory>`, `<reminderInstructions>`, `<workflowGuidance>`, `<agents>`
+`<instructions>`, `<skills>`, `<modeInstructions>`, `<toolUseInstructions>`, `<toolSearchInstructions>`, `<communicationStyle>`, `<outputFormatting>`, `<repoMemory>`, `<reminderInstructions>`, `<workflowGuidance>`, `<agents>`
 
 Exception: `<agents>` is permitted in `copilot-instructions.md` because VS Code wraps that file in `<attachment>` scope, avoiding collision with the platform-level `<agents>` tag.
 
@@ -96,6 +96,22 @@ Canonical terms prevent vocabulary drift across artifacts. Use only these terms 
 </glossary>
 
 
+<banned_patterns>
+
+Patterns that indicate portability or quality issues. Scan every artifact for these before delivery.
+
+| Pattern | Severity | Detail |
+|---|---|---|
+| Drive letters or absolute OS paths | P1 | `C:\`, `e:\`, `/home/`, `/Users/` — use relative paths only |
+| Bare `#tool:` references | P1 | Must be backticked (`` `#tool:search` ``) to prevent VS Code injection |
+| `@agent` outside brain | P2 | Cross-agent references belong only in brain.agent.md |
+| Hard-coded model names | P2 | `gpt-4`, `claude-3` — use capability descriptions instead |
+| Motivational or filler phrases | P3 | "Let's", "Great job", "Remember to" — state rules directly |
+| Temporal language | P3 | "currently", "recently", "new" — content becomes stale |
+
+</banned_patterns>
+
+
 <validation>
 
 Every artifact passes the same quality gates regardless of type. Fix all P1 and P2 issues before delivery. Flag P3 issues as suggestions.
@@ -104,6 +120,7 @@ Every artifact passes the same quality gates regardless of type. Fix all P1 and 
 
 | Check | Detail |
 |---|---|
+| Required fields | Required frontmatter fields present per type (`description` for agents, `name` + `description` for skills) |
 | Frontmatter format | All YAML string values single-quoted |
 | File extension | Matches artifact type (`.agent.md`, `SKILL.md`, `.prompt.md`, `.instructions.md`) |
 | No headings | Zero markdown headings in artifact body — XML tags only |
@@ -119,6 +136,8 @@ Every artifact passes the same quality gates regardless of type. Fix all P1 and 
 | No orphaned resources | Every file in subfolders referenced from parent file |
 | Descriptions | Frontmatter `description` field is keyword-rich and specific |
 | Naming consistency | Tag names follow snake_case; terms match `<glossary>` |
+| No project-specific paths | Paths must be relative — no drive letters, home directories, or workspace-specific prefixes (e.g., `e:\workspaces\...`, `/home/user/...`) |
+| No cross-agent references | Only brain.agent.md may reference other agents by name (`@builder`, `@researcher`). All other artifacts — including other agent files — must use role descriptions instead |
 
 **P3 — Polish** (apply during final review):
 
