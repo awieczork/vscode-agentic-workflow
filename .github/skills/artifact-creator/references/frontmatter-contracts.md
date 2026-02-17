@@ -50,7 +50,7 @@ Standalone tools (not in any set): `todo`, `renderMermaidDiagram`, `context7/*` 
 
 ```yaml
 ---
-name: 'builder'
+name: 'developer'
 description: 'Executes implementation tasks — produces working code and reports completion'
 tools: ['search', 'read', 'edit', 'execute', 'context7', 'web']
 user-invokable: false
@@ -148,7 +148,7 @@ Variables use `${name}` syntax — the dollar prefix is required.
 ---
 description: 'Scaffold a new REST endpoint with validation and error handling'
 name: 'new-endpoint'
-agent: 'builder'
+agent: 'developer'
 tools: ['edit', 'read', 'codebase']
 ---
 ```
@@ -213,9 +213,9 @@ applyTo: '**/*.ts'
 
 The project-level `copilot-instructions.md` file has no frontmatter — it is plain markdown, auto-applied to all chat requests.
 
-- **Location:** `.github/copilot-instructions.md`
+- **Location:** `copilot-instructions.md` in the project's GitHub configuration directory
 - **Discovery:** Automatic — VS Code attaches it to every chat request in the workspace
-- **Content:** Project context, conventions, constraints, and decision frameworks
+- **Content:** Project context, goals, and universal rules
 - **Structure:** Use XML tags for section organization, prose for project-specific rules
 
 </copilot_instructions>

@@ -29,7 +29,7 @@ Translate the planner's `plan_template` phases into diagram topology:
 - **`[sequential]` phase** — thick `==>|"Phase N"|` edge → agent node → task node(s) chained with `-->`
 - **`Files:` field** — second line of task node label: `["action description<br/>target/file.path"]:::task`
 - **`Depends on:` field** — edge from dependency's join bar or preceding task node
-- **`@inspector` gate** — always appears after the last build phase as a diamond node
+- **`@inspector` gate** — always appears after the last development phase as a diamond node
 - **`@curator` phase** — appears after inspector passes, before Done
 
 Only include agent nodes that are actually spawned — omit `@researcher` if no research phase exists, omit `@curator` if no curation phase.
@@ -46,7 +46,7 @@ Build the diagram using the B4 visual vocabulary. Every diagram follows this ske
 3. Place `(["@brain"]):::brain` at top
 4. Map each phase from `<step_1_map>` into nodes and edges
 5. Converge all phases at `{"@inspector<br/>verify"}:::gate`
-6. Add pass edge to Done (or @curator), dotted rework edge back to builder
+6. Add pass edge to Done (or @curator), dotted rework edge back to developer
 7. Close with `classDef` declarations and accessibility metadata
 
 Consult `<visual_vocabulary>` for node shapes, edge types, and the color palette.
@@ -72,31 +72,31 @@ config:
 ---
 flowchart TD
     accTitle: Implementation plan diagram
-    accDescr: Three-phase plan with parallel builders, sequential tasks, and inspection gate
+    accDescr: Three-phase plan with parallel developers, sequential tasks, and inspection gate
 
     brain(["@brain"]):::brain
 
     brain ==>|"Phase 1"| fork1@{ shape: fork, label: " " }
-    fork1 --> B1["@builder"]:::builder
-    fork1 --> B2["@builder"]:::builder
+    fork1 --> B1["@developer"]:::developer
+    fork1 --> B2["@developer"]:::developer
     B1 --> T1["create auth module<br/>src/auth/handler.ts"]:::task
     B2 --> T2["create session store<br/>src/auth/session.ts"]:::task
     T1 --> join1@{ shape: fork, label: " " }
     T2 --> join1
 
-    join1 ==>|"Phase 2"| B3["@builder"]:::builder
+    join1 ==>|"Phase 2"| B3["@developer"]:::developer
     B3 --> T3["wire middleware<br/>src/middleware/auth.ts"]:::task
 
-    T3 ==>|"Phase 3"| B4["@builder"]:::builder
+    T3 ==>|"Phase 3"| B4["@developer"]:::developer
     B4 --> T4["add integration tests<br/>tests/auth.test.ts"]:::task
 
     T4 ==> gate{"@inspector<br/>verify"}:::gate
     gate -->|"pass"| done(["Done"]):::done
-    gate -.->|"rework"| rework["re-spawn<br/>@builder"]:::rework
+    gate -.->|"rework"| rework["re-spawn<br/>@developer"]:::rework
     rework -.-> B3
 
     classDef brain fill:#008080,stroke:#66b2b2,color:#e0f0f0,stroke-width:2px
-    classDef builder fill:#005f5f,stroke:#66b2b2,color:#e0f0f0
+    classDef developer fill:#005f5f,stroke:#66b2b2,color:#e0f0f0
     classDef task fill:#0d3333,stroke:#4d9999,color:#b2d8d8
     classDef gate fill:#804000,stroke:#cc8040,color:#fff
     classDef done fill:#008060,stroke:#00a67a,color:#fff
@@ -145,14 +145,14 @@ Complete reference for the B4 plan diagram pattern — node shapes, edge types, 
 | Node | Syntax | Style class |
 |---|---|---|
 | Orchestrator | `(["@brain"]):::brain` | Stadium, teal primary |
-| Builder spawn | `["@builder"]:::builder` | Rectangle, dark teal |
+| Developer spawn | `["@developer"]:::developer` | Rectangle, dark teal |
 | Researcher spawn | `["@researcher"]:::researcher` | Rectangle, blue-teal |
 | Planner spawn | `["@planner"]:::planner` | Rectangle, teal-green |
 | Curator spawn | `["@curator"]:::curator` | Rectangle, muted teal |
 | Task | `["action<br/>target/file.md"]:::task` | Rectangle, deepest teal |
 | Inspection gate | `{"@inspector<br/>verify"}:::gate` | Diamond, burnt orange |
 | Completion | `(["Done"]):::done` | Stadium, green-teal |
-| Rework | `["re-spawn<br/>@builder"]:::rework` | Dashed rectangle, muted red |
+| Rework | `["re-spawn<br/>@developer"]:::rework` | Dashed rectangle, muted red |
 | Fork/join bar | `@{ shape: fork, label: " " }` | Default |
 | Spawned agent | `["@researcher"]:::spawned` | Dashed rectangle, dark teal (isolation) |
 
@@ -162,13 +162,13 @@ Complete reference for the B4 plan diagram pattern — node shapes, edge types, 
 |---|---|---|
 | Phase transition | `==>` or `==>\|"Phase N"\|` | Critical path, sequential flow between phases |
 | Agent-to-task | `-->` or `-->\|"label"\|` | Normal connections within a phase |
-| Rework loop | `-.->` or `-.->\|"rework"\|` | Feedback from inspector back to builder |
+| Rework loop | `-.->` or `-.->\|"rework"\|` | Feedback from inspector back to developer |
 
 **Color palette (teal monochrome from `#008080`):**
 
 ```
 classDef brain fill:#008080,stroke:#66b2b2,color:#e0f0f0,stroke-width:2px
-classDef builder fill:#005f5f,stroke:#66b2b2,color:#e0f0f0
+classDef developer fill:#005f5f,stroke:#66b2b2,color:#e0f0f0
 classDef researcher fill:#006080,stroke:#4d9999,color:#e0f0f0
 classDef planner fill:#005f6a,stroke:#4d9999,color:#e0f0f0
 classDef task fill:#0d3333,stroke:#4d9999,color:#b2d8d8
@@ -242,7 +242,7 @@ flowchart TD
 
     subgraph iso1 ["workspace research"]
         R1["@researcher"]:::researcher
-        T1["scan codebase patterns<br/>.github/agents/"]:::task
+        T1["scan codebase patterns<br/>src/agents/"]:::task
         R1 --> T1
     end
 
@@ -257,12 +257,12 @@ flowchart TD
     T1 --> join1@{ shape: fork, label: " " }
     T2 --> join1
 
-    join1 ==>|"Phase 2"| B1["@builder"]:::builder
+    join1 ==>|"Phase 2"| B1["@developer"]:::developer
     B1 --> T3["implement feature<br/>src/feature.ts"]:::task
 
     classDef brain fill:#008080,stroke:#66b2b2,color:#e0f0f0,stroke-width:2px
     classDef researcher fill:#006080,stroke:#4d9999,color:#e0f0f0
-    classDef builder fill:#005f5f,stroke:#66b2b2,color:#e0f0f0
+    classDef developer fill:#005f5f,stroke:#66b2b2,color:#e0f0f0
     classDef task fill:#0d3333,stroke:#4d9999,color:#b2d8d8
     style iso1 fill:#0a2626,stroke:#4d9999,stroke-width:2px,stroke-dasharray:5 5,color:#b2d8d8
     style iso2 fill:#0a2626,stroke:#4d9999,stroke-width:2px,stroke-dasharray:5 5,color:#b2d8d8
@@ -314,7 +314,7 @@ Every plan diagram must pass these checks before delivery.
 
 - Consistent node ID naming (short, descriptive)
 - Rework loop uses dotted edges (`-.->`) with `"rework"` label
-- Inspector gate converges all build phases before Done
+- Inspector gate converges all development phases before Done
 - Task nodes combine action + file: two lines separated by `<br/>`
 
 </validation>

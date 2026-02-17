@@ -22,8 +22,6 @@ XML tags are the structural skeleton of every artifact. They replace markdown he
 
 `<instructions>`, `<skills>`, `<modeInstructions>`, `<toolUseInstructions>`, `<toolSearchInstructions>`, `<communicationStyle>`, `<outputFormatting>`, `<repoMemory>`, `<reminderInstructions>`, `<workflowGuidance>`, `<agents>`
 
-Exception: `<agents>` is permitted in `copilot-instructions.md` because VS Code wraps that file in `<attachment>` scope, avoiding collision with the platform-level `<agents>` tag.
-
 </xml_tags>
 
 
@@ -137,7 +135,7 @@ Every artifact passes the same quality gates regardless of type. Fix all P1 and 
 | Descriptions | Frontmatter `description` field is keyword-rich and specific |
 | Naming consistency | Tag names follow snake_case; terms match `<glossary>` |
 | No project-specific paths | Paths must be relative — no drive letters, home directories, or workspace-specific prefixes (e.g., `e:\workspaces\...`, `/home/user/...`) |
-| No cross-agent references | Only brain.agent.md may reference other agents by name (`@builder`, `@researcher`). All other artifacts — including other agent files — must use role descriptions instead |
+| No cross-agent references | Only brain.agent.md may reference other agents by name (`@developer`, `@researcher`). All other artifacts — including other agent files — must use role descriptions instead |
 
 **P3 — Polish** (apply during final review):
 

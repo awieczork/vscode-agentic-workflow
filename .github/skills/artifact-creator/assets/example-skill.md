@@ -1,4 +1,3 @@
-```markdown
 ---
 name: 'api-scaffold'
 description: 'Scaffolds REST API endpoints with routing, validation, and error handling. Use when asked to "scaffold routes", "add endpoint", or "create controller". Produces route handlers, input validation middleware, and TypeScript types.'
@@ -117,4 +116,3 @@ Verify the scaffolded output:
 - [validation-schemas.md](./references/validation-schemas.md) — validation middleware patterns per framework. Load for `<step_3_create_routes>`
 
 </resources>
-```

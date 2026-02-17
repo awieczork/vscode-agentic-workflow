@@ -12,7 +12,7 @@ Agent bodies follow a consistent convention observed across all core agents. The
 **`<workflow>`** — Required. Opens with a prose paragraph describing the agent's execution model: stateless reception, what arrives in the spawn prompt, tool priority, and what to do when context is missing. Followed by numbered steps with bold names and em-dash descriptions:
 
 - Format: `1. **Verb** — What this step does`
-- Steps are domain-specific — parse, scan, execute, verify, report for a builder; parse, investigate, report for a researcher
+- Steps are domain-specific — parse, scan, execute, verify, report for a developer; parse, investigate, report for a researcher
 - Each step is 2-5 lines: what to do, what tools to use, what to produce
 - Include decision points inline: "If X, return BLOCKED" or "When Y, delegate to Z"
 
@@ -25,9 +25,9 @@ Agent bodies follow a consistent convention observed across all core agents. The
 
 New agents extend the orchestrator's capabilities. When designing a new agent, follow these positioning guidelines:
 
-**Naming convention** — Domain agents follow the `{domain}-{core-role}` pattern. The domain prefix describes the specialization; the suffix maps to the core agent role being extended. Examples: `theme-builder`, `security-inspector`, `api-planner`. This convention ensures the orchestrator can infer capability from the agent name.
+**Naming convention** — Domain agents follow the `{domain}-{core-role}` pattern. The domain prefix describes the specialization; the suffix maps to the core agent role being extended. Examples: `theme-developer`, `security-inspector`, `api-planner`. This convention ensures the orchestrator can infer capability from the agent name.
 
-- Define the agent's role relative to an existing core agent — a `@python-builder` replaces `@builder` for Python projects, a `@security-inspector` extends `@inspector` with security focus
+- Define the agent's role relative to an existing core agent — a `@python-developer` replaces `@developer` for Python projects, a `@security-inspector` extends `@inspector` with security focus
 - Specify when the orchestrator should prefer this agent over the core alternative — include selection criteria in the identity prose or guidelines
 - Follow the same interface patterns as the core agent being extended — status codes (`COMPLETE` | `BLOCKED`), session ID echo, output template structure — so the orchestrator can route to it seamlessly
 - Think of agent creation as growing the orchestrator's agent pool — every new agent enables a new delegation path
@@ -180,7 +180,7 @@ Project context, goals, and universal rules. Attached to every chat turn — eve
 
 <cross_agent_references>
 
-Not all artifact types should reference other agents by name. Cross-agent references (`@builder`, `@researcher`) create coupling between artifacts. Follow these rules per type:
+Not all artifact types should reference other agents by name. Cross-agent references (`@developer`, `@researcher`) create coupling between artifacts. Follow these rules per type:
 
 | Type | `@agent` references | Rationale |
 |------|---------------------|----------|

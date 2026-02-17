@@ -1,6 +1,5 @@
-```markdown
-<!-- description targets discovery; agent field targets this prompt to a specific agent; argument-hint provides UI guidance -->
 ---
+# description targets discovery; agent field targets this prompt to a specific agent; argument-hint provides UI guidance
 description: 'Generate comprehensive test cases for selected code'
 agent: 'test-engineer'
 argument-hint: 'Select the code you want to generate tests for'
@@ -11,7 +10,7 @@ Generate comprehensive test cases for the provided code.
 
 Analyze the selected code: ${selection}
 
-Review existing test patterns using #tool:search to find similar test files in the codebase.
+Review existing test patterns using `#tool:search` to find similar test files in the codebase.
 
 Reference the project testing conventions: [testing-guide.md](../docs/testing-guide.md)
 
@@ -36,4 +35,3 @@ Generate test cases that cover:
 - Include setup and teardown when shared state is needed
 
 </format>
-```
