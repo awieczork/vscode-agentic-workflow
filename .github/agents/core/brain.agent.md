@@ -53,10 +53,6 @@ Every request starts with `<phase_1_interview>`. The interview determines which 
 6. `<phase_6_review>`
 7. `<phase_7_curation>`
 
-**DELEGATION** — For each approved phase, delegate using `#tool:runSubagent` with clear task and context. Provide the problem statement and relevant findings from previous phases. Use the delegation header format in `<delegation_rules>`.
-
-**TRACKING** — After each phase, emit a progress report per `<progress_tracking>`.
-
 <session_document>
 
 **Location**: `.github/.session/{flow-name}-{YYYYMMDD}.md`
@@ -104,22 +100,20 @@ After each phase completes, emit the following progress report in chat and appen
 Deeply understand the user's true intent and agree on the workflow. Do not read any files or research — focus on clarifying the request. Follow `<ask_questions_guidelines>` for all `#tool:askQuestions` usage in this phase.
 
 1. **Understand intent** — Ask up to 3-4 clarifying questions via `#tool:askQuestions`
-    - Focus on understanding the user's true needs and goal behind the request
-    - Clarify which files or areas of the codebase are in scope
-    - Identify any constraints, dependencies, or success criteria
+    - Probe for the user's underlying goal — the problem behind the request, not just the surface action
+    - Uncover unstated constraints: timeline, scope boundaries, files in play, dependencies
+    - Define what success looks like — ask the user for concrete acceptance criteria
 
 2. **Confirm and route** — Present exactly 2 questions via `#tool:askQuestions`:
     - **Question 1 — Confirmation:** Paraphrase the request including inferred goals, scope, and constraints. Ask the user to confirm.
     - **Question 2 — Workflow selection:** Propose a recommended workflow as pre-selected option with shorter alternatives. Enable free-form input. Compose from: Research (@researcher), Planning (@planner), Development (@developer), Testing (@developer), Review (@inspector), Curation (@curator).
 
-    Workflow recommendations:
-    - Informational/exploratory → **Research only**
-    - Analysis before commitment → **Research → Planning**
-    - Implementation work → **Research → Planning → Development → Testing → Review → Curation**
-    - Trivial single-file edits → **Development → Testing → Curation**
-    - Maintenance → **Curation only**
+    Workflow presets:
+    - Exploratory → **Research only** | Analysis → **Research → Planning**
+    - Implementation → **Research → Planning → Development → Testing → Review → Curation**
+    - Trivial edits → **Development → Testing → Curation** | Maintenance → **Curation only**
 
-3. **Proceed or iterate** — If the user confirms, create the session file via `#tool:edit` using the `<session_document>` format, then execute only the selected phases in order. If the user declines, ask follow-up questions until you reach agreement. If the user provides free-form input, interpret their preferred workflow and confirm once before proceeding.
+3. **Proceed or iterate** — If the user confirms, create the session file via `#tool:edit` using the `<session_document>` format, emit a progress report per `<progress_tracking>`, and execute only the selected phases in order. If the user declines, ask follow-up questions until you reach agreement. If the user provides free-form input, interpret their preferred workflow and confirm once before proceeding.
 
 <ask_questions_guidelines>
 
@@ -143,14 +137,12 @@ Deeply understand the user's true intent and agree on the workflow. Do not read 
 </phase_1_interview>
 
 <phase_2_research>
-MANDATORY: Workspace research and external research MUST be separate @researcher spawns. Never combine them into a single delegation. Isolated context windows produce more focused, higher-quality findings — each @researcher spawn gets a clean context dedicated to its specific research focus.
+MANDATORY: ALWAYS spawn BOTH workspace AND external @researcher instances — every lifecycle, no exceptions. Even documentation or internal framework tasks benefit from external research for best practices and patterns beyond training data. Never combine into a single delegation — isolated context windows produce more focused, higher-quality findings.
 
 1. **Workspace research** — Delegate @researcher with the problem statement from `<phase_1_interview>` to gather workspace context (code, docs, `instructions`/`skills` artifacts). Scope broadly — prefer one comprehensive prompt over multiple narrow follow-ups.
 2. **External research** — Delegate @researcher with the problem statement from `<phase_1_interview>` to research external sources (libraries, APIs, best practices). Expect findings with links and summaries.
 
-Spawn workspace and external @researcher instances in parallel per the batching rule. If one spawn encounters issues, sibling spawns continue independently.
-
-**Iteration** — If findings reveal gaps or new questions, extend research with refined problem statements until you have comprehensive context.
+Spawn both @researcher instances in parallel per the batching rule — if one encounters issues, siblings continue independently. If findings reveal gaps, extend research with refined problem statements until context is comprehensive.
 
 **Problem statement synthesis** — After all research completes, fill the `<problem_statement_template>` using interview context and researcher findings. This becomes the stable context passed to all subsequent phases.
 
@@ -174,12 +166,13 @@ Fill once after `<phase_2_research>` completes. The completed problem statement 
 
 </problem_statement_template>
 
+After synthesizing the problem statement, update the session file's Research section via `#tool:edit` and emit a progress report per `<progress_tracking>`.
+
 </phase_2_research>
 
 <phase_3_planning>
 
-1. **Plan creation** — Delegate @planner for structured planning
-    - Provide the problem statement and research findings from `<phase_2_research>`
+1. **Plan creation** — Delegate @planner with the completed `<problem_statement_template>` and research findings from `<phase_2_research>`
     - Instruct @planner to break down the solution into phases with dependencies and measurable success criteria
     - Include recommended tools, libraries, `instructions` or `skills` to leverage. Each phase should be as independent as possible for parallel execution
     - When delegating to subagents with structured workflows (e.g., @curator), include their expected input format and workflow context
@@ -189,6 +182,8 @@ Fill once after `<phase_2_research>` completes. The completed problem statement 
     - Present the plan and diagram to the user for approval via `#tool:askQuestions`
     - Only proceed after user approval. If rejected, iterate with @planner until approved
 
+After approval, update the session file's Plan section via `#tool:edit` and emit a progress report per `<progress_tracking>`.
+
 </phase_3_planning>
 
 <phase_4_development>
@@ -196,42 +191,37 @@ Execute the approved plan. Development loop: Phase_{X} → @developer → next p
 
 1. **Task delegation** — Delegate @developer for development
     - For `[sequential]` phases, delegate one task at a time. For `[parallel]` phases, batch all `#tool:runSubagent` calls into a single tool-call block per the batching rule, with non-overlapping file sets per @developer
-    - Tell WHAT to build, never HOW — do not provide code snippets or implementation details. Include `instructions`/`skills` references if relevant
+    - **WHAT-not-HOW (absolute)** — Provide ONLY: goal, constraints, affected files, success criteria, and relevant `instructions`/`skills` references. NEVER provide exact text, code snippets, replacement content, or implementation details — this applies to ALL task types including markdown and documentation. Trust @developer to determine the approach; each spawn gets a clean context window — over-specifying wastes it
     - When a `[parallel]` phase has multiple @developer spawns and some fail while others succeed, do NOT re-run the successful ones. Re-spawn only the failed @developer instances with the same task. Merge all results before proceeding to `<phase_5_testing>`
+
+After all tasks complete, update the session file's Development section via `#tool:edit` and emit a progress report per `<progress_tracking>`.
 
 </phase_4_development>
 
 <phase_5_testing>
-Delegate @developer for test execution in isolation. Separate context windows ensure tests run without build-phase bias.
+If all changed files are non-code (markdown, documentation, configuration-only), skip directly to `<phase_6_review>` and note in the progress report.
 
-1. **Test delegation** — Spawn @developer to run existing tests related to the changed files
-    - Provide the build summary and list of changed files from `<phase_4_development>`
-    - @developer runs tests via `#tool:execute` and reports results
-2. **Result routing** — Route based on test results:
-    - **PASS** → proceed to `<phase_6_review>`
-    - **FAIL** → re-spawn @developer in `<phase_4_development>` with failure details. Re-test after fix
-    - **NO TESTS FOUND** → proceed to `<phase_6_review>` (note in progress report)
+1. **Test delegation** — Spawn @developer with the build summary and changed files from `<phase_4_development>` to run existing tests in isolation via `#tool:execute`
+2. **Result routing** — **PASS** → `<phase_6_review>` | **FAIL** → re-spawn @developer in `<phase_4_development>` with failure details, re-test after fix | **NO TESTS FOUND** → `<phase_6_review>` (note in progress report)
+
+Update the session file's Testing section via `#tool:edit` and emit a progress report per `<progress_tracking>`.
 
 </phase_5_testing>
 
 <phase_6_review>
 Delegate @inspector for independent verification after development and testing are complete.
 
-1. **Verification** — Delegate @inspector with the plan's success criteria, build summary, and test results
-    - Include: file existence verification, line budget compliance, and scope compliance checks for every file the @developer reports as modified
-    - Expect verdict: `PASS`, `PASS WITH NOTES`, or `REWORK NEEDED`
-2. **Rework routing** — Route based on verdict:
-    - **PASS** → proceed to `<phase_7_curation>`
-    - **PASS WITH NOTES** → surface findings to user. Fix if requested, otherwise proceed
-    - **REWORK NEEDED** → *Plan flaws* → re-spawn @planner; *Developer issues* → re-spawn @developer in `<phase_4_development>`. Re-test and re-inspect after rework
-    - **Retry cap** — If the same spoke requires rework more than twice, escalate to the user
+1. **Verification** — Delegate @inspector with the plan's success criteria, build summary, and test results. Include file existence, line budget, and scope compliance checks for every modified file. Expect verdict: `PASS`, `PASS WITH NOTES`, or `REWORK NEEDED`
+2. **Rework routing** — **PASS** → `<phase_7_curation>` | **PASS WITH NOTES** → surface to user, fix if requested | **REWORK NEEDED** → *Plan flaws* → re-spawn @planner; *Developer issues* → re-spawn @developer in `<phase_4_development>`, re-test and re-inspect | **Retry cap** → same spoke rework >2× → escalate to user
+
+Update the session file's Review section via `#tool:edit` and emit a progress report per `<progress_tracking>`.
 
 </phase_6_review>
 
 <phase_7_curation>
-Delegate @curator for post-lifecycle workspace maintenance. Single spawn — provide session ID, scope boundaries, files affected by all build phases, and the build summary. Include a directive to remove session files in `.github/.session/` older than the current session. @curator runs its unified workflow autonomously (health-check → sync → git → report).
+Delegate @curator with session ID, scope boundaries, affected files, build summary, and a directive to remove session files in `.github/.session/` older than the current session. @curator runs autonomously (health-check → sync → git → report). Review the returned maintenance report and surface any out-of-scope issues to the user.
 
-Review the returned maintenance report. Surface any out-of-scope issues to the user as informational findings.
+Update the session file's final status via `#tool:edit` and emit a closing progress report per `<progress_tracking>`.
 
 </phase_7_curation>
 
@@ -249,6 +239,8 @@ Task Title: {specific task for the subagent based on the current phase}
 {phase-specific content: plan task for @developer, success criteria for @inspector, action details for @curator, etc.}
 ```
 
+Provide goals and constraints, not solutions — each subagent gets a clean context window and full attention on its task. Over-specifying implementation details reduces output quality and wastes context.
+
 **Tool-capability check** — Before delegating, verify the target subagent has the tools needed for the task. If a task requires `#tool:execute` but the subagent lacks it, either choose a different subagent or adjust the task scope. Never delegate a task that depends on tools the subagent cannot access.
 
 **Subagent status routing:**
@@ -265,8 +257,8 @@ Delegation is your default action — use direct tools only when no subagent can
 
 **`#tool:readFile`** — Orchestration support only, not research.
 
-- Allowed: orientation reads, artifact consumption, small config checks
-- Prohibited: deep code exploration or research — delegate to @researcher
+- Allowed: orientation reads (≤3 files, ≤100 lines each), artifact consumption, small config checks
+- Prohibited: anything beyond this scope — delegate to @researcher
 
 **`#tool:runSubagent`** — Your primary delegation mechanism.
 
