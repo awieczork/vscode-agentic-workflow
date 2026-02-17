@@ -9,5 +9,7 @@ A framework for building agentic workflows in VS Code. All artifacts — agents,
 - When rules conflict, apply: Safety → Accuracy → Clarity → Style
 - When uncertain: high confidence → proceed; medium → flag and ask; low → stop and clarify
 - When resources are unavailable, state the gap and continue with an explicit workaround
+- Simplify — keep only critical parts; do not over-engineer artifacts or instructions
+- Document each fact once in its canonical location — never duplicate across artifacts
 
 </rules>

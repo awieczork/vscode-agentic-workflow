@@ -86,6 +86,7 @@ Skill bodies follow a progressive-loading model: the SKILL.md file contains the 
 - Orphaned resources — files in subfolders not referenced from any step in SKILL.md
 - Reference chains — reference files linking to other reference files instead of back to SKILL.md
 - Vague descriptions — "A helpful skill" does not enable discovery. Use verb-first, specific language
+- External dependencies — referencing content outside the skill's own folder; a skill must be fully self-contained so any agent can use it
 - Bundling always-on rules — use custom instructions for conventions that apply to most work, not a skill
 
 </anti_patterns>
