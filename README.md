@@ -26,7 +26,10 @@ This repository defines a reusable orchestration model for AI-powered developmen
 │   ├── patterns.md                    — 17 design patterns for agent artifacts
 │   ├── agents/                        — Domain-specialized agents
 │   └── skills/
-│       └── agent-creator/             — Skill for creating domain-expert agents
+│       ├── agent-creator/             — Skill for creating domain-expert agents
+│       ├── copilot-instructions-creator/ — Skill for creating copilot-instructions.md
+│       ├── instruction-creator/       — Skill for creating .instructions.md files
+│       └── skill-creator/             — Skill for creating new skills
 └── legacy/                            — Deprecated artifacts pending rewrite
 ```
 
@@ -60,7 +63,11 @@ Project-specific development area containing:
 
 - **`patterns.md`** — 17 design patterns distilled from agent artifact iterations.
 - **`agents/`** — Domain-specialized agents. `python-developer.agent.md` serves as an exemplar.
-- **`skills/agent-creator/`** — Skill for building new domain-expert agents. Follows the standard skill format: `SKILL.md` + `references/` + `assets/`, with progressive loading and self-contained references.
+- **`skills/`** — Artifact-creator skills, each following the standard format: `SKILL.md` + `references/` + `assets/`, with progressive loading and self-contained references.
+  - `agent-creator/` — Creates domain-expert `.agent.md` files
+  - `copilot-instructions-creator/` — Creates the singleton `.github/copilot-instructions.md`
+  - `instruction-creator/` — Creates scoped `.instructions.md` files
+  - `skill-creator/` — Creates new skills with `SKILL.md` workflows
 
 ## legacy/
 
