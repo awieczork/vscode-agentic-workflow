@@ -1,44 +1,67 @@
 # VS Code Agentic Workflow Framework
 
-A framework for generating AI agent systems in VS Code using a hub-and-spoke orchestration pattern.
+A framework for building agentic workflows in VS Code. All artifacts — agents, skills, prompts, and instructions — are written for AI agents to execute.
 
 ## What is this
 
-This repository contains reusable agents, workflows, skills, and prompt templates that produce complete `.github/` configurations for any project. You describe your project; the framework interviews you and generates a tailored set of AI agents, skills, instructions, and prompts — all executable by GitHub Copilot in VS Code.
+This repository defines a reusable orchestration model for AI-powered development workflows. Six core agents form the backbone; domain-expert agents extend them for specific contexts. The framework ships patterns, skills, and exemplars for creating new agent artifacts.
 
 ## Repository structure
 
 ```
-.github/
-├── agents/core/             — 6 core agents (brain, researcher, planner, developer, inspector, curator)
-├── agent-workflows/         — Workflow orchestrations (generation)
-├── instructions/            — Path-specific instruction files (reserved)
-├── prompts/                 — One-shot prompt templates (init-project)
-├── skills/artifact-creator/ — Unified skill for creating all artifact types
-└── copilot-instructions.md  — Workspace-level AI context
+├── .github/
+│   ├── copilot-instructions.md        — Framework-level rules for all agents
+│   ├── agents/
+│   │   └── core/                      — Living copies of core agents (changes happen here)
+│   │       ├── brain.agent.md         — Orchestrator
+│   │       ├── curator.agent.md       — Workspace maintenance
+│   │       ├── developer.agent.md     — Implementation
+│   │       ├── inspector.agent.md     — Quality verification
+│   │       ├── planner.agent.md       — Problem decomposition
+│   │       └── researcher.agent.md    — Deep research
+│   └── .session/                      — Ephemeral session files (gitignored)
+├── core-model/
+│   └── core-agents/                   — Source-of-truth copies of core agents
+├── github-dev/
+│   ├── patterns.md                    — 17 design patterns for agent artifacts
+│   ├── agents/                        — Domain-specialized agents
+│   └── skills/
+│       └── agent-creator/             — Skill for creating domain-expert agents
+└── legacy/                            — Deprecated artifacts pending rewrite
 ```
 
-## Quick start
+## Core model
 
-Three workflows, each triggered by running a prompt template in VS Code Copilot Chat:
-
-| Workflow | Prompt file | What it does |
-|---|---|---|
-| **Generate** | `init-project.prompt.md` | Fill the seed (name, tech, goal) and run — starts an expert interview that produces a full `.github/` agent setup for your project |
-
-## Agents
-
-Hub-and-spoke model — `@brain` receives all requests and delegates to specialized subagents:
+Six agents form the orchestration backbone:
 
 | Agent | Role |
 |---|---|
-| `@brain` | Central orchestrator — routes tasks, tracks session state |
-| `@researcher` | Deep research and source synthesis on focused topics |
+| `@brain` | Central orchestrator — routes tasks, delegates to specialists |
+| `@researcher` | Deep research and source synthesis |
 | `@planner` | Decomposes problems into phased, dependency-verified plans |
 | `@developer` | Executes implementation tasks, produces working code |
 | `@inspector` | Final quality gate — verifies against plan and standards |
 | `@curator` | Workspace maintenance — docs sync, git commits, cleanup |
 
-## Output
+`@brain` orchestrates by delegating to specialist agents. Domain-expert agents (like `python-developer`) extend core roles for specific domains.
 
-Generated artifacts are written to `output/{projectName}/.github/` and are self-contained — copy the `.github/` folder into your target project and you're ready to go.
+## Development workflow
+
+Core agents exist in two locations:
+
+- **`core-model/core-agents/`** — Source of truth. Canonical definitions live here.
+- **`.github/agents/core/`** — Living copies where active development happens.
+
+Changes are made in `.github/agents/core/` first, then deployed back to `core-model/` once stable. This lets agents be tested in-place before promoting to the canonical source.
+
+## github-dev/
+
+Project-specific development area containing:
+
+- **`patterns.md`** — 17 design patterns distilled from agent artifact iterations.
+- **`agents/`** — Domain-specialized agents. `python-developer.agent.md` serves as an exemplar.
+- **`skills/agent-creator/`** — Skill for building new domain-expert agents. Follows the standard skill format: `SKILL.md` + `references/` + `assets/`, with progressive loading and self-contained references.
+
+## legacy/
+
+Contains deprecated artifacts from prior architecture iterations. Per `copilot-instructions.md`, these are marked as **"pending full rewrite — treat as outdated and unsupported."** Kept for reference during rewrites only.
