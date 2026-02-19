@@ -157,7 +157,7 @@ The session file is your sole persistent memory across context compaction. Your 
 
 1. **Brain identity** — Match your `sessionId` against `session_id` in frontmatter to confirm you are brain (not a subagent). After compaction, read frontmatter FIRST to recover phase, workflow, and task state
 2. **Subagent context** — The Problem Statement section feeds every delegation header; the Files Changed manifest feeds @inspector and @curator
-3. **Audit trail** — Rework cycles, routing decisions, and verdicts are recorded so you can enforce the retry cap and avoid repeating failed approaches
+3. **Audit trail** — Rework cycles, routing decisions, verdicts, and self-reflections are recorded so you can enforce the retry cap, avoid repeating failed approaches, and learn from each phase transition
 
 Update the session file after EVERY phase transition. When your context feels incomplete or you cannot recall a prior decision, read the session file before proceeding.
 
@@ -188,46 +188,54 @@ workflow: {selected phases as comma-separated list}
 task: {short description of current task}
 ---
 
+## Reflection
+
+### After {phase_name}
+- What went well: {decisions, delegations, or patterns that worked}
+- What went wrong: {missteps, wasted cycles, or missed context}
+- What to do differently next time: {actionable improvements for future sessions}
+- Open risks: {anything unresolved that could affect later phases}
+
 ## Interview
-Goal: {one-sentence user goal}
-Scope: {files and areas in play}
-Boundaries: {what is explicitly out of scope}
-Constraints: {technical, style, or process constraints}
-Success criteria: {what done looks like — measurable}
+- Goal: {one-sentence user goal}
+- Scope: {files and areas in play}
+- Boundaries: {what is explicitly out of scope}
+- Constraints: {technical, style, or process constraints}
+- Success criteria: {what done looks like — measurable}
 
 ## Research
-Problem statement: {completed problem_statement_template — the stable context passed to all subsequent delegations}
-Key findings: {summarized with file paths and external links}
+- Problem statement: {completed problem_statement_template — the stable context passed to all subsequent delegations}
+- Key findings: {summarized with file paths and external links}
 
 ## Plan
-Overview: {high-level approach in one sentence}
-Phases: {numbered list with [parallel]/[sequential] markers and task counts}
-Dependencies: {critical dependency chain or "none"}
+- Overview: {high-level approach in one sentence}
+- Phases: {numbered list with [parallel]/[sequential] markers and task counts}
+- Dependencies: {critical dependency chain or "none"}
 
 ## Diagram
 Base source: {Mermaid source code from initial plan visualization — updated with phase statuses at each transition}
 
 ## Development
-Files changed: {manifest — created, modified, deleted}
-Phase {N} ({status}): {build summary per plan phase}
+- Files changed: {manifest — created, modified, deleted}
+- Phase {N} ({status}): {build summary per plan phase}
 
 ## Testing
-Result: {PASS | FAIL | SKIPPED | NO TESTS}
-Details: {failure specifics, skip reason, or test count}
+- Result: {PASS | FAIL | SKIPPED | NO TESTS}
+- Details: {failure specifics, skip reason, or test count}
 
 ## Review
-Verdict: {PASS | PASS WITH NOTES | REWORK NEEDED}
-Findings: {key findings summary}
-Rework log: {for each cycle — iteration number, root cause classification, action taken, outcome}
+- Verdict: {PASS | PASS WITH NOTES | REWORK NEEDED}
+- Findings: {key findings summary}
+- Rework log: {for each cycle — iteration number, root cause classification, action taken, outcome}
 
 ### Iteration {N}
-Root cause: {classification}
-Action: {what was done}
-Outcome: {result}
+- Root cause: {classification}
+- Action: {what was done}
+- Outcome: {result}
 
 ## Curation
-Commit: {hash and message}
-Cleanup: {session files removed, docs synced}
+- Commit: {hash and message}
+- Cleanup: {session files removed, docs synced}
 ```
 
 </session_document>
