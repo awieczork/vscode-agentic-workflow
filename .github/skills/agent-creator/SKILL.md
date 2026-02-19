@@ -3,98 +3,102 @@ name: 'agent-creator'
 description: 'Guides creation of domain-specialized .agent.md files by extending one of the five core roles (developer, researcher, planner, inspector, curator). Use when asked to "create an agent", "build a domain agent", "make a specialized agent", or "extend a core role" (e.g., python-developer, security-researcher, api-planner). The result is a complete .agent.md file with frontmatter, identity prose, constraint bullets, workflow steps, and output template.'
 ---
 
-Follow these steps to create a domain-specialized agent by extending one of the five core roles. The governing principle is exemplar-driven specialization — study what works, then replicate the pattern for a new domain. Begin with `<step_1_understand>` to capture intent and validate inputs.
+Follow these steps to create a domain subagent by inheriting a core role and specializing it for a domain. The governing principle is role-based inheritance — each core role defines a structural baseline (step names, constraint layers, output template) that the domain agent inherits and extends with domain-specific expertise. The five core roles are: developer, researcher, planner, inspector, curator. Begin with `<step_1_understand>` to capture intent and load the target role's baseline.
 
 
 <use_cases>
 
-- Build a Python-specialized developer agent
-- Create a security-focused researcher for vulnerability analysis
-- Extend the inspector role for API contract validation
-- Add a docs-specialized developer for documentation projects
+- "Create a python-developer agent" — extend developer for Python projects
+- "Build a security-researcher" — extend researcher for vulnerability analysis
+- "Make an api-planner agent" — extend planner for API design workflows
+- "Extend the inspector for accessibility" — specialize inspector for a11y audits
+- "Create a docs-curator agent" — extend curator for documentation governance
 
 </use_cases>
 
 
 <workflow>
 
-Execute steps sequentially. Each step builds on the previous — intent determines the base agent, the base and exemplar inform structure, the spec governs content, generation produces the file, and validation confirms delivery readiness.
+Execute steps sequentially. Each step builds on the previous — intent selects the core role, the role baseline defines inherited structure, the spec governs specialization, generation writes the file, and validation confirms delivery readiness.
 
 
 <step_1_understand>
 
-Capture the user's intent and validate inputs.
+Capture the user's intent and load the target role's structural baseline.
 
 - Determine the **domain name** — the specialization prefix (e.g., `python`, `security`, `api`, `webapp`, `docs`)
 - Determine the **core role** to extend — must be one of: `developer`, `researcher`, `planner`, `inspector`, `curator`
-- If the specified role is not one of the 5 archetypes, stop and report the error (see `<error_handling>`)
-- Determine the **tool set** — default is to inherit tools from the target core agent. Load [role-frontmatters.md](references/role-frontmatters.md) for the baseline frontmatter of the target role. Note any domain-specific tool additions the user requests
+- If the specified role is not one of the 5 core roles, stop and report the error (see `<error_handling>`)
+- Load [references/roles/{role}.md](references/roles/) for the target role — this provides the frontmatter baseline, workflow step names, constraint layers, output template shape, and inheritance guidance. Only the target role's file is loaded (progressive loading).
 - Created agents are always **subagent-only** (`user-invokable: false`) — never include user-interaction patterns, handoffs, or orchestration affordances
+- Note any domain-specific tool additions the user requests — tools default to the core role's baseline set
 - If the user provides insufficient domain context to proceed, ask for clarification before continuing
 
-**Output of this step:** domain name, target core role, tool set (inherited + additions if any), any domain-specific context the user provided.
+**Output of this step:** domain name, target core role, inherited baseline (from role file), tool set (inherited + additions if any), domain-specific context.
 
 </step_1_understand>
 
 
 <step_2_study>
 
-Study the base agent and the gold-reference exemplar to understand what needs specialization and what structural patterns to follow.
+Study the exemplar and base agent to understand how inheritance produces a domain agent.
 
-- If available in the workspace, search for the target core agent file (`{role}.agent.md`) and read it to observe its identity prose, constraint structure, workflow shape, output template, and tool set. If not available, proceed using the structural specification in [agent-spec.md](references/agent-spec.md) which contains all necessary patterns.
-- Load [exemplar.md](assets/exemplar.md) — study the embedded gold-reference agent and its annotations to understand how a domain agent differs from its core counterpart
-- Identify what sections need domain specialization:
-  - Identity prose: domain character voice
-  - Constraint bullets: domain-specific NEVER/ALWAYS rules
-  - Workflow: domain vocabulary and domain-specific sub-actions
-  - Output template: domain-specific fields
-  - Domain XML tags: only if the domain has structurally distinct content
+- If available in the workspace, search for the target core agent file (`{role}.agent.md`) and read it to observe how the baseline manifests in practice — identity prose, constraint structure, workflow, output template, and tool set. If not available, proceed using the role baseline loaded in step 1 and the structural specification.
+- Load [exemplar.md](assets/exemplar.md) — study the gold-reference agent and its annotations to see how a domain agent inherits its core role's structure while rewriting identity and specializing constraints
+- Identify what gets inherited vs. rewritten:
+  - **Inherited (immutable):** workflow step names and ordering, output template base fields, hygiene and project constraint layers
+  - **Specialized:** domain constraint layer (NEVER/ALWAYS rules unique to the domain), workflow sub-actions and domain vocabulary, domain-specific output fields
+  - **Rewritten:** identity prose — the domain agent gets its own character voice, not a copy
 
 </step_2_study>
 
 
 <step_3_plan>
 
-Apply the structural specification to plan the new agent's content.
+Apply the structural specification to plan how the inherited baseline gets specialized.
 
-Load [agent-spec.md](references/agent-spec.md) and apply each section:
+Load [agent-spec.md](references/agent-spec.md) and apply each section using the role baseline from step 1:
 
-- **Frontmatter** — Plan the YAML header using the field spec and [role-frontmatters.md](references/role-frontmatters.md) for the baseline. File name follows `{domain}-{core-role}.agent.md`. The `name` field matches `{domain}-{core-role}`. The `description` uses one em-dash sentence stating what the agent delivers. Tools default to the core agent's tool set unless the domain requires additions or restrictions. `user-invokable` is always `false`, `agents` is always `[]`, and no `handoffs` definitions — all created agents are subagent-only.
+- **Frontmatter** — Start from the role's `<frontmatter_baseline>`. File name: `{domain}-{core-role}.agent.md`. `name` matches `{domain}-{core-role}`. `description` uses one em-dash sentence stating what the agent delivers. Tools default to the role baseline — domain may add tools but not remove core tools. `user-invokable` is always `false`, `agents` is always `[]`, no `handoffs`.
 
-- **Body structure** — Plan each section in order:
-  - Identity prose: 2-4 sentences, character voice, second-person, em-dash role declaration, governing principle
-  - Constraint bullets: 5-9 items in three layers — positive principles (2-3), domain NEVER/ALWAYS (3-5), HALT (1, always last)
-  - Workflow: stateless-context preamble, 5 numbered steps with domain verbs, docs-before-code directive
-  - Domain XML tags: only if content is structurally distinct enough to warrant separation
-  - Output template: domain-named tag, Status COMPLETE|BLOCKED, conditional Session ID, domain-specific fields, realistic example
+- **Identity prose** — Fully rewritten for the domain. 2-4 sentences, character voice, second-person, em-dash role declaration, governing principle. The domain agent gets its own personality — not a paraphrase of the core role.
 
-- **Positioning** — The agent extends its core role as a specialized alternative. Self-contained: no references to core agent, no orchestration language, no cross-agent references. Written from its own perspective.
+- **Constraint bullets** — Three-layer transformation from the role's `<constraint_baseline>`:
+  1. **Project-rules** (inherited as-is) — workspace boundary, scope discipline
+  2. **Domain-rules** (specialized) — replace core domain-rules with 3-5 concrete NEVER/ALWAYS rules unique to this specialization, each with a reason clause
+  3. **Hygiene-rules** (inherited as-is) — build summary, BLOCKED status, HALT for credentials
 
-- **Design guidelines** — Apply the 13 design patterns as guidelines during planning. Prioritize: voice over function, layered constraints, domain vocabulary in workflows, principles over enumerations, sections earn their keep.
+- **Workflow** — Step names from the role's `<workflow_baseline>` are immutable — never rename or reorder. Add domain-specific sub-actions, vocabulary, and decision points within each step. Open with a stateless-context preamble and docs-before-code directive.
+
+- **Output template** — Additive on the role's `<output_template_baseline>`. Keep all base fields (Status, Session ID, Summary, Files Changed, Tests, Deviations, Blockers). Append domain-specific fields only if the domain produces distinct deliverables. Include realistic example.
+
+- **Domain XML tags** — Inherit tag names from the role's `<domain_tags>` where applicable. Add new tags only if the domain has structurally distinct content that cannot be absorbed into existing sections.
+
+- **Design guidelines** — Apply the 13 design patterns from agent-spec.md. Prioritize: voice over function, layered constraints, domain vocabulary in workflows, principles over enumerations.
 
 </step_3_plan>
 
 
 <step_4_generate>
 
-Write the complete `.agent.md` file. Generate each section using the plan from step 3.
+Write the complete `.agent.md` file. Generate each section by specializing the inherited baseline.
 
-- **Frontmatter** — YAML between `---` fences. All string values single-quoted. Include: `name`, `description`, `tools`, `user-invokable`, `disable-model-invocation`, `agents` (empty array for domain agents). Always set `user-invokable: false` and `agents: []`. Never generate `handoffs`. Tool set defaults from core role baseline — domain may add tools but not remove core tools.
+- **Frontmatter** — YAML between `---` fences. All string values single-quoted. Start from the role's frontmatter baseline. Include: `name`, `description`, `tools`, `user-invokable`, `disable-model-invocation`, `agents` (empty array). Always set `user-invokable: false` and `agents: []`. Never generate `handoffs`. Tools default to the role baseline — domain may add but not remove.
 
-- **Identity prose** — Character voice expressing domain expertise and mindset. First sentence: "You are the {DOMAIN} {ROLE} — ..." with em-dash. Convey personality through verbs and rhythm, not adjectives. Present tense, second-person.
+- **Identity prose** — Fully rewritten for the domain. First sentence: "You are the {DOMAIN} {ROLE} — ..." with em-dash. Convey domain personality through verbs and rhythm, not adjectives. Present tense, second-person.
 
-- **Constraint bullets** — Bare bullets (no wrapping tag), three layers:
-  1. Positive-framing principles (2-3) — scope discipline, project-first orientation, mandatory build summary. Ground in domain language.
-  2. Domain NEVER/ALWAYS (3-5) — concrete prohibitions and mandates unique to this specialization. Each states one rule with a reason clause.
-  3. HALT (1, final) — unconditional stop for credentials, secrets, or PII.
+- **Constraint bullets** — Bare bullets (no wrapping tag). Three-layer transformation:
+  1. Project-rules (inherited as-is) — workspace boundary, scope discipline
+  2. Domain-rules (specialized) — 3-5 concrete NEVER/ALWAYS rules unique to this domain, each with a reason clause
+  3. Hygiene-rules (inherited as-is) — build summary, BLOCKED status, HALT always last
 
-- **`<workflow>`** — Open with a stateless-context preamble: two short paragraphs establishing that the agent receives a task with no prior history, plus a docs-before-code directive. Then 5 numbered steps using the format `**Verb** — description`. Steps use domain vocabulary for names and actions. Sub-bullets break down concrete actions. Include decision points inline.
+- **`<workflow>`** — Stateless-context preamble, then steps using inherited step names from the role baseline. Domain vocabulary in sub-actions. Decision points inline. Docs-before-code directive where applicable.
 
-- **Domain XML tags** — Add only if the domain has content structurally distinct enough for a dedicated section (tables, decision matrices, specialized guidelines). Name tags for the domain, not generically. If content can be absorbed into constraint bullets or workflow steps without loss, skip the tag.
+- **Domain XML tags** — Reuse tag names from the role's `<domain_tags>`. Add new tags only if the domain has structurally distinct content. Name tags for the domain, not generically.
 
-- **Output template** — Domain-named tag (e.g., `<build_summary_template>`, `<analysis_template>`). Fenced code block with: Status COMPLETE|BLOCKED, Session ID `{echo if provided}`, Summary, domain-specific fields, Files Changed, Tests, Deviations, Blockers. Include a "When BLOCKED" variant with Reason, Partial work, and Need. Close with `<example>` sub-tag containing realistic output with plausible values.
+- **Output template** — Use the tag name from the role's `<output_template_baseline>`. Base fields inherited (Status, Session ID, Summary, Files Changed, Tests, Deviations, Blockers). Domain fields appended. Include "When BLOCKED" variant. Close with `<example>` sub-tag containing realistic output.
 
-The agent must be **self-contained** — no references to core agent files, no orchestration language ("spawn", "delegation", "session"), no `@agent` names in body. Output conventions exist as professional delivery practice, not because an orchestrator expects them.
+The agent must be **self-contained** — no references to core agent files, no orchestration language ("spawn", "delegation", "session"), no `@agent` names in body. The inheritance model informs generation, but the output stands alone.
 
 Output file name: `{domain}-{core-role}.agent.md`
 
@@ -107,33 +111,15 @@ Quality-check the generated agent against all validation gates.
 
 Load [quality-gates.md](references/quality-gates.md) and run each tier:
 
-- **P1 — Blocking** (fix before delivery):
-  - `description` present in frontmatter
-  - All YAML string values single-quoted
-  - File ends with `.agent.md`
-  - Zero markdown headings (`#`) in agent body
-  - No platform-reserved tags in body
-  - No secrets or absolute paths
+- **P1 — Blocking** (fix before delivery): subagent-only fields enforced (`user-invokable: false`, `agents: []`, no `handoffs`/`argument-hint`/`target`), required fields present, YAML strings single-quoted, file ends with `.agent.md`, zero markdown headings, no platform-reserved tags, no secrets or absolute paths
 
-- **P2 — Quality** (fix before finalizing):
-  - Description is keyword-rich and specific, not generic filler
-  - All XML tags use `snake_case` with domain-specific names
-  - No cross-agent `@` references in body
-  - No project-specific or OS-specific paths
+- **P2 — Quality** (fix before finalizing): description keyword-rich, tags use `snake_case` with domain names, no cross-agent `@` references, no project-specific paths
 
-- **P3 — Polish** (flag as suggestions):
-  - Active voice throughout — no hedging ("try to", "should")
-  - Identity prose and major tags open with governing principles
-  - Concise — no verbose padding
-  - Complex rules include Wrong/Correct contrast pairs
+- **P3 — Polish** (flag as suggestions): active voice throughout, governing principles open major sections, concise prose, contrast pairs for complex rules
 
 - **Banned patterns scan** — Check for drive letters, bare `#tool:` references, `@agent` names outside brain, hard-coded model names, filler phrases, temporal language
 
-- **Self-containment verification**:
-  - No references to core agent files within the generated body
-  - No orchestration vocabulary in workflow or constraints
-  - No platform-reserved XML tags
-  - Agent is readable and executable without knowledge of other agents
+- **Self-containment verification** — No references to core agent files, no orchestration vocabulary, no platform-reserved tags, agent is fully readable without knowledge of other agents
 
 Fix all P1 and P2 issues. Report P3 suggestions to the user. If P1 fixes require structural changes, return to `<step_4_generate>`.
 
@@ -147,7 +133,7 @@ Fix all P1 and P2 issues. Report P3 suggestions to the user. If P1 fixes require
 
 Recovery actions for common failure modes. Apply the matching recovery when an issue surfaces during any step.
 
-- If the user specifies a **core role not in the 5 archetypes** (developer, researcher, planner, inspector, curator) — report the valid options and ask the user to select one before proceeding
+- If the user specifies a **core role not in the 5 core roles** (developer, researcher, planner, inspector, curator) — report the valid options and ask the user to select one before proceeding
 - If the user provides **insufficient domain context** to differentiate the agent from the generic core role — ask targeted questions: What technologies or practices define this domain? What domain-specific constraints should it enforce? What makes this agent's workflow different from the core role?
 - If **P1 validation failures** are found in step 5 — return to `<step_4_generate>` and fix the specific violations — do not regenerate the entire file unless structural issues require it
 - If the generated file **exceeds 150 lines or falls below 80 lines** — review for verbose padding (trim) or missing sections (expand) — target 80-150 lines for a well-scoped domain agent
@@ -161,9 +147,9 @@ Reference files loaded on demand during workflow steps. All paths are relative t
 
 **References:**
 
-- [agent-spec.md](references/agent-spec.md) — Agent structural specification: frontmatter fields, body structure conventions, positioning rules, and 13 design guidelines. Loaded in step 2.
+- [agent-spec.md](references/agent-spec.md) — Agent structural specification: frontmatter fields, body structure conventions, positioning rules, and design guidelines. Loaded in step 3.
 - [quality-gates.md](references/quality-gates.md) — Validation tiers (P1/P2/P3), banned patterns, platform-reserved tags, and agent anti-patterns. Loaded in step 5.
-- [role-frontmatters.md](references/role-frontmatters.md) — Baseline frontmatter for each core role. Loaded in step 1 and step 3.
+- [references/roles/{role}.md](references/roles/) — Per-role structural baselines (frontmatter, workflow steps, constraint layers, output template, inheritance guidance), loaded progressively based on target role. Loaded in step 1.
 
 **Assets:**
 
