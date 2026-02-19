@@ -1,0 +1,12 @@
+{
+  "hooks": {
+    "PreCompact": [
+      {
+        "type": "command",
+        "command": ".github/hooks/scripts/session-safety.sh",
+        "windows": "powershell -ExecutionPolicy Bypass -File .github/hooks/scripts/session-safety.ps1",
+        "timeout": 5
+      }
+    ]
+  }
+}

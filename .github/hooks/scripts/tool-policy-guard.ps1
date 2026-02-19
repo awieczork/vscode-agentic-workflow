@@ -87,7 +87,7 @@ function Handle-PreToolUse {
         @{
             hookSpecificOutput = @{
                 permissionDecision       = 'deny'
-                permissionDecisionReason = 'Brain agent can only edit files inside .github/.session/'
+                permissionDecisionReason = 'Denied by `<tool_policies>` `#tool:edit` — edits are restricted to files inside .github/.session/.'
             }
         } | ConvertTo-Json -Depth 3
     }

@@ -16,7 +16,7 @@ if ($ToolName -ne 'runSubagent') { exit 0 }
 
 $output = @{
     hookSpecificOutput = @{
-        additionalContext = 'Subagent returned. Update the session document in .github/.session/ with the phase outcome. If the workflow includes a plan, re-render the Mermaid diagram using the plan-visualization skill.'
+        additionalContext = 'Subagent returned. Per `<session_document>`, update the session file with the phase outcome and emit a `<progress_tracking>` report. If the plan includes a diagram, re-render it via the `plan-visualization` skill and store the updated Mermaid source in the session document''s Diagram section.'
     }
 } | ConvertTo-Json -Depth 3 -Compress
 

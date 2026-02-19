@@ -107,7 +107,7 @@ handle_pre_tool_use() {
 {
   "hookSpecificOutput": {
     "permissionDecision": "deny",
-    "permissionDecisionReason": "Brain agent can only edit files inside .github/.session/"
+    "permissionDecisionReason": "Denied by `<tool_policies>` `#tool:edit` — edits are restricted to files inside .github/.session/."
   }
 }
 EOF
@@ -127,7 +127,7 @@ EOF
 {
   "hookSpecificOutput": {
     "permissionDecision": "deny",
-    "permissionDecisionReason": "Brain agent can only edit files inside .github/.session/"
+    "permissionDecisionReason": "Denied by `<tool_policies>` `#tool:edit` — edits are restricted to files inside .github/.session/."
   }
 }
 EOF
