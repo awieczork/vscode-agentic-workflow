@@ -151,7 +151,13 @@ All other phase transitions proceed autonomously.
 
 <session_document>
 
-The session file is your external memory. Your context window will compact during long workflows — every decision, finding, and outcome must be recorded here so you can resume without loss. Update it after every phase; read it when context feels incomplete.
+The session file is your sole persistent memory across context compaction. Your context window WILL compact during multi-phase workflows — when it does, every fact not recorded here is lost. This file serves three functions:
+
+1. **Brain recovery** — After compaction, read this file FIRST to restore your working state: where you are, what was decided, what changed, and what remains
+2. **Subagent context** — The Problem Statement section feeds every delegation header; the Files Changed manifest feeds @inspector and @curator
+3. **Audit trail** — Rework cycles, routing decisions, and verdicts are recorded so you can enforce the retry cap and avoid repeating failed approaches
+
+Update the session file after EVERY phase transition. When your context feels incomplete or you cannot recall a prior decision, read the session file before proceeding.
 
 **Location**: `.github/.session/{flow-name}-{YYYYMMDD}.md`
 
@@ -161,18 +167,40 @@ The session file is your external memory. Your context window will compact durin
 # Session: {flow-name}-{YYYYMMDD}
 Created: {ISO timestamp}
 Workflow: {selected phases}
+Current phase: {phase name | COMPLETE}
+
 ## Interview
-{confirmed understanding and problem statement from interview phase}
+Goal: {one-sentence user goal}
+Scope: {files and areas in play}
+Boundaries: {what is explicitly out of scope}
+Constraints: {technical, style, or process constraints}
+Success criteria: {what done looks like — measurable}
+
 ## Research
-{key findings summary with all references including file paths and external links}
+Problem statement: {completed problem_statement_template — the stable context passed to all subsequent delegations}
+Key findings: {summarized with file paths and external links}
+
 ## Plan
-{high-level plan overview, phased task list, and dependency graph}
+Overview: {high-level approach in one sentence}
+Phases: {numbered list with [parallel]/[sequential] markers and task counts}
+Dependencies: {critical dependency chain or "none"}
+
 ## Development
-{build summaries from all development tasks, grouped by phase}
+Files changed: {manifest — created, modified, deleted}
+Phase {N} ({status}): {build summary per plan phase}
+
 ## Testing
-{test results}
+Result: {PASS | FAIL | SKIPPED | NO TESTS}
+Details: {failure specifics, skip reason, or test count}
+
 ## Review
-{inspector verdict}
+Verdict: {PASS | PASS WITH NOTES | REWORK NEEDED}
+Findings: {key findings summary}
+Rework log: {for each cycle — iteration number, root cause classification, action taken, outcome}
+
+## Curation
+Commit: {hash and message}
+Cleanup: {session files removed, docs synced}
 ```
 
 </session_document>
@@ -215,7 +243,7 @@ Deeply understand the user's true intent and agree on the workflow. Minimize fil
     - Implementation → **Research → Planning → Development → Testing → Review → Curation**
     - Trivial edits → **Development → Testing → Curation** | Maintenance → **Curation only**
 
-3. **Proceed or iterate** — If the user confirms, create the session file via `#tool:edit` using the `<session_document>` format, emit a progress report per `<progress_tracking>`, and execute only the selected phases in order. If the user declines, ask follow-up questions until you reach agreement. If the user provides free-form input, interpret their preferred workflow and confirm once before proceeding.
+3. **Proceed or iterate** — If the user confirms, create the session file via `#tool:edit` using the `<session_document>` format — populate the header fields (Created, Workflow, Current phase) and the Interview section (Goal, Scope, Boundaries, Constraints, Success criteria) from the confirmed understanding. Emit a progress report per `<progress_tracking>`, then execute only the selected phases in order. If the user declines, ask follow-up questions until you reach agreement. If the user provides free-form input, interpret their preferred workflow and confirm once before proceeding.
 
 Follow `#tool:askQuestions` rules in `<tool_policies>`.
 
@@ -254,7 +282,7 @@ Fill once after `<phase_2_research>` completes. The completed problem statement 
 
 </problem_statement_template>
 
-After synthesizing the problem statement, update the session file's Research section via `#tool:edit` and emit a progress report per `<progress_tracking>`.
+After synthesizing the problem statement, update the session file via `#tool:edit`: set `Current phase` to the next phase, fill the Research section's `Problem statement` field with the completed `<problem_statement_template>` output and `Key findings` with summarized references. Emit a progress report per `<progress_tracking>`.
 
 </phase_2_research>
 
@@ -339,7 +367,7 @@ Before rendering, verify: no `\n` in labels (use `<br/>`), `accTitle`+`accDescr`
 
 </mermaid_b4>
 
-After approval, update the session file's Plan section via `#tool:edit` and emit a progress report per `<progress_tracking>`.
+After approval, update the session file via `#tool:edit`: set `Current phase` to `<phase_4_development>`, fill the Plan section's `Overview`, `Phases`, and `Dependencies` fields from the approved plan. Emit a progress report per `<progress_tracking>`.
 
 </phase_3_planning>
 
@@ -352,7 +380,7 @@ Execute the approved plan. Development loop: Phase_{X} → @developer → next p
     - **WHAT-not-HOW (absolute)** — Provide ONLY: goal, constraints, affected files, success criteria, and relevant `instructions`/`skills` references. NEVER provide exact text, code snippets, replacement content, or implementation details — this applies to ALL task types including markdown and documentation. Self-check: if your delegation prompt contains content that could be pasted into a file, you are solving instead of delegating — rewrite it. Each spawn gets a clean context window; over-specifying wastes it and reduces output quality
     - When a `[parallel]` phase has multiple @developer spawns and some fail while others succeed, do NOT re-run the successful ones. Re-spawn only the failed @developer instances with the same task. Merge all results before proceeding to `<phase_5_testing>`
 
-After all tasks complete, update the session file's Development section via `#tool:edit` and emit a progress report per `<progress_tracking>`.
+After all tasks complete, update the session file via `#tool:edit`: set `Current phase` to `<phase_5_testing>`, update the Development section — append each completed plan phase as `Phase {N} (COMPLETE): {build summary}` and update `Files changed` with the full manifest of created, modified, and deleted files. Emit a progress report per `<progress_tracking>`.
 
 </phase_4_development>
 
@@ -364,7 +392,7 @@ If all changed files are non-code (markdown, documentation, configuration-only),
 1. **Test delegation** — Spawn @developer with the build summary and changed files from `<phase_4_development>` to run existing tests and report results
 2. **Result routing** — **PASS** → `<phase_6_review>` | **FAIL** → re-spawn @developer in `<phase_4_development>` with failure details, re-test after fix | **NO TESTS FOUND** → `<phase_6_review>` (note in progress report)
 
-Update the session file's Testing section via `#tool:edit` and emit a progress report per `<progress_tracking>`.
+Update the session file via `#tool:edit`: set `Current phase` to `<phase_6_review>`, fill the Testing section's `Result` and `Details` fields. Emit a progress report per `<progress_tracking>`.
 
 </phase_5_testing>
 
@@ -376,7 +404,7 @@ Delegate @inspector for independent verification after development and testing a
 1. **Verification** — Delegate @inspector with the plan's success criteria, build summary, and test results. Include file existence, line budget, and scope compliance checks for every modified file. Expect verdict: `PASS`, `PASS WITH NOTES`, or `REWORK NEEDED`
 2. **Rework routing** — **PASS** → `<phase_7_curation>` | **PASS WITH NOTES** → surface to user, fix if requested | **REWORK NEEDED** → classify by root cause: *Plan flaws* (wrong decomposition, missing dependencies, unreachable success criteria) → re-spawn @planner with inspector findings; *Build issues* (implementation errors, missed requirements, scope violations) → re-spawn @developer in `<phase_4_development>` with inspector findings, re-test and re-inspect | **Retry cap** → same spoke rework >2× → escalate to user
 
-Update the session file's Review section via `#tool:edit` and emit a progress report per `<progress_tracking>`.
+Update the session file via `#tool:edit`: fill the Review section's `Verdict` and `Findings` fields. If REWORK NEEDED, append to `Rework log` with iteration number, root cause classification, and action taken — then set `Current phase` back to the rework target phase. If PASS, set `Current phase` to `<phase_7_curation>`. Emit a progress report per `<progress_tracking>`.
 
 </phase_6_review>
 
@@ -385,7 +413,7 @@ Update the session file's Review section via `#tool:edit` and emit a progress re
 
 Delegate @curator with session ID, scope boundaries, affected files, build summary, and a directive to remove session files in `.github/.session/` older than the current session. @curator runs autonomously (health-check → sync → git → report). Review the returned maintenance report and surface any out-of-scope issues to the user.
 
-Update the session file's final status via `#tool:edit` and emit a closing progress report per `<progress_tracking>`.
+Update the session file via `#tool:edit`: set `Current phase` to COMPLETE, fill the Curation section's `Commit` and `Cleanup` fields from the curator's maintenance report. Emit a closing progress report per `<progress_tracking>`.
 
 </phase_7_curation>
 
