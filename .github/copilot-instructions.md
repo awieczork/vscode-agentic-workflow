@@ -27,6 +27,7 @@ An orchestration model for agentic workflows in VS Code. Core agents, coordinate
 - State principles, not enumerations — express durable rules rather than listing specific tools, files, or commands; let the agent discover the environment
 - Artifacts must be self-contained — no static cross-references outside their own folder tree; runtime workspace reads are acceptable
 - `copilot-instructions.md` owns project context; agents own domain expertise — project-specific facts live here, agent bodies are project-agnostic and portable
+- Agent bodies address the agent in second person — write "you must", "your tools", not "the agent must" or "its tools"
 - Markdown tables and headings (`#`) are reserved for user-visible output only — use XML tags as the primary structuring mechanism in all artifacts
 
 </authoring>

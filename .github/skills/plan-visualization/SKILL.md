@@ -9,7 +9,7 @@ Follow these steps to create or update a Mermaid flowchart diagram that maps an 
 <use_cases>
 
 - Render a newly approved plan as a Mermaid flowchart with all phases pending
-- Update an existing plan diagram after a phase completes to reflect progress
+- Re-render an existing plan diagram when the plan structure changes (rework, re-planning, scope drift)
 - Visualize a plan with parallel phases using fork/join topology
 - Re-render a diagram after an inspector returns REWORK NEEDED to show rework loops
 - Create a plan diagram for user approval during the planning phase
