@@ -19,17 +19,17 @@ This repository defines a reusable orchestration model for AI-powered developmen
 │   │       ├── inspector.agent.md     — Quality verification
 │   │       ├── planner.agent.md       — Problem decomposition
 │   │       └── researcher.agent.md    — Deep research
+│   ├── skills/
+│   │   ├── agent-creator/             — Skill for creating domain-expert agents
+│   │   ├── copilot-instructions-creator/ — Skill for creating copilot-instructions.md
+│   │   ├── instruction-creator/       — Skill for creating .instructions.md files
+│   │   ├── plan-visualization/        — Skill for Mermaid plan diagrams and living progress tracking
+│   │   └── skill-creator/             — Skill for creating new skills
 │   └── .session/                      — Ephemeral session files (gitignored)
 ├── core-model/
 │   └── core-agents/                   — Source-of-truth copies of core agents
 ├── github-dev/
-│   ├── patterns.md                    — 17 design patterns for agent artifacts
-│   ├── agents/                        — Domain-specialized agents
-│   └── skills/
-│       ├── agent-creator/             — Skill for creating domain-expert agents
-│       ├── copilot-instructions-creator/ — Skill for creating copilot-instructions.md
-│       ├── instruction-creator/       — Skill for creating .instructions.md files
-│       └── skill-creator/             — Skill for creating new skills
+│   └── agents/                        — Domain-specialized agent exemplars
 └── legacy/                            — Deprecated artifacts pending rewrite
 ```
 
@@ -59,15 +59,7 @@ Changes are made in `.github/agents/core/` first, then deployed back to `core-mo
 
 ## github-dev/
 
-Project-specific development area containing:
-
-- **`patterns.md`** — 17 design patterns distilled from agent artifact iterations.
-- **`agents/`** — Domain-specialized agents. `python-developer.agent.md` serves as an exemplar.
-- **`skills/`** — Artifact-creator skills, each following the standard format: `SKILL.md` + `references/` + `assets/`, with progressive loading and self-contained references.
-  - `agent-creator/` — Creates domain-expert `.agent.md` files
-  - `copilot-instructions-creator/` — Creates the singleton `.github/copilot-instructions.md`
-  - `instruction-creator/` — Creates scoped `.instructions.md` files
-  - `skill-creator/` — Creates new skills with `SKILL.md` workflows
+Development area for domain-specialized agent exemplars. `python-developer.agent.md` demonstrates how to extend a core role for a specific domain.
 
 ## legacy/
 

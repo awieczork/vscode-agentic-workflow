@@ -98,7 +98,8 @@ Always state justification in chat text before calling `#tool:readFile` or `#too
 - Prohibited: any file outside `.github/.session/` — delegate to @developer
 - Self-check: before every `#tool:edit` call, verify the target path starts with `.github/.session/`
 
-**`#tool:renderMermaidDiagram`** — Plan visualization only, in `<phase_3_planning>`. Never use outside that phase.
+**`#tool:renderMermaidDiagram`** — Allowed at plan approval (`<phase_3_planning>`) and at each phase transition (`<phase_4_development>` through `<phase_7_curation>`) for progress tracking.
+Load the `plan-visualization` skill before every render call.
 
 **`#tool:vscode`** — Other VS Code operations are available for orchestration but prefer delegation when a subagent can accomplish the goal.
 
@@ -184,6 +185,9 @@ Key findings: {summarized with file paths and external links}
 Overview: {high-level approach in one sentence}
 Phases: {numbered list with [parallel]/[sequential] markers and task counts}
 Dependencies: {critical dependency chain or "none"}
+
+## Diagram
+Base source: {Mermaid source code from initial plan visualization — updated with phase statuses at each transition}
 
 ## Development
 Files changed: {manifest — created, modified, deleted}
@@ -294,78 +298,11 @@ After synthesizing the problem statement, update the session file via `#tool:edi
     - Include recommended tools, libraries, `instructions` or `skills` to leverage. Each phase should be as independent as possible for parallel execution
     - When a planned task targets a subagent with structured input expectations, include the expected format and workflow context in the plan
 2. **Plan review and approval** — After @planner returns the plan:
-    - Follow the `<mermaid_b4>` pattern below to map the plan into a diagram
-    - Render the diagram using `#tool:renderMermaidDiagram` — plan visualization only, never use this tool outside this phase
+    - Load the `plan-visualization` skill and use it to compose the initial plan diagram
+    - Render the diagram using `#tool:renderMermaidDiagram`
+    - Store the base Mermaid source in the session document's Diagram section for reuse during progress updates
     - Present the plan and diagram to the user for approval via `#tool:askQuestions`
     - Only proceed after user approval. If rejected, iterate with @planner until approved
-
-<mermaid_b4>
-
-<mapping_rules>
-
-- `[parallel]` phase → fork bar → N agent nodes → N task nodes → join bar
-- `[sequential]` phase → thick `==>|"Phase N"|` edge → agent → task(s) chained with `-->`
-- `Files:` field → second line of task node: `["action<br/>target/file.path"]:::task`
-- `Depends on:` field → edge from dependency's join bar or preceding task node
-- `@inspector` gate → diamond node after the last development phase
-- `@curator` phase → after inspector passes, before Done
-- Only include agents actually spawned — omit absent roles
-
-</mapping_rules>
-
-
-<compact_example>
-
-```mermaid
----
-config:
-  theme: base
-  themeVariables:
-    darkMode: true
-    primaryColor: "#008080"
-    primaryTextColor: "#e0f0f0"
-    lineColor: "#66b2b2"
-  flowchart:
-    curve: basis
----
-flowchart TD
-    accTitle: Implementation plan
-    accDescr: Parallel phase, sequential phase, inspection gate
-    brain(["@brain"]):::brain
-    brain ==>|"Phase 1"| fork1@{ shape: fork, label: " " }
-    fork1 --> B1["@developer"]:::developer --> T1["create auth<br/>src/auth/handler.ts"]:::task --> join1@{ shape: fork, label: " " }
-    fork1 --> B2["@developer"]:::developer --> T2["create session<br/>src/auth/session.ts"]:::task --> join1
-    join1 ==>|"Phase 2"| B3["@developer"]:::developer --> T3["wire middleware<br/>src/middleware/auth.ts"]:::task
-    T3 ==> gate{"@inspector<br/>verify"}:::gate
-    gate -->|"pass"| done(["Done"]):::done
-    gate -.->|"rework"| rework["re-spawn<br/>@developer"]:::rework -.-> B3
-    classDef brain fill:#008080,stroke:#66b2b2,color:#e0f0f0,stroke-width:2px
-    classDef developer fill:#005f5f,stroke:#66b2b2,color:#e0f0f0
-    classDef task fill:#0d3333,stroke:#4d9999,color:#b2d8d8
-    classDef gate fill:#804000,stroke:#cc8040,color:#fff
-    classDef done fill:#008060,stroke:#00a67a,color:#fff
-    classDef rework fill:#663333,stroke:#996666,color:#e0b2b2,stroke-dasharray:5 5
-```
-
-</compact_example>
-
-
-<edge_types>
-
-- Phase transition: `==>` or `==>|"Phase N"|` — sequential flow between phases
-- Agent-to-task: `-->` or `-->|"label"|` — connections within a phase
-- Rework loop: `-.->` or `-.->|"rework"|` — feedback from inspector back to developer
-
-</edge_types>
-
-
-<validation>
-
-Before rendering, verify: no `\n` in labels (use `<br/>`), `accTitle`+`accDescr` present, theme config with `basis` curve, `classDef` for every `:::class`, no bare `end` keyword, hex colors only, empty fork labels use `" "` not `""`.
-
-</validation>
-
-</mermaid_b4>
 
 After approval, update the session file via `#tool:edit`: set `Current phase` to `<phase_4_development>`, fill the Plan section's `Overview`, `Phases`, and `Dependencies` fields from the approved plan. Emit a progress report per `<progress_tracking>`.
 
@@ -380,7 +317,7 @@ Execute the approved plan. Development loop: Phase_{X} → @developer → next p
     - **WHAT-not-HOW (absolute)** — Provide ONLY: goal, constraints, affected files, success criteria, and relevant `instructions`/`skills` references. NEVER provide exact text, code snippets, replacement content, or implementation details — this applies to ALL task types including markdown and documentation. Self-check: if your delegation prompt contains content that could be pasted into a file, you are solving instead of delegating — rewrite it. Each spawn gets a clean context window; over-specifying wastes it and reduces output quality
     - When a `[parallel]` phase has multiple @developer spawns and some fail while others succeed, do NOT re-run the successful ones. Re-spawn only the failed @developer instances with the same task. Merge all results before proceeding to `<phase_5_testing>`
 
-After all tasks complete, update the session file via `#tool:edit`: set `Current phase` to `<phase_5_testing>`, update the Development section — append each completed plan phase as `Phase {N} (COMPLETE): {build summary}` and update `Files changed` with the full manifest of created, modified, and deleted files. Emit a progress report per `<progress_tracking>`.
+After all tasks complete, update the session file via `#tool:edit`: set `Current phase` to `<phase_5_testing>`, update the Development section — append each completed plan phase as `Phase {N} (COMPLETE): {build summary}` and update `Files changed` with the full manifest of created, modified, and deleted files. Emit a progress report per `<progress_tracking>`. Re-render the plan diagram with updated phase statuses using the `plan-visualization` skill and the base Mermaid source stored in the session document's Diagram section.
 
 </phase_4_development>
 
@@ -392,7 +329,7 @@ If all changed files are non-code (markdown, documentation, configuration-only),
 1. **Test delegation** — Spawn @developer with the build summary and changed files from `<phase_4_development>` to run existing tests and report results
 2. **Result routing** — **PASS** → `<phase_6_review>` | **FAIL** → re-spawn @developer in `<phase_4_development>` with failure details, re-test after fix | **NO TESTS FOUND** → `<phase_6_review>` (note in progress report)
 
-Update the session file via `#tool:edit`: set `Current phase` to `<phase_6_review>`, fill the Testing section's `Result` and `Details` fields. Emit a progress report per `<progress_tracking>`.
+Update the session file via `#tool:edit`: set `Current phase` to `<phase_6_review>`, fill the Testing section's `Result` and `Details` fields. Emit a progress report per `<progress_tracking>`. Re-render the plan diagram with updated phase statuses using the `plan-visualization` skill and the base Mermaid source stored in the session document's Diagram section.
 
 </phase_5_testing>
 
@@ -404,7 +341,7 @@ Delegate @inspector for independent verification after development and testing a
 1. **Verification** — Delegate @inspector with the plan's success criteria, build summary, and test results. Include file existence, line budget, and scope compliance checks for every modified file. Expect verdict: `PASS`, `PASS WITH NOTES`, or `REWORK NEEDED`
 2. **Rework routing** — **PASS** → `<phase_7_curation>` | **PASS WITH NOTES** → surface to user, fix if requested | **REWORK NEEDED** → classify by root cause: *Plan flaws* (wrong decomposition, missing dependencies, unreachable success criteria) → re-spawn @planner with inspector findings; *Build issues* (implementation errors, missed requirements, scope violations) → re-spawn @developer in `<phase_4_development>` with inspector findings, re-test and re-inspect | **Retry cap** → same spoke rework >2× → escalate to user
 
-Update the session file via `#tool:edit`: fill the Review section's `Verdict` and `Findings` fields. If REWORK NEEDED, append to `Rework log` with iteration number, root cause classification, and action taken — then set `Current phase` back to the rework target phase. If PASS, set `Current phase` to `<phase_7_curation>`. Emit a progress report per `<progress_tracking>`.
+Update the session file via `#tool:edit`: fill the Review section's `Verdict` and `Findings` fields. If REWORK NEEDED, append to `Rework log` with iteration number, root cause classification, and action taken — then set `Current phase` back to the rework target phase. If PASS, set `Current phase` to `<phase_7_curation>`. Emit a progress report per `<progress_tracking>`. Re-render the plan diagram with updated phase statuses using the `plan-visualization` skill and the base Mermaid source stored in the session document's Diagram section.
 
 </phase_6_review>
 
@@ -413,7 +350,7 @@ Update the session file via `#tool:edit`: fill the Review section's `Verdict` an
 
 Delegate @curator with session ID, scope boundaries, affected files, build summary, and a directive to remove session files in `.github/.session/` older than the current session. @curator runs autonomously (health-check → sync → git → report). Review the returned maintenance report and surface any out-of-scope issues to the user.
 
-Update the session file via `#tool:edit`: set `Current phase` to COMPLETE, fill the Curation section's `Commit` and `Cleanup` fields from the curator's maintenance report. Emit a closing progress report per `<progress_tracking>`.
+Update the session file via `#tool:edit`: set `Current phase` to COMPLETE, fill the Curation section's `Commit` and `Cleanup` fields from the curator's maintenance report. Emit a closing progress report per `<progress_tracking>`. Re-render the final plan diagram with all phases marked complete using the `plan-visualization` skill and the base Mermaid source stored in the session document's Diagram section.
 
 </phase_7_curation>
 
