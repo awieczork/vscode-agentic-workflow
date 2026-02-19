@@ -1,0 +1,28 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "type": "command",
+        "command": ".github/hooks/scripts/tool-policy-guard.sh",
+        "windows": "powershell -ExecutionPolicy Bypass -File .github/hooks/scripts/tool-policy-guard.ps1",
+        "timeout": 10
+      }
+    ],
+    "SubagentStart": [
+      {
+        "type": "command",
+        "command": ".github/hooks/scripts/tool-policy-guard.sh",
+        "windows": "powershell -ExecutionPolicy Bypass -File .github/hooks/scripts/tool-policy-guard.ps1",
+        "timeout": 5
+      }
+    ],
+    "SubagentStop": [
+      {
+        "type": "command",
+        "command": ".github/hooks/scripts/tool-policy-guard.sh",
+        "windows": "powershell -ExecutionPolicy Bypass -File .github/hooks/scripts/tool-policy-guard.ps1",
+        "timeout": 5
+      }
+    ]
+  }
+}
