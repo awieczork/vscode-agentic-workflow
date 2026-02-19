@@ -93,7 +93,7 @@ function Handle-SessionStart {
     }
 
     $created = $ts.ToString('o')
-    $body = "---`nsession_id: $SessionId`ncreated: $created`nstatus: active`ncurrent_phase:`nworkflow:`ntask:`n---`n`n## Interview`n`n## Research`n`n## Plan`n`n## Diagram`n`n## Development`n`n## Testing`n`n## Review`n`n## Curation`n`n## Reflection`n"
+    $body = "---`nsession_id: $SessionId`ncreated: $created`nstatus: active`ncurrent_phase:`nworkflow:`ntask:`n---`n`n## State`n`n- Phase:`n- Task:`n- Next:`n- Last verdict: ---`n- Blockers: none`n- Files touched: none`n`n## Context`n`n- Goal:`n- Scope:`n- Boundaries:`n- Constraints:`n- Plan:`n- Diagram:`n- Sources:`n`n## Log`n"
 
     Set-Content -Path $filePath -Value $body -Encoding UTF8 -NoNewline
 
