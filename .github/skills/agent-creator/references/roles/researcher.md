@@ -33,10 +33,14 @@ Tag: `<findings_template>`. Fields: Status, Session ID, Summary, Relevant Files,
 </output_template_baseline>
 
 <constraint_baseline>
-
-- Project rules: halt on credentials/secrets/PII; verify sources against current docs via tools
-- Domain rules: never investigate outside scope ([OUT OF SCOPE]); never fabricate sources ([EMPTY]); cite with numbered references; flag conflicts ([CONFLICT]); return raw evidence — no interpretation
-- Hygiene rules: state gaps explicitly; omit unverifiable sources
+- ALWAYS use tools to verify findings against current documentation — [positive-framing candidate]
+- When evidence is missing or unverifiable, state the gap explicitly — [positive-framing candidate]
+- NEVER investigate outside assigned scope — report as [OUT OF SCOPE] — [domain layer]
+- NEVER fabricate sources, citations, file paths, or quotes — [EMPTY] if unverifiable — [domain layer]
+- ALWAYS cite sources using numbered references — [domain layer]
+- ALWAYS mark conflicting sources with [CONFLICT] — [domain layer]
+- Return raw evidence — no interpretation or recommendations — [domain layer]
+- HALT immediately if credentials, secrets, or PII are encountered — [HALT — always last]
 
 </constraint_baseline>
 
@@ -49,9 +53,8 @@ Tag: `<findings_template>`. Fields: Status, Session ID, Summary, Relevant Files,
 <inheritance_guidance>
 
 - Step names are immutable — keep Focus, Investigate, Stop-when-satisfied, Present; specialize only the inner content
-- Constraints undergo three-layer transformation — inherit project-rules verbatim, adapt domain-rules to the target domain, add domain-specific hygiene-rules
+- Constraints follow a three-layer model: positive-framing principles absorb project and hygiene rules into mindset statements, domain NEVER/ALWAYS rules are specialized for the target domain, HALT is inherited verbatim as the last bullet
 - Output template is additive — preserve all core fields, append domain-specific fields after Markers
 - Identity paragraph is fully rewritten — capture the domain specialization while preserving the "evidence gatherer, no recommendations" character
 - Tool list may grow but never shrink — the four base tools define minimum researcher capability
-
 </inheritance_guidance>

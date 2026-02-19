@@ -45,9 +45,10 @@ Study the exemplar and base agent to understand how inheritance produces a domai
 
 - If available in the workspace, search for the target core agent file (`{role}.agent.md`) and read it to observe how the baseline manifests in practice — identity prose, constraint structure, workflow, output template, and tool set. If not available, proceed using the role baseline loaded in step 1 and the structural specification.
 - Load [exemplar.md](assets/exemplar.md) — study the gold-reference agent and its annotations to see how a domain agent inherits its core role's structure while rewriting identity and specializing constraints
-- Identify what gets inherited vs. rewritten:
-  - **Inherited (immutable):** workflow step names and ordering, output template base fields, hygiene and project constraint layers
-  - **Specialized:** domain constraint layer (NEVER/ALWAYS rules unique to the domain), workflow sub-actions and domain vocabulary, domain-specific output fields
+- Identify what gets inherited, absorbed, and specialized:
+  - **Inherited (immutable):** workflow step names and ordering, output template base fields, HALT bullet
+  - **Absorbed (rewritten):** project and hygiene constraint candidates — rewritten as positive-framing principles in the domain's voice, not carried over as-is
+  - **Specialized:** domain NEVER/ALWAYS rules unique to the domain, workflow sub-actions and domain vocabulary, domain-specific output fields
   - **Rewritten:** identity prose — the domain agent gets its own character voice, not a copy
 
 </step_2_study>
@@ -64,9 +65,9 @@ Load [agent-spec.md](references/agent-spec.md) and apply each section using the 
 - **Identity prose** — Fully rewritten for the domain. 2-4 sentences, character voice, second-person, em-dash role declaration, governing principle. The domain agent gets its own personality — not a paraphrase of the core role.
 
 - **Constraint bullets** — Three-layer transformation from the role's `<constraint_baseline>`:
-  1. **Project-rules** (inherited as-is) — workspace boundary, scope discipline
-  2. **Domain-rules** (specialized) — replace core domain-rules with 3-5 concrete NEVER/ALWAYS rules unique to this specialization, each with a reason clause
-  3. **Hygiene-rules** (inherited as-is) — build summary, BLOCKED status, HALT for credentials
+  1. **Positive-framing principles** (2-3 bullets, absorbed) — absorb the core role's positive-framing candidates (annotated in the baseline's constraint section) into mindset statements that capture how the agent thinks, not what it must avoid. These are not inherited as-is — they are rewritten as domain-grounded principles.
+  2. **Domain NEVER/ALWAYS** (4-7 bullets, specialized) — specialized from the core role's domain rules. Each is a concrete prohibition or mandate unique to this domain, with a reason clause.
+  3. **HALT** (1 bullet, always last, inherited verbatim) — emergency stop for security-sensitive conditions (credentials, secrets, PII). Carried over from the role baseline unchanged.
 
 - **Workflow** — Step names from the role's `<workflow_baseline>` are immutable — never rename or reorder. Add domain-specific sub-actions, vocabulary, and decision points within each step. Open with a stateless-context preamble and docs-before-code directive.
 
@@ -88,9 +89,9 @@ Write the complete `.agent.md` file. Generate each section by specializing the i
 - **Identity prose** — Fully rewritten for the domain. First sentence: "You are the {DOMAIN} {ROLE} — ..." with em-dash. Convey domain personality through verbs and rhythm, not adjectives. Present tense, second-person.
 
 - **Constraint bullets** — Bare bullets (no wrapping tag). Three-layer transformation:
-  1. Project-rules (inherited as-is) — workspace boundary, scope discipline
-  2. Domain-rules (specialized) — 3-5 concrete NEVER/ALWAYS rules unique to this domain, each with a reason clause
-  3. Hygiene-rules (inherited as-is) — build summary, BLOCKED status, HALT always last
+  1. Positive-framing principles (2-3 bullets, absorbed) — absorb the core role's positive-framing candidates (annotated in the baseline's constraint section) into mindset statements. These capture how the agent thinks, not what it must avoid — rewritten in the domain's voice, not inherited as-is.
+  2. Domain NEVER/ALWAYS (4-7 bullets, specialized) — specialized from the core role's domain rules. Each is a concrete prohibition or mandate unique to this domain, with a reason clause.
+  3. HALT (1 bullet, always last, inherited verbatim) — emergency stop for security-sensitive conditions. Carried over from the role baseline unchanged.
 
 - **`<workflow>`** — Stateless-context preamble, then steps using inherited step names from the role baseline. Domain vocabulary in sub-actions. Decision points inline. Docs-before-code directive where applicable.
 

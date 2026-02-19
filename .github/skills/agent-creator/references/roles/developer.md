@@ -23,23 +23,17 @@ Tag: `<build_summary_template>` — Fields: Status, Session ID, Summary, Files C
 </output_template_baseline>
 <constraint_baseline>
 
-Project-rules:
+Actual constraint bullets from the core developer, annotated by spec layer:
 
-- NEVER edit files outside the workspace boundary
-- HALT immediately if credentials, API keys, or secrets would appear in output
-
-Domain-rules:
-
-- NEVER deviate from task scope or improvise architectural decisions
-- NEVER execute destructive commands unless explicitly listed in the task
-- NEVER create extra files beyond what the task specifies
-- NEVER label test failures as "pre-existing" without evidence
-- ALWAYS document deviations; ALWAYS run existing tests before completion
-
-Hygiene-rules:
-
-- NEVER terminate without returning a build summary
-- ALWAYS return status BLOCKED with partial work if context window fills
+- NEVER edit files outside the workspace boundary — [positive-framing candidate]
+- NEVER terminate without returning a build summary — [positive-framing candidate]
+- ALWAYS return status BLOCKED with partial work if context window fills — [positive-framing candidate]
+- NEVER deviate from task scope or improvise architectural decisions — [domain layer]
+- NEVER execute destructive commands unless explicitly listed in the task — [domain layer]
+- NEVER create extra files beyond what the task specifies — [domain layer]
+- NEVER label test failures as "pre-existing" without evidence — [domain layer]
+- ALWAYS document deviations; ALWAYS run existing tests before completion — [domain layer]
+- HALT immediately if credentials, API keys, or secrets would appear in output — [HALT — always last]
 
 </constraint_baseline>
 <domain_tags>
@@ -48,7 +42,7 @@ Hygiene-rules:
 <inheritance_guidance>
 
 - Step names (Understand, Orient, Implement, Test, Deliver) are immutable — add substeps, never rename or reorder
-- Constraints undergo three-layer transformation: project-rules inherited as-is, domain-rules specialized, hygiene-rules inherited as-is
+- Constraints follow a three-layer model: positive-framing principles absorb project and hygiene rules into mindset statements, domain NEVER/ALWAYS rules are specialized for the target domain, HALT is inherited verbatim as the last bullet
 - Output template is additive — keep all base fields, append domain-specific ones
 - Identity prose is fully rewritten — domain agent gets its own character, not a copy
 - Domain tags are inherited — reuse `<workflow>` and `<build_summary_template>` tag names

@@ -8,7 +8,6 @@ Agent frontmatter is YAML between `---` fences. All string values use single quo
 - **`description`** (string, required) — Brief description shown as placeholder in chat input. Drives discovery — include trigger words. Max 1024 chars
 - **`name`** (string, optional) — Agent name in dropdown. Lowercase alphanumeric + hyphens. Derived from filename if omitted
 - **`tools`** (string[], optional) — Tool or tool-set names. See tool sets below
-- **`model`** (string, strongly recommended) — LLM model. Example: `'claude-sonnet-4'`
 - **`user-invokable`** (boolean, optional) — Default `true`. Set `false` to hide from user selection (sub-agent only)
 - **`disable-model-invocation`** (boolean, optional) — When `true`, agent is only user-invokable, never auto-selected by model
 - **`agents`** (string[], optional) — Restricts which sub-agents this agent can invoke. Example: `['researcher', 'build']`
@@ -22,7 +21,7 @@ Agent frontmatter is YAML between `---` fences. All string values use single quo
 - **`execute`** — `runInTerminal`, `getTerminalOutput`, `awaitTerminal`, `killTerminal`, `createAndRunTask`, `runNotebookCell`, `runTests`, `testFailure`, `memory`
 - **`web`** — `fetch`, `githubRepo`
 
-Standalone tools (not in any set): `todo`, `renderMermaidDiagram`, `context7/*` (MCP).
+Standalone tools (not in any set): `todo`, `renderMermaidDiagram`, `context7` (MCP).
 
 **Tool selection guidance**
 

@@ -29,9 +29,17 @@ Tag: `<maintenance_report_template>`. Fields: Status, Session ID, Summary, Healt
 
 <constraint_baseline>
 
-- Project-rules: no source code edits (meta-files only), no secrets in commits, halt on destructive paths
-- Domain-rules: no force-push/rebase/branch deletion (commit forward only), conventional commit format, git diff --staged before every commit, no file deletion without health-check evidence
-- Hygiene-rules: always read before editing, return PARTIAL when context fills, staged-content verification before commit
+Actual constraint bullets from the core curator, annotated by spec layer:
+
+- NEVER edit project source code — meta-files only — [positive-framing candidate]
+- ALWAYS read current file content before editing — [positive-framing candidate]
+- When context window fills, return progress so far as PARTIAL — [positive-framing candidate]
+- NEVER force-push, rebase, or delete branches — commit forward only — [domain layer]
+- NEVER commit secrets or credentials — unstage and report as Critical — [domain layer]
+- NEVER delete files without evidence from health-check — [domain layer]
+- ALWAYS run git diff --staged before committing — [domain layer]
+- ALWAYS use conventional commit format — [domain layer]
+- HALT if file path is project source code or a destructive git command is about to execute — [HALT — always last]
 
 </constraint_baseline>
 
@@ -44,7 +52,7 @@ The curator defines `<git_exclusion_policy>` — a list of glob patterns and cat
 <inheritance_guidance>
 
 - Step names (Assess, Health-check, Sync docs, Git operations, Deliver) are immutable — domain curators add substeps within them
-- Constraints undergo three-layer transformation: project-rules are inherited verbatim, domain-rules are specialized to the target domain, hygiene-rules are inherited verbatim
+- Constraints follow a three-layer model: positive-framing principles absorb project and hygiene rules into mindset statements, domain NEVER/ALWAYS rules are specialized for the target domain, HALT is inherited verbatim as the last bullet
 - Output template is additive — domain curators may add fields but must preserve the base field set
 - Identity paragraph is fully rewritten to reflect the domain specialization
 - `<git_exclusion_policy>` is inherited and extended, never reduced — domain-specific patterns are appended

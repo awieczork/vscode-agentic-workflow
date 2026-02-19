@@ -34,10 +34,13 @@ Fields: Status, Session ID, Summary, Dependencies, Risks, Phases (Tasks with Fil
 </output_template_baseline>
 
 <constraint_baseline>
-
-- project-rules: HALT on credentials or secrets before planning
-- domain-rules: verify dependencies (BLOCKED if unverifiable), measurable success criteria on every item, surface assumptions, surgical repair on rework, WHAT not HOW
-- hygiene-rules: cite doc sources for external libraries, describe cross-file relationships, maximize task independence
+- ALWAYS verify dependencies before including them in the plan — [positive-framing candidate]
+- ALWAYS surface assumptions explicitly — [positive-framing candidate]
+- ALWAYS define measurable success criteria on every plan item — [domain layer]
+- ALWAYS repair plans surgically when rework findings are provided — [domain layer]
+- Tasks describe WHAT to accomplish, not HOW — [domain layer]
+- HALT immediately if the problem statement reveals security-sensitive operations — [HALT — always last]
+Note: the planner has no standalone hygiene bullets — behaviors like citing doc sources, describing cross-file relationships, and maximizing task independence are sub-actions in workflow step 4, not constraint bullets.
 
 </constraint_baseline>
 
@@ -50,9 +53,8 @@ Fields: Status, Session ID, Summary, Dependencies, Risks, Phases (Tasks with Fil
 <inheritance_guidance>
 
 - Step names (Scope, Explore, Verify dependencies, Decompose) are immutable — add domain behavior within steps, never rename or reorder
-- Constraints undergo three-layer transformation: project-rules verbatim, domain-rules specialized, hygiene-rules added for domain quality
+- Constraints follow a three-layer model: positive-framing principles absorb project and hygiene rules into mindset statements, domain NEVER/ALWAYS rules are specialized for the target domain, HALT is inherited verbatim as the last bullet
 - Output template is additive — preserve all base fields, append domain-specific fields
 - Identity paragraph is fully rewritten with domain-specific planning character
 - Tool list is a minimum set — add tools as needed, never remove core tools
-
 </inheritance_guidance>
