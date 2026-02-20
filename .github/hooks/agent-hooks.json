@@ -27,6 +27,13 @@
         "command": "powershell -NoProfile -ExecutionPolicy Bypass -File .github/hooks/scripts/agent-hooks.ps1",
         "timeout": 5
       }
+    ],
+    "Stop": [
+      {
+        "type": "command",
+        "command": "powershell -NoProfile -ExecutionPolicy Bypass -File .github/hooks/scripts/agent-hooks.ps1",
+        "timeout": 10
+      }
     ]
   }
 }

@@ -1,5 +1,5 @@
 # agent-hooks.ps1 -- consolidated hook script for VS Code Copilot Chat events:
-# SessionStart, PreToolUse, PostToolUse, PreCompact.
+# SessionStart, PreToolUse, PostToolUse, PreCompact, Stop.
 # Brain detection via session_id in YAML frontmatter of .github/.session/*.md files.
 # No temp files -- all state stored in session files.
 
@@ -180,6 +180,51 @@ function Handle-PreCompact {
     Write-Context "Context was compacted. Read $relPath FIRST to restore your working state -- it is your sole persistent memory. After recovery, emit a progress report before taking any other action."
 }
 
+function Handle-Stop {
+    # Re-entry guard -- skip if hook already triggered from a prior stop continuation
+    if ($Parsed_.stop_hook_active -eq $true) { return }
+
+    $sessionFile = Find-BrainSession -Sid $SessionId -Dir $SessionDir
+    if (-not $sessionFile) { return }
+
+    # Parse YAML frontmatter and check status
+    $raw = Get-Content -Path $sessionFile.FullName -Raw -ErrorAction SilentlyContinue
+    if (-not $raw) { return }
+    if ($raw -notmatch '(?s)^---\r?\n(.+?)\r?\n---') { return }
+    $fm = $Matches[1]
+    if ($fm -notmatch '(?m)^status:\s*(.+)$') { return }
+    $status = $Matches[1].Trim()
+    if ($status -ne 'complete') { return }
+
+    # Extract session stamp from filename (session-{stamp}.md)
+    $stamp = $sessionFile.Name -replace '^session-', '' -replace '\.md$', ''
+
+    # Parse Diagram field from ## Context zone
+    $diagramPath = $null
+    if ($raw -match '(?s)## Context\r?\n(.+?)(?=\r?\n## |\z)') {
+        $contextZone = $Matches[1]
+        if ($contextZone -match '(?m)^- Diagram:\s*(.+)$') {
+            $dVal = $Matches[1].Trim()
+            if ($dVal -and $dVal -ne '—' -and $dVal -ne '-' -and $dVal -ne '---') {
+                $diagramPath = Join-Path $Cwd $dVal
+            }
+        }
+    }
+
+    # Create destination directory
+    $destDir = Join-Path $SessionDir "completed\$stamp"
+    New-Item -Path $destDir -ItemType Directory -Force | Out-Null
+
+    # Move session file
+    Move-Item -Path $sessionFile.FullName -Destination (Join-Path $destDir $sessionFile.Name) -Force
+
+    # Move diagram sidecar if it exists
+    if ($diagramPath -and (Test-Path $diagramPath)) {
+        $diagramName = [System.IO.Path]::GetFileName($diagramPath)
+        Move-Item -Path $diagramPath -Destination (Join-Path $destDir $diagramName) -Force
+    }
+}
+
 # --- dispatch ---
 
 switch ($Event_) {
@@ -187,4 +232,5 @@ switch ($Event_) {
     'PreToolUse'   { Handle-PreToolUse }
     'PostToolUse'  { Handle-PostToolUse }
     'PreCompact'   { Handle-PreCompact }
+    'Stop'         { Handle-Stop }
 }
