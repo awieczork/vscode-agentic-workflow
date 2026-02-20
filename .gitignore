@@ -1,6 +1,1 @@
-output/
-output-prompt/
-.github/prompts/output-prompt/
-
-# Session documents (ephemeral, not committed)
-.github/.session/
+/.github/
